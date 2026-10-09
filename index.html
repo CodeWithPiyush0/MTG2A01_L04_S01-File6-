@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">   <!-- [responsive] the page fills the whole screen (notch, home bar); app.js fits the stage inside the safe area -->
+<title>SwiftPAL · MTG2A01_L04_S01 · संख्याओं का घटाव</title>
+<link rel="icon" href="data:,">   <!-- [QA 15] no favicon request: the browser's automatic /favicon.ico 404 was the last console error -->
+<!-- [QA 02] No blank white flash before the loader. style.css is a separate
+     request, so without this the very first paint is unstyled. This inline rule
+     lands the loader's own colour on the first frame. -->
+<style>html,body{background:#FFFFFF;margin:0;}</style>
+<link rel="stylesheet" href="style.css">
+<!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
+     arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
+     file:// a preload of a fetch() fails, and local files need no head start. -->
+<script>(function(){ if(!/^https?:$/.test(location.protocol)) return;
+  [["assets/fonts/baloo2-800.woff2", "font", "font/woff2"], ["assets/gif/new_landing_swiftee_anim.webp", "fetch"],
+   ["assets/startnew_bg_plain.webp", "image"], ["assets/background_1st_screen.webp", "image"], ["assets/pv_rod.webp", "image"]
+  ].forEach(function(f){ var l = document.createElement("link"); l.rel = "preload"; l.href = f[0]; l.as = f[1];
+    if(f[2]) l.type = f[2]; if(f[1] !== "image") l.crossOrigin = "anonymous"; document.head.appendChild(l); });
+})();</script>
+</head>
+<body class="is-start">
+<div class="start-bg" aria-hidden="true"></div>
+<!-- landing sky: the decorations baked into startnew_bg.webp cannot move, so a matching
+     layer drifts + twinkles above it. Edge-masked, so it never competes with the centre card.
+     Elements are generated at runtime by FLNMotion.sky (animation kit recipe 1). -->
+<div class="sg-glow" aria-hidden="true"></div>
+<div class="sg-sky"  aria-hidden="true"></div>
+<div class="end-bg"  aria-hidden="true"></div>   <!-- [20a] body-level: position:fixed must NOT sit inside the transformed .stage or it gets hijacked to the stage box (leaves letterbox band) -->
+
+<!-- BOOT LOADER — [template] r4/P2: white boot screen, no-tap auto-dismiss (see boot()) -->
+<div class="boot-loader" id="bootLoader">
+  <img src="assets/gif/loader.webp" alt="">
+</div>
+
+<div class="stage-wrap">
+<!-- [responsive] the bands beside / above the stage: 8 mirrored copies of the stage's own backdrop (app.js Screen.bleed) -->
+<div class="stage-bleed" id="stageBleed" aria-hidden="true"><i class="b-l"></i><i class="b-r"></i><i class="b-t"></i><i class="b-b"></i><i class="b-tl"></i><i class="b-tr"></i><i class="b-bl"></i><i class="b-br"></i></div>
+<div class="stage" id="stage">
+
+  <div class="stage-inner">
+    <!-- HEADER -->
+    <div class="header-row">
+      <div class="prompt-band"><div class="prompt-text" id="promptText">…</div></div>
+      <div class="audio-chip" id="audioChip" title="आवाज़ सुनो"><svg viewBox="0 0 62 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Audio"><g filter="url(#hdrChipShadow)"><rect x="8" y="4" width="46" height="44" rx="22" fill="url(#hdrChipGrad)"/><rect x="6" y="2" width="50" height="48" rx="24" stroke="white" stroke-width="4"/><path d="M29.8466 19.0574C29.8804 19.0524 29.9145 19.0496 29.9487 19.0488C30.6094 19.0317 31.0021 19.5124 31.0015 20.1414C31.0008 20.9661 31.0003 21.7911 31.0005 22.6158L31.001 27.7212L31.0009 30.5591C31.0009 31.0364 31.0122 31.5472 30.9863 32.0228C30.9662 32.2709 30.902 32.4608 30.7251 32.643C30.3831 32.9952 29.8337 33.0842 29.4386 32.7671C29.0784 32.4781 28.7473 32.1159 28.4181 31.7862L26.4414 29.8087C26.1771 29.5426 25.9071 29.2636 25.6339 29.0081C25.0227 28.9649 24.3645 29.017 23.7487 28.9979C23.445 28.9885 23.1625 29.0211 22.8589 28.9606C22.3751 28.8616 22.0618 28.4823 22.0642 27.9824C22.0706 26.5937 22.0287 25.1949 22.0828 23.8081C22.0884 23.6626 22.2302 23.4334 22.3309 23.3252C22.454 23.1907 22.6146 23.0963 22.792 23.0543C23.0567 22.9904 23.5328 23.016 23.8224 23.0128C24.4143 23.0063 25.0171 23.0277 25.609 23.0073C25.6794 22.9529 25.8505 22.7743 25.919 22.706L26.5305 22.0945L28.5396 20.0838C28.9157 19.7059 29.3217 19.1749 29.8466 19.0574Z" fill="white"/><path class="wv wv2" d="M36.2367 18.6905C36.8783 18.6449 37.3041 19.231 37.6725 19.6829C38.7675 21.0046 39.4982 22.5894 39.7923 24.2804C40.2503 26.8763 39.6548 29.5478 38.1378 31.7035C37.8393 32.1274 37.508 32.5324 37.149 32.9063C36.9404 33.1236 36.7646 33.2558 36.4622 33.3081C36.2013 33.3412 35.9378 33.2717 35.7272 33.1144C35.5185 32.9615 35.3816 32.7298 35.3483 32.4733C35.2786 31.9235 35.5696 31.6821 35.8914 31.3297C36.0448 31.1639 36.1901 30.9908 36.3269 30.811C38.3669 28.136 38.4986 24.4654 36.6555 21.6511C36.4826 21.3899 36.2966 21.1376 36.0984 20.8951C35.8252 20.5652 35.3947 20.2691 35.3472 19.8184C35.2845 19.2225 35.6439 18.768 36.2367 18.6905Z" fill="white"/><path class="wv wv1" d="M33.3868 21.5044C33.9769 21.4549 34.2563 21.7845 34.5981 22.1981C35.1982 22.924 35.6149 23.7691 35.8211 24.6886C36.171 26.2384 35.8867 27.8637 35.0314 29.2026C34.7421 29.6568 34.2333 30.3745 33.6937 30.4946C33.1633 30.5437 32.6759 30.2927 32.5495 29.7376C32.3921 29.0462 32.9849 28.6956 33.3274 28.1763C34.2088 26.833 34.1932 25.0908 33.288 23.7635C33.0747 23.4522 32.6159 23.0564 32.5518 22.7133C32.4377 22.1027 32.7745 21.619 33.3868 21.5044Z" fill="white"/></g><defs><filter id="hdrChipShadow" x="0" y="0" width="62" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="4"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter><linearGradient id="hdrChipGrad" x1="8" y1="26" x2="54" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#1987FC"/><stop offset="1" stop-color="#1565F4"/></linearGradient></defs></svg></div>
+      <button class="hint-btn" id="hintBtn" title="संकेत">
+        <svg viewBox="25 17 22 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="bulb-rays" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+            <line x1="36" y1="14" x2="36" y2="10"/>
+            <line x1="25" y1="18" x2="22" y2="15"/>
+            <line x1="47" y1="18" x2="50" y2="15"/>
+            <line x1="21" y1="27" x2="17" y2="26.5"/>
+            <line x1="51" y1="27" x2="55" y2="26.5"/>
+          </g>
+          <path class="bulb" d="M42.7872 19.7599C41.561 18.7514 40.125 18.0293 38.5841 17.6464C37.0432 17.2635 35.4363 17.2294 33.8806 17.5466C31.8091 17.965 29.9086 18.9894 28.4202 20.4896C26.9317 21.9899 25.9225 23.8985 25.5206 25.9733C25.227 27.5289 25.2804 29.1301 25.6768 30.6628C26.0732 32.1954 26.8029 33.6217 27.8139 34.8399C28.7522 35.8987 29.29 37.2526 29.3339 38.6666V42.6666C29.3339 43.7275 29.7553 44.7449 30.5055 45.495C31.2556 46.2452 32.273 46.6666 33.3339 46.6666H38.6672C39.7281 46.6666 40.7455 46.2452 41.4957 45.495C42.2458 44.7449 42.6672 43.7275 42.6672 42.6666V38.9199C42.712 37.3588 43.2855 35.8592 44.2939 34.6666C46.0607 32.481 46.8936 29.6864 46.6115 26.8901C46.3293 24.0938 44.955 21.5219 42.7872 19.7333V19.7599ZM40.0006 42.6666C40.0006 43.0202 39.8601 43.3594 39.61 43.6094C39.36 43.8595 39.0209 43.9999 38.6672 43.9999H33.3339C32.9803 43.9999 32.6411 43.8595 32.3911 43.6094C32.141 43.3594 32.0006 43.0202 32.0006 42.6666V41.3333H40.0006V42.6666ZM42.2272 33.0133C40.8866 34.6034 40.1044 36.5893 40.0006 38.6666H37.3339V34.6666C37.3339 34.313 37.1934 33.9738 36.9434 33.7238C36.6933 33.4737 36.3542 33.3333 36.0006 33.3333C35.647 33.3333 35.3078 33.4737 35.0578 33.7238C34.8077 33.9738 34.6672 34.313 34.6672 34.6666V38.6666H32.0006C31.9654 36.6241 31.2098 34.6596 29.8672 33.1199C28.9814 32.0586 28.3858 30.7858 28.1383 29.4257C27.8909 28.0656 28.0001 26.6646 28.4554 25.3593C28.9106 24.054 29.6963 22.8889 30.7359 21.9777C31.7755 21.0665 33.0335 20.4402 34.3872 20.1599C35.5506 19.9204 36.7528 19.9429 37.9064 20.2259C39.06 20.5089 40.1361 21.0452 41.0566 21.7959C41.9771 22.5466 42.7189 23.4928 43.2281 24.566C43.7374 25.6391 44.0012 26.8121 44.0006 27.9999C44.0093 29.8262 43.3824 31.5987 42.2272 33.0133Z" fill="white"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- SLIDE STAGE (engine swaps slides here) -->
+    <div class="slide-stage">
+      <div class="slide-host" id="slideHost"></div>
+      <div class="nudge-hand" id="nudgeHand">
+        <!-- FLN animation kit recipes 3 (treatment C, the plain press) + 4 (the tap ripple), review 2026-09-30:
+             two wavefronts and three sparks break out of the fingertip as it touches, BEHIND the hand -->
+        <span class="nh-tapfx" aria-hidden="true"><i class="fx-ro"></i><i class="fx-ri"></i><i class="fx-sp"></i></span>
+        <img data-src="assets/nudge_hand_new.svg" alt="">   <!-- [loading] data-src: its file arrives with the lesson's UI art (app.js Assets), not ahead of the landing's -->
+      </div>
+    </div>
+
+    <!-- Swiftie buddy: persistent, reacting character (replaces the static header photo + feedback popup) -->
+    <div class="mascot-wrap" id="swBuddy"><div class="mascot-circle"><img class="mascot-img" id="swBuddyImg" alt=""></div></div>
+
+    <!-- Nav button — kit-style pill, floats bottom-right -->
+    <button class="nav-btn" id="navBtn" disabled>आगे</button>
+  </div>
+
+
+  <!-- TAP-TO-START — uses provided title-screen art -->
+  <div class="start-gate" id="startGate">
+    <div class="sg-card">
+      <!-- ambient scene FX over the room art: sun flare in the window, sunlit dust, lamp-bulb flicker (decorative only) -->
+      <div class="sg-fx" aria-hidden="true">
+        <!-- soft lens flare in the window, no sun / no rays: one big hazy disc, a smaller violet disc
+             overlapping it, a faint glint and a soft haze lobe. .sg-sun stays as a 0x0 anchor - the
+             dust system in app.js reads the light source position from it. -->
+        <div class="sg-sun"></div>
+        <div class="sg-flare2">
+          <i class="fl-big"></i><i class="fl-violet"></i><i class="fl-haze"></i><i class="fl-glint"></i>
+        </div>
+        <div class="sg-lamp"></div>
+        <canvas class="sg-dust" id="sgDust"></canvas>   <!-- sunlit dust: physics particle system, see app.js [landing dust] -->
+      </div>
+      <img class="sg-mascot" data-src="assets/gif/new_landing_swiftee_anim.webp" alt="Swiftee"
+           onerror="this.style.display='none'">
+      <div class="sg-content">
+        <div class="sg-title" id="sgTitle">संख्याओं की जोड़</div>
+
+        <!-- r4/#2: concept strip is now DATA-DRIVEN — the engine fills #sgHero from
+             CARD.landing_hero (kind:"concept_strip"). Each tile is a visual example of the
+             ordering task (no words); a new game just declares its cells in card.json. -->
+        <div class="sg-art" id="sgHero"></div>
+      </div>
+      <button class="sg-vo" id="sgVo" type="button" aria-label="सुनो"><svg viewBox="0 0 62 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Audio"><g filter="url(#sgChipShadow)"><rect x="8" y="4" width="46" height="44" rx="22" fill="url(#sgChipGrad)"/><rect x="6" y="2" width="50" height="48" rx="24" stroke="white" stroke-width="4"/><path d="M29.8466 19.0574C29.8804 19.0524 29.9145 19.0496 29.9487 19.0488C30.6094 19.0317 31.0021 19.5124 31.0015 20.1414C31.0008 20.9661 31.0003 21.7911 31.0005 22.6158L31.001 27.7212L31.0009 30.5591C31.0009 31.0364 31.0122 31.5472 30.9863 32.0228C30.9662 32.2709 30.902 32.4608 30.7251 32.643C30.3831 32.9952 29.8337 33.0842 29.4386 32.7671C29.0784 32.4781 28.7473 32.1159 28.4181 31.7862L26.4414 29.8087C26.1771 29.5426 25.9071 29.2636 25.6339 29.0081C25.0227 28.9649 24.3645 29.017 23.7487 28.9979C23.445 28.9885 23.1625 29.0211 22.8589 28.9606C22.3751 28.8616 22.0618 28.4823 22.0642 27.9824C22.0706 26.5937 22.0287 25.1949 22.0828 23.8081C22.0884 23.6626 22.2302 23.4334 22.3309 23.3252C22.454 23.1907 22.6146 23.0963 22.792 23.0543C23.0567 22.9904 23.5328 23.016 23.8224 23.0128C24.4143 23.0063 25.0171 23.0277 25.609 23.0073C25.6794 22.9529 25.8505 22.7743 25.919 22.706L26.5305 22.0945L28.5396 20.0838C28.9157 19.7059 29.3217 19.1749 29.8466 19.0574Z" fill="white"/><path class="wv wv2" d="M36.2367 18.6905C36.8783 18.6449 37.3041 19.231 37.6725 19.6829C38.7675 21.0046 39.4982 22.5894 39.7923 24.2804C40.2503 26.8763 39.6548 29.5478 38.1378 31.7035C37.8393 32.1274 37.508 32.5324 37.149 32.9063C36.9404 33.1236 36.7646 33.2558 36.4622 33.3081C36.2013 33.3412 35.9378 33.2717 35.7272 33.1144C35.5185 32.9615 35.3816 32.7298 35.3483 32.4733C35.2786 31.9235 35.5696 31.6821 35.8914 31.3297C36.0448 31.1639 36.1901 30.9908 36.3269 30.811C38.3669 28.136 38.4986 24.4654 36.6555 21.6511C36.4826 21.3899 36.2966 21.1376 36.0984 20.8951C35.8252 20.5652 35.3947 20.2691 35.3472 19.8184C35.2845 19.2225 35.6439 18.768 36.2367 18.6905Z" fill="white"/><path class="wv wv1" d="M33.3868 21.5044C33.9769 21.4549 34.2563 21.7845 34.5981 22.1981C35.1982 22.924 35.6149 23.7691 35.8211 24.6886C36.171 26.2384 35.8867 27.8637 35.0314 29.2026C34.7421 29.6568 34.2333 30.3745 33.6937 30.4946C33.1633 30.5437 32.6759 30.2927 32.5495 29.7376C32.3921 29.0462 32.9849 28.6956 33.3274 28.1763C34.2088 26.833 34.1932 25.0908 33.288 23.7635C33.0747 23.4522 32.6159 23.0564 32.5518 22.7133C32.4377 22.1027 32.7745 21.619 33.3868 21.5044Z" fill="white"/></g><defs><filter id="sgChipShadow" x="0" y="0" width="62" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="4"/><feGaussianBlur stdDeviation="2"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/></filter><linearGradient id="sgChipGrad" x1="8" y1="26" x2="54" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#1987FC"/><stop offset="1" stop-color="#1565F4"/></linearGradient></defs></svg></button>
+      <button class="sg-btn sg-btn--art sg-btn--play sg-waiting" id="sgBtn" type="button" aria-label="शुरू करें" aria-disabled="true"><img src="assets/btn-play-round-waiting.svg" alt="" draggable="false"></button>
+    </div>
+  </div>
+
+  <!-- END / CELEBRATION -->
+  <div class="end-screen" id="endScreen">
+    <div class="confetti" id="confetti"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-subtitle" id="endSubtitle"></div>
+    <img class="end-mascot" data-src="assets/last_swifty_still.webp" alt="Swiftee"
+         onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'end-mascot',textContent:'🎉'}))">
+    <button class="end-btn" id="endBtn">आगे बढ़ें →</button>
+  </div>
+
+  <!-- DEV VALIDATOR BANNER -->
+  <div class="dev-banner" id="devBanner"></div>
+
+</div></div>
+
+
+<!-- PHASE-TRANSITION PEEK GATE - [20a PT-3] BODY-LEVEL so position:fixed covers the FULL
+     viewport (a transformed ancestor like the scaled .stage would hijack fixed positioning
+     and shrink the gate with the stage - production pattern). -->
+<div class="phase-gate" id="phaseGate">
+    <div class="pg-title" id="phaseGateTitle"></div>
+    <img id="phaseGateImg" alt="">   <!-- (its picture: a blob: URL of peeking.webp per gate, app.js restartPeek) -->
+    <canvas id="phaseGateCv" style="display:none" aria-hidden="true"></canvas>   <!-- [peek-7] the same clip, drawn by app.js PeekPlayer; the <img> is its fallback -->
+</div>
+
+<!-- CORRECT-ANSWER CONFETTI (FLN animation kit recipe 7) - BODY-LEVEL for the same reason: it falls over the WHOLE
+     window, the letterbox beside the stage included (review 2026-09-30: "not covering the full horizontal space");
+     inside .stage-inner it was clipped to the scaled 1333px stage. -->
+<div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+
+<!-- [responsive] a phone or tablet held upright: the lesson is landscape - a card asks for a turn (html.ask-rotate,
+     app.js Screen). On Android a tap on it goes full screen in landscape, which turns the screen by itself. -->
+<div class="rotate-ask" id="rotateAsk" role="dialog" aria-label="फ़ोन को घुमाइए">
+  <div class="ra-phone" aria-hidden="true"><i></i></div>
+  <div class="ra-text">फ़ोन को घुमाइए</div>
+</div>
+
+<!-- ============ CARD DATA (embedded; in prod the compiler does this) ============ -->
+<script type="application/json" id="cardData">
+{
+ "version": "0.2",
+ "skill_code": "MTG2A01_L04_S01",
+ "lo_code": "MTG2A01_L04",
+ "grade": "G2",
+ "attribute": "A01",
+ "skill_type": "CORE",
+ "part_label": "",
+ "theme": "toybox",
+ "title": {
+  "hi": "संख्याओं का घटाव",
+  "en": "Subtract horizontally without regrouping"
+ },
+ "landing_hero": {
+  "kind": "pv_eq",
+  "a": 20,
+  "b": 10,
+  "op": "−"
+ },
+ "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
+ "phase_distribution": {
+  "tutorial": 3,
+  "guided": 3,
+  "practice": 5
+ },
+ "scaffold_rules": {
+  "nudge_timeout_ms": {
+   "tutorial": 7000,
+   "guided": 7000,
+   "practice": 7000,
+   "independent": 7000
+  },
+  "max_attempts": 3
+ },
+ "signals_expected": [
+  "slide_entered",
+  "slide_completed",
+  "pv_build_done",
+  "pv_remove_done",
+  "mcq_correct",
+  "numpad_correct",
+  "mastery_score",
+  "lesson_completed"
+ ],
+ "assets": {
+  "audio_ext": "ogg",
+  "img_ext": "webp",
+  "audio": {
+   "sfx_celebrate": "assets/voiceover/sfx_celebrate.ogg",
+   "vo_ask_pick": "assets/voiceover/vo_ask_pick.ogg",
+   "vo_cel": "assets/voiceover/vo_cel.ogg",
+   "vo_g1_build": "assets/voiceover/vo_g1_build.ogg",
+   "vo_g1_correct": "assets/voiceover/vo_g1_correct.ogg",
+   "vo_g1_eq": "assets/voiceover/vo_g1_eq.ogg",
+   "vo_g1_prompt": "assets/voiceover/vo_g1_prompt.ogg",
+   "vo_g1_remove": "assets/voiceover/vo_g1_remove.ogg",
+   "vo_g1_sub": "assets/voiceover/vo_g1_sub.ogg",
+   "vo_g2_build": "assets/voiceover/vo_g2_build.ogg",
+   "vo_g2_correct": "assets/voiceover/vo_g2_correct.ogg",
+   "vo_g2_eq": "assets/voiceover/vo_g2_eq.ogg",
+   "vo_g2_prompt": "assets/voiceover/vo_g2_prompt.ogg",
+   "vo_g2_remove": "assets/voiceover/vo_g2_remove.ogg",
+   "vo_g2_reveal": "assets/voiceover/vo_g2_reveal.ogg",
+   "vo_g2_sub": "assets/voiceover/vo_g2_sub.ogg",
+   "vo_g3_build": "assets/voiceover/vo_g3_build.ogg",
+   "vo_g3_correct": "assets/voiceover/vo_g3_correct.ogg",
+   "vo_g3_eq": "assets/voiceover/vo_g3_eq.ogg",
+   "vo_g3_prompt": "assets/voiceover/vo_g3_prompt.ogg",
+   "vo_g3_reveal": "assets/voiceover/vo_g3_reveal.ogg",
+   "vo_g3_rm_ones": "assets/voiceover/vo_g3_rm_ones.ogg",
+   "vo_g3_rm_tens": "assets/voiceover/vo_g3_rm_tens.ogg",
+   "vo_g3_sub": "assets/voiceover/vo_g3_sub.ogg",
+   "vo_landing": "assets/voiceover/vo_landing.ogg",
+   "vo_p1_ask": "assets/voiceover/vo_p1_ask.ogg",
+   "vo_p1_build": "assets/voiceover/vo_p1_build.ogg",
+   "vo_p1_correct": "assets/voiceover/vo_p1_correct.ogg",
+   "vo_p1_prompt": "assets/voiceover/vo_p1_prompt.ogg",
+   "vo_p1_reveal": "assets/voiceover/vo_p1_reveal.ogg",
+   "vo_p1_rm_ones": "assets/voiceover/vo_p1_rm_ones.ogg",
+   "vo_p1_rm_tens": "assets/voiceover/vo_p1_rm_tens.ogg",
+   "vo_p1_sub": "assets/voiceover/vo_p1_sub.ogg",
+   "vo_p2_correct": "assets/voiceover/vo_p2_correct.ogg",
+   "vo_p2_prompt": "assets/voiceover/vo_p2_prompt.ogg",
+   "vo_p2_remove": "assets/voiceover/vo_p2_remove.ogg",
+   "vo_p2_reveal": "assets/voiceover/vo_p2_reveal.ogg",
+   "vo_p3_correct": "assets/voiceover/vo_p3_correct.ogg",
+   "vo_p3_prompt": "assets/voiceover/vo_p3_prompt.ogg",
+   "vo_p3_reveal": "assets/voiceover/vo_p3_reveal.ogg",
+   "vo_p3_try_again": "assets/voiceover/vo_p3_try_again.ogg",
+   "vo_p4_correct": "assets/voiceover/vo_p4_correct.ogg",
+   "vo_p4_hint": "assets/voiceover/vo_p4_hint.ogg",
+   "vo_p4_prompt": "assets/voiceover/vo_p4_prompt.ogg",
+   "vo_p4_reveal": "assets/voiceover/vo_p4_reveal.ogg",
+   "vo_p4_try_again": "assets/voiceover/vo_p4_try_again.ogg",
+   "vo_pt_guided": "assets/voiceover/vo_pt_guided.ogg",
+   "vo_pt_practice": "assets/voiceover/vo_pt_practice.ogg",
+   "vo_pt_tutorial": "assets/voiceover/vo_pt_tutorial.ogg",
+   "vo_rm_guide": "assets/voiceover/vo_rm_guide.ogg",
+   "vo_rm_ones_less": "assets/voiceover/vo_rm_ones_less.ogg",
+   "vo_rm_ones_more": "assets/voiceover/vo_rm_ones_more.ogg",
+   "vo_rm_tens_more": "assets/voiceover/vo_rm_tens_more.ogg",
+   "vo_t1_a": "assets/voiceover/vo_t1_a.ogg",
+   "vo_t1_ask": "assets/voiceover/vo_t1_ask.ogg",
+   "vo_t1_b": "assets/voiceover/vo_t1_b.ogg",
+   "vo_t1_learn": "assets/voiceover/vo_t1_learn.ogg",
+   "vo_t2_built": "assets/voiceover/vo_t2_built.ogg",
+   "vo_t2_digits": "assets/voiceover/vo_t2_digits.ogg",
+   "vo_t2_head": "assets/voiceover/vo_t2_head.ogg",
+   "vo_t2_intro": "assets/voiceover/vo_t2_intro.ogg",
+   "vo_t2_ones": "assets/voiceover/vo_t2_ones.ogg",
+   "vo_t2_ones_left": "assets/voiceover/vo_t2_ones_left.ogg",
+   "vo_t2_rm_ones": "assets/voiceover/vo_t2_rm_ones.ogg",
+   "vo_t2_rm_tens": "assets/voiceover/vo_t2_rm_tens.ogg",
+   "vo_t2_sub": "assets/voiceover/vo_t2_sub.ogg",
+   "vo_t2_tens": "assets/voiceover/vo_t2_tens.ogg",
+   "vo_t2_tens_left": "assets/voiceover/vo_t2_tens_left.ogg",
+   "vo_t2_total": "assets/voiceover/vo_t2_total.ogg",
+   "vo_t3_a": "assets/voiceover/vo_t3_a.ogg",
+   "vo_t3_b": "assets/voiceover/vo_t3_b.ogg",
+   "vo_t3_c": "assets/voiceover/vo_t3_c.ogg",
+   "vo_try_left": "assets/voiceover/vo_try_left.ogg"
+  },
+  "audio_text": {
+   "vo_ask_pick": "अब कितने बचे? सही संख्या चुनिए।",
+   "vo_cel": "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।",
+   "vo_g1_build": "सबसे पहले ब्लॉक्स की सहायता से 34 बनाते हैं, जिसमें 3 दहाई और 4 इकाई होते हैं।",
+   "vo_g1_correct": "शाबाश! 34 में से 21 घटाने पर हमें मिलीं 1 दहाई और 3 इकाई, यानी 13।",
+   "vo_g1_eq": "इसलिए 34 घटा 21 बराबर 13।",
+   "vo_g1_prompt": "34 में से 21 घटाइए।",
+   "vo_g1_remove": "तो पहले 4 इकाई में से 1 इकाई हटाइए, फिर 3 दहाई में से 2 दहाई हटाइए।",
+   "vo_g1_sub": "और अब 21 घटाते हैं, 21 में 2 दहाई और 1 इकाई हैं।",
+   "vo_g2_build": "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।",
+   "vo_g2_correct": "शाबाश! 47 में से 20 घटाने पर हमें मिलीं 2 दहाई और 7 इकाई, यानी 27।",
+   "vo_g2_eq": "इसलिए 47 घटा 20 बराबर 27।",
+   "vo_g2_prompt": "47 में से 20 घटाइए।",
+   "vo_g2_remove": "पहले इकाइयाँ घटाइए, 7 इकाई में से 0 इकाई हटाइए, और फिर दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
+   "vo_g2_reveal": "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।",
+   "vo_g2_sub": "और अब 20 घटाते हैं, 20 में 2 दहाई और 0 इकाई हैं।",
+   "vo_g3_build": "सबसे पहले ब्लॉक्स की सहायता से 58 बनाइए, जिसमें 5 दहाई और 8 इकाई होते हैं।",
+   "vo_g3_correct": "शाबाश! 58 में से 30 घटाने पर हमें मिलीं 2 दहाई और 8 इकाई, यानी 28।",
+   "vo_g3_eq": "इसलिए 58 घटा 30 बराबर 28।",
+   "vo_g3_prompt": "58 में से 30 घटाइए।",
+   "vo_g3_reveal": "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।",
+   "vo_g3_rm_ones": "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।",
+   "vo_g3_rm_tens": "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।",
+   "vo_g3_sub": "और अब इसमें से 30 घटाते हैं, 30 में 3 दहाई और 0 इकाई हैं।",
+   "vo_landing": "नमस्ते दोस्त! मैं हूँ स्विफ्टी! आज हम संख्याओं को घटाना सीखेंगे।",
+   "vo_p1_ask": "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।",
+   "vo_p1_build": "सबसे पहले ब्लॉक्स की सहायता से 79 बनाइए, जिसमें 7 दहाई और 9 इकाई होते हैं।",
+   "vo_p1_correct": "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।",
+   "vo_p1_prompt": "79 में से 34 घटाइए।",
+   "vo_p1_reveal": "79 में से 34 घटाने पर 45 बचता है। तो सही संख्या यह है।",
+   "vo_p1_rm_ones": "पहले इकाइयाँ घटाइए। 9 इकाई में से 4 इकाई हटाइए।",
+   "vo_p1_rm_tens": "अब दहाइयाँ घटाइए। 7 दहाई में से 3 दहाई हटाइए।",
+   "vo_p1_sub": "और अब इसमें से 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।",
+   "vo_p2_correct": "शाबाश! आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।",
+   "vo_p2_prompt": "86 में से 56 घटाइए और सही संख्या चुनिए।",
+   "vo_p2_remove": "दिए हुए ब्लॉक्स पर टैप करके 56 ब्लॉक्स हटाइए। पहले इकाई में से हटाइए, फिर दहाई में से।",
+   "vo_p2_reveal": "86 में से 56 घटाने पर 30 बचता है। तो सही संख्या यह है।",
+   "vo_p3_correct": "शाबाश! आपने सही संख्या चुन ली। 45 घटा 12 बराबर 33।",
+   "vo_p3_prompt": "45 में से 12 घटाइए और सही संख्या चुनिए।",
+   "vo_p3_reveal": "45 में से 12 घटाने पर 33 बचता है। तो सही संख्या यह है।",
+   "vo_p3_try_again": "फिर से घटाइए।",
+   "vo_p4_correct": "शाबाश! 90 घटा 40 बराबर 50।",
+   "vo_p4_hint": "संख्याओं में पहले इकाई के स्थान से घटाइए, फिर दहाई के स्थान से घटाइए।",
+   "vo_p4_prompt": "90 में से 40 घटाइए और डिब्बे पर टैप करके सही संख्या लिखिए।",
+   "vo_p4_reveal": "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।",
+   "vo_p4_try_again": "फिर से कोशिश करिए।",
+   "vo_pt_guided": "चलिए, साथ में करें!",
+   "vo_pt_practice": "अब आपकी बारी!",
+   "vo_pt_tutorial": "चलिए, शुरू करते हैं!",
+   "vo_rm_guide": "इनमें से इतने हटाइए।",
+   "vo_rm_ones_less": "आपने इकाई में कम हटाए हैं। दोबारा कोशिश करिए।",
+   "vo_rm_ones_more": "आपने इकाई में ज़्यादा हटाए हैं। दोबारा कोशिश करिए।",
+   "vo_rm_tens_more": "आपने दहाई में ज़्यादा हटाए हैं। दोबारा कोशिश करिए।",
+   "vo_t1_a": "मीरा के पास कुल पच्चीस ब्लॉक्स हैं,",
+   "vo_t1_ask": "चलिए, पता करते हैं, मीरा के पास अब कितने ब्लॉक्स बचे हैं?",
+   "vo_t1_b": "उनमें से तेरह ब्लॉक्स मीरा ने अमन को दिए हैं।",
+   "vo_t1_learn": "इसके लिए हम सीखते हैं, पच्चीस में से तेरह घटाने पर कितने बचते हैं?",
+   "vo_t2_built": "यह हमने ब्लॉक्स से संख्या पच्चीस बना ली।",
+   "vo_t2_digits": "25 में 2 दहाई और 5 इकाई हैं।",
+   "vo_t2_head": "आइए, पहले 25 बनाते हैं।",
+   "vo_t2_intro": "सबसे पहले ब्लॉक्स की सहायता से 25 बनाते हैं।",
+   "vo_t2_ones": "अब 5 इकाई के लिए 5 ब्लॉक रखते हैं।",
+   "vo_t2_ones_left": "5 इकाई में से 3 इकाई घटाने पर बचीं, 2 इकाई।",
+   "vo_t2_rm_ones": "पहले इकाइयाँ घटाते हैं। 5 इकाई में से 3 इकाई हटाते हैं।",
+   "vo_t2_rm_tens": "अब आप दहाइयाँ घटाइए। 2 दहाई में से 1 दहाई हटाइए।",
+   "vo_t2_sub": "अब 25 में से 13 घटाते हैं। 13 में 1 दहाई और 3 इकाई होते हैं।",
+   "vo_t2_tens": "2 दहाई के लिए 2 बंडल रखते हैं।",
+   "vo_t2_tens_left": "बहुत बढ़िया! 2 दहाई में से 1 दहाई घटाने पर बचे, 1 दहाई।",
+   "vo_t2_total": "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12",
+   "vo_t3_a": "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।",
+   "vo_t3_b": "अब इस डिब्बे में 12 आएगा।",
+   "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।",
+   "vo_try_left": "फिर से सोचिए, कितने बचे।"
+  }
+ },
+ "slides": [
+  {
+   "id": "T1",
+   "phase": "tutorial",
+   "eis": "iconic",
+   "type": "STORY_SUB",
+   "prompt_hi": "कितने बचे?",
+   "audio": {
+    "a": "vo_t1_a",
+    "b": "vo_t1_b",
+    "ask": "vo_t1_ask",
+    "learn": "vo_t1_learn"
+   },
+   "data": {
+    "mode": "ask",
+    "a": 25,
+    "b": 13
+   }
+  },
+  {
+   "id": "T2",
+   "phase": "tutorial",
+   "eis": "iconic",
+   "type": "PV_SUB_DEMO",
+   "prompt_hi": "पहले 25 बनाते हैं।",
+   "audio": {
+    "head": "vo_t2_head",
+    "intro": "vo_t2_intro",
+    "digits": "vo_t2_digits",
+    "tens": "vo_t2_tens",
+    "ones": "vo_t2_ones",
+    "built": "vo_t2_built",
+    "sub": "vo_t2_sub",
+    "rm_ones": "vo_t2_rm_ones",
+    "ones_left": "vo_t2_ones_left",
+    "rm_tens": "vo_t2_rm_tens",
+    "tens_left": "vo_t2_tens_left",
+    "total": "vo_t2_total"
+   },
+   "data": {
+    "a": 25,
+    "b": 13,
+    "eq_prompt": "25 − 13 = ?",
+    "idle_ms": 3000
+   }
+  },
+  {
+   "id": "T3",
+   "phase": "tutorial",
+   "eis": "iconic",
+   "type": "STORY_SUB",
+   "prompt_hi": "कितने बचे?",
+   "audio": {
+    "a": "vo_t3_a",
+    "b": "vo_t3_b",
+    "c": "vo_t3_c"
+   },
+   "data": {
+    "mode": "answer",
+    "a": 25,
+    "b": 13,
+    "fill_at": 0.5
+   }
+  },
+  {
+   "id": "G1",
+   "phase": "guided",
+   "eis": "iconic",
+   "type": "PV_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "rm_ones_more": "vo_rm_ones_more",
+    "rm_ones_less": "vo_rm_ones_less",
+    "rm_tens_more": "vo_rm_tens_more",
+    "rm_guide": "vo_rm_guide",
+    "prompt": "vo_g1_prompt",
+    "build": "vo_g1_build",
+    "sub": "vo_g1_sub",
+    "remove": "vo_g1_remove",
+    "correct": "vo_g1_correct",
+    "eq": "vo_g1_eq"
+   },
+   "data": {
+    "a": 34,
+    "b": 21,
+    "answer": "fill",
+    "build": true,
+    "steps": false,
+    "right_table": true
+   }
+  },
+  {
+   "id": "G2",
+   "phase": "guided",
+   "eis": "iconic",
+   "type": "PV_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "rm_ones_more": "vo_rm_ones_more",
+    "rm_ones_less": "vo_rm_ones_less",
+    "rm_tens_more": "vo_rm_tens_more",
+    "rm_guide": "vo_rm_guide",
+    "prompt": "vo_g2_prompt",
+    "build": "vo_g2_build",
+    "sub": "vo_g2_sub",
+    "remove": "vo_g2_remove",
+    "ask": "vo_ask_pick",
+    "try_again": "vo_try_left",
+    "reveal": "vo_g2_reveal",
+    "correct": "vo_g2_correct",
+    "eq": "vo_g2_eq"
+   },
+   "data": {
+    "a": 47,
+    "b": 20,
+    "answer": "mcq",
+    "build": true,
+    "steps": false,
+    "right_table": true,
+    "options": [
+     72,
+     27,
+     67
+    ]
+   }
+  },
+  {
+   "id": "G3",
+   "phase": "guided",
+   "eis": "iconic",
+   "type": "PV_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "rm_ones_more": "vo_rm_ones_more",
+    "rm_ones_less": "vo_rm_ones_less",
+    "rm_tens_more": "vo_rm_tens_more",
+    "rm_guide": "vo_rm_guide",
+    "prompt": "vo_g3_prompt",
+    "build": "vo_g3_build",
+    "sub": "vo_g3_sub",
+    "rm_ones": "vo_g3_rm_ones",
+    "rm_tens": "vo_g3_rm_tens",
+    "ask": "vo_ask_pick",
+    "try_again": "vo_try_left",
+    "reveal": "vo_g3_reveal",
+    "correct": "vo_g3_correct",
+    "eq": "vo_g3_eq"
+   },
+   "data": {
+    "a": 58,
+    "b": 30,
+    "answer": "mcq",
+    "build": true,
+    "steps": true,
+    "right_table": true,
+    "options": [
+     88,
+     28,
+     82
+    ]
+   }
+  },
+  {
+   "id": "P1",
+   "phase": "practice",
+   "eis": "iconic",
+   "type": "PV_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "rm_ones_more": "vo_rm_ones_more",
+    "rm_ones_less": "vo_rm_ones_less",
+    "rm_tens_more": "vo_rm_tens_more",
+    "rm_guide": "vo_rm_guide",
+    "prompt": "vo_p1_prompt",
+    "build": "vo_p1_build",
+    "sub": "vo_p1_sub",
+    "rm_ones": "vo_p1_rm_ones",
+    "rm_tens": "vo_p1_rm_tens",
+    "ask": "vo_p1_ask",
+    "try_again": "vo_try_left",
+    "reveal": "vo_p1_reveal",
+    "correct": "vo_p1_correct"
+   },
+   "data": {
+    "a": 79,
+    "b": 34,
+    "answer": "numpad",
+    "build": true,
+    "steps": true,
+    "right_table": true
+   }
+  },
+  {
+   "id": "P2",
+   "phase": "practice",
+   "eis": "iconic",
+   "type": "PV_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "rm_ones_more": "vo_rm_ones_more",
+    "rm_ones_less": "vo_rm_ones_less",
+    "rm_tens_more": "vo_rm_tens_more",
+    "rm_guide": "vo_rm_guide",
+    "prompt": "vo_p2_prompt",
+    "remove": "vo_p2_remove",
+    "ask": "vo_ask_pick",
+    "try_again": "vo_try_left",
+    "reveal": "vo_p2_reveal",
+    "correct": "vo_p2_correct"
+   },
+   "data": {
+    "a": 86,
+    "b": 56,
+    "answer": "mcq",
+    "build": false,
+    "steps": false,
+    "right_table": false,
+    "options": [
+     30,
+     40,
+     13
+    ]
+   }
+  },
+  {
+   "id": "P3",
+   "phase": "practice",
+   "eis": "symbolic",
+   "type": "MENTAL_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "prompt": "vo_p3_prompt",
+    "try_again": "vo_p3_try_again",
+    "reveal": "vo_p3_reveal",
+    "correct": "vo_p3_correct"
+   },
+   "data": {
+    "a": 45,
+    "b": 12,
+    "answer": "mcq",
+    "options": [
+     57,
+     23,
+     33
+    ]
+   }
+  },
+  {
+   "id": "P4",
+   "phase": "practice",
+   "eis": "symbolic",
+   "type": "MENTAL_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "prompt": "vo_p4_prompt",
+    "try_again": "vo_p4_try_again",
+    "hint": "vo_p4_hint",
+    "reveal": "vo_p4_reveal",
+    "correct": "vo_p4_correct"
+   },
+   "data": {
+    "a": 90,
+    "b": 40,
+    "answer": "numpad"
+   }
+  },
+  {
+   "id": "CEL",
+   "phase": "practice",
+   "eis": "enactive",
+   "type": "CELEBRATION",
+   "prompt_hi": "",
+   "audio": {
+    "prompt": "vo_cel"
+   },
+   "data": {}
+  }
+ ]
+}
+</script>
+
+<!-- ============ ENGINE ============ -->
+<script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
+<script src="app.js"></script>
+</body>
+</html>
