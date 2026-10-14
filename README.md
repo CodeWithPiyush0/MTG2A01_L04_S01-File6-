@@ -36,7 +36,7 @@ by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 Deleted (deck): pages 6, 10, 12, 14. The boat game (deck slide 18, hidden; cover-slide notes) is not part of this lesson.
 
 ## Assets
-- **Blocks / shell art:** from MTG2A01_L03_S01 (`pv_rod.webp`, `pv_cube.webp`, Swiftie, landing, end screen, SFX).
+- **Blocks / shell art:** from MTG2A01_L03_S01 (`pv_rod.webp`, `pv_cube.webp`, Swiftie, the landing courtyard `bg_landing_soft2.webp`, end screen, SFX).
 - **VO:** 72 Hindi clips, Gemini TTS voice "Kore" (the voice of v1), finished like the sibling's (`tools/build_vo.py`).
 
 ## Rebuilding
@@ -46,6 +46,15 @@ python tools/build_vo.py         # renders any VO line not yet on disk (GEMINI_K
 node tools/gen_asset_sizes.js    # the preload manifest - after ANY asset change
 ```
 Dev: `index.html?slide=N` opens slide N directly; `?dev=1` adds the slide navigator.
+
+## Kept in step with MTG2A01_L03_S01
+- **2026-10-13** (sibling commits e97cf1b, 507c370, 202fcf4): taken over - the first screen's village courtyard
+  (`assets/bg_landing_soft2.webp`, in place of the room) with the title painted on its wall (`landing_hero.title_look
+  "wall"`); the place-value table's two columns always the same width; the tutorial card's larger working area; two
+  tables side by side further apart; the answer cards clear once the right answer flies into the "?". Not taken (not in
+  this lesson): the Pari / Aaru / Amma cast and the landing's walking children, the regrouping lane and "दहाई बनाओ"
+  button, the addition demo's "+" timing. 507c370 + 202fcf4 cancel out (a tap step added, then removed); their
+  `.gitignore` lines are already covered here.
 ## Deploying (Vercel)
 A plain static site - no build. `vercel.json` pins the "Other" preset with no install / build step and the output
 directory `.` (this folder), so a dashboard setting cannot point the deployment at a missing `public/` folder.

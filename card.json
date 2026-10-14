@@ -15,7 +15,8 @@
   "kind": "pv_eq",
   "a": 20,
   "b": 10,
-  "op": "−"
+  "op": "−",
+  "title_look": "wall"
  },
  "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
  "phase_distribution": {

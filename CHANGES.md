@@ -91,3 +91,35 @@ defect of this build — the checker expects the factory layout, this build is o
 ## EAR-CHECK (a human must listen before children hear it)
 - **All 72 VO clips** are machine-made (Gemini TTS); a machine transcription pass matched every one of them to its line.
 - The soft **pop** as the story boxes / the equation come in is synthesised in WebAudio (no file): listen on a device.
+
+## Sync with MTG2A01_L03_S01 — 2026-10-13 (not an SME change; the deck's content is untouched)
+| Sibling change | Taken? | Here |
+|---|---|---|
+| Landing art: village courtyard `bg_landing_soft2.webp` replaces the room; lamp glow / lens flare off | ✅ | landing (the deck fixes only the title, 20 − 10 = ? and the greeting — all unchanged) |
+| Title painted on the courtyard wall (`title_look: "wall"`) | ✅ | landing title "संख्याओं का घटाव" |
+| Place-value table: both columns always the same width | ✅ | every table (T2, G1–G3, P1, P2) |
+| Tutorial card grows into the spare margin (bigger working area) | ✅ | T1–T3 |
+| Two tables side by side stand further apart | ✅ | G1–G3, P1 (at least 512px between centres, as the sibling's 410 / 922) |
+| After the right card, the answer cards go | ✅ + fix | G2, G3, P2, P3 — the sibling's rule left the *faded* wrong cards on screen (`.mq-opt.faded` outranks `.pv-gone`); one CSS line makes every card go, as its comment intends |
+| Cast Tara/Kabir/Maa → Pari/Aaru/Amma, walking children on the landing, no portrait over the total | ✗ not relevant | no characters in this lesson (the SME's story is Meera / Aman, voice only) |
+| Regrouping lane + "दहाई बनाओ" button placement | ✗ not relevant | no regrouping in this skill |
+| Addition demo: "+" appears with the second number; no column digits | ✗ not relevant | no "+"; column digits were never used here |
+| 507c370 / 202fcf4: title VO tap step added, then removed | ✗ cancels out | — |
+| `.gitignore` (`.vercel`, `.env*`) | already covered | |
+Verified: landing, T2, G2, P1, P2 played in Chrome; all 11 slides + landing loaded with 0 console errors.
+
+## UI aligned with MTG2A01_L03_S01 — 2026-10-14 (look only; the deck's content, numbers, text and VO unchanged)
+Compared screen by screen with the sibling's build (side-by-side captures) and brought the remaining differences in line:
+| Element | Before | Now (the sibling's) |
+|---|---|---|
+| Landing equation pill | enlarged (84px cards, 58px digits) | her size (64px cards, 44px digits) |
+| T1 / T3 story equation | the deck mockup's blue gradient tiles | her white number cards, navy digits, dashed "?"; the "big" row of her mental-maths screen, centred in the card |
+| T3 "12 आएगा" | green tile + confetti + correct SFX | her story-answer fill: the "?" turns green with the number, no confetti (as her T3/T6) |
+| T2 "25" card and the 25 − 13 row | blue | her white number cards; her tutorial-card rows (number cards at 228, tables at 282) |
+| −/+ block buttons | 66px pill, 44px circles | her + button's make: 64px pill, 42px circles, 44 / 30px block art (the − kept: the deck draws [−] rod [+]) |
+| Equation, tables, blocks under the header band | shrunk (eq 150 / 60px, tables 226, 28px cubes, 124px rods) | her sizes: eq 168 / 62px, tables 246, 30px cubes, 134px rods |
+| Answer cards | 34px under the tables | 40px under the tables (hers) |
+| P3 equation / cards | 250 / 420 | her mental screen: 282 / 452 |
+| Number pad (P1) | — | her layout, except the pad is kept on the stage: hers starts at 473 and ends at 765 on the 750px stage, cutting off its bottom row (⌫ 0) - here it starts at 454 at the latest |
+Verified: G2, P1, P4 played (wrong paths included), G1, G3, P2 played; the landing + all 11 slides load with 0 console errors.
+
