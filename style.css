@@ -2146,3 +2146,5 @@ body.is-start .sg-sky{
 @media (prefers-reduced-motion:reduce){ .sgq{opacity:1;animation:none !important;} }
 /* room for it: the title stands a little higher on this landing (only when the pill is there) */
 .sg-content.has-eq .sg-title{top:-40px;}
+/* page 2's end: the equation, answered, grows in the middle of the card (user 2026-10-17) */
+.pv-eq.pv-eq-hero{scale:1.75;}

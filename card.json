@@ -27,7 +27,7 @@
  },
  "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
  "phase_distribution": {
-  "tutorial": 3,
+  "tutorial": 2,
   "guided": 3,
   "practice": 5
  },
@@ -66,6 +66,7 @@
    "vo_g2_build": "assets/voiceover/vo_g2_build.ogg",
    "vo_g2_correct": "assets/voiceover/vo_g2_correct.ogg",
    "vo_g2_eq": "assets/voiceover/vo_g2_eq.ogg",
+   "vo_g2_h2": "assets/voiceover/vo_g2_h2.ogg",
    "vo_g2_prompt": "assets/voiceover/vo_g2_prompt.ogg",
    "vo_g2_remove": "assets/voiceover/vo_g2_remove.ogg",
    "vo_g2_reveal": "assets/voiceover/vo_g2_reveal.ogg",
@@ -73,33 +74,37 @@
    "vo_g3_build": "assets/voiceover/vo_g3_build.ogg",
    "vo_g3_correct": "assets/voiceover/vo_g3_correct.ogg",
    "vo_g3_eq": "assets/voiceover/vo_g3_eq.ogg",
+   "vo_g3_h2": "assets/voiceover/vo_g3_h2.ogg",
    "vo_g3_prompt": "assets/voiceover/vo_g3_prompt.ogg",
    "vo_g3_reveal": "assets/voiceover/vo_g3_reveal.ogg",
    "vo_g3_rm_ones": "assets/voiceover/vo_g3_rm_ones.ogg",
    "vo_g3_rm_tens": "assets/voiceover/vo_g3_rm_tens.ogg",
    "vo_g3_sub": "assets/voiceover/vo_g3_sub.ogg",
+   "vo_h_order": "assets/voiceover/vo_h_order.ogg",
+   "vo_h_recount": "assets/voiceover/vo_h_recount.ogg",
    "vo_landing": "assets/voiceover/vo_landing.ogg",
    "vo_p1_ask": "assets/voiceover/vo_p1_ask.ogg",
    "vo_p1_build": "assets/voiceover/vo_p1_build.ogg",
    "vo_p1_correct": "assets/voiceover/vo_p1_correct.ogg",
+   "vo_p1_h2": "assets/voiceover/vo_p1_h2.ogg",
    "vo_p1_prompt": "assets/voiceover/vo_p1_prompt.ogg",
    "vo_p1_reveal": "assets/voiceover/vo_p1_reveal.ogg",
    "vo_p1_rm_ones": "assets/voiceover/vo_p1_rm_ones.ogg",
    "vo_p1_rm_tens": "assets/voiceover/vo_p1_rm_tens.ogg",
    "vo_p1_sub": "assets/voiceover/vo_p1_sub.ogg",
    "vo_p2_correct": "assets/voiceover/vo_p2_correct.ogg",
+   "vo_p2_h2": "assets/voiceover/vo_p2_h2.ogg",
    "vo_p2_prompt": "assets/voiceover/vo_p2_prompt.ogg",
    "vo_p2_remove": "assets/voiceover/vo_p2_remove.ogg",
    "vo_p2_reveal": "assets/voiceover/vo_p2_reveal.ogg",
    "vo_p3_correct": "assets/voiceover/vo_p3_correct.ogg",
+   "vo_p3_h2": "assets/voiceover/vo_p3_h2.ogg",
    "vo_p3_prompt": "assets/voiceover/vo_p3_prompt.ogg",
    "vo_p3_reveal": "assets/voiceover/vo_p3_reveal.ogg",
-   "vo_p3_try_again": "assets/voiceover/vo_p3_try_again.ogg",
    "vo_p4_correct": "assets/voiceover/vo_p4_correct.ogg",
-   "vo_p4_hint": "assets/voiceover/vo_p4_hint.ogg",
+   "vo_p4_h2": "assets/voiceover/vo_p4_h2.ogg",
    "vo_p4_prompt": "assets/voiceover/vo_p4_prompt.ogg",
    "vo_p4_reveal": "assets/voiceover/vo_p4_reveal.ogg",
-   "vo_p4_try_again": "assets/voiceover/vo_p4_try_again.ogg",
    "vo_pt_guided": "assets/voiceover/vo_pt_guided.ogg",
    "vo_pt_practice": "assets/voiceover/vo_pt_practice.ogg",
    "vo_pt_tutorial": "assets/voiceover/vo_pt_tutorial.ogg",
@@ -125,8 +130,7 @@
    "vo_t2_total": "assets/voiceover/vo_t2_total.ogg",
    "vo_t3_a": "assets/voiceover/vo_t3_a.ogg",
    "vo_t3_b": "assets/voiceover/vo_t3_b.ogg",
-   "vo_t3_c": "assets/voiceover/vo_t3_c.ogg",
-   "vo_try_left": "assets/voiceover/vo_try_left.ogg"
+   "vo_t3_c": "assets/voiceover/vo_t3_c.ogg"
   },
   "audio_text": {
    "vo_ask_pick": "अब कितने बचे? सही संख्या चुनिए।",
@@ -140,6 +144,7 @@
    "vo_g2_build": "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।",
    "vo_g2_correct": "शाबाश! 47 में से 20 घटाने पर हमें मिलीं 2 दहाई और 7 इकाई, यानी 27।",
    "vo_g2_eq": "इसलिए 47 घटा 20 बराबर 27।",
+   "vo_g2_h2": "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।",
    "vo_g2_prompt": "47 में से 20 घटाइए।",
    "vo_g2_remove": "पहले इकाइयाँ घटाइए, 7 इकाई में से 0 इकाई हटाइए, और फिर दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
    "vo_g2_reveal": "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।",
@@ -147,33 +152,37 @@
    "vo_g3_build": "सबसे पहले ब्लॉक्स की सहायता से 58 बनाइए, जिसमें 5 दहाई और 8 इकाई होते हैं।",
    "vo_g3_correct": "शाबाश! 58 में से 30 घटाने पर हमें मिलीं 2 दहाई और 8 इकाई, यानी 28।",
    "vo_g3_eq": "इसलिए 58 घटा 30 बराबर 28।",
+   "vo_g3_h2": "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।",
    "vo_g3_prompt": "58 में से 30 घटाइए।",
    "vo_g3_reveal": "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।",
    "vo_g3_rm_ones": "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।",
    "vo_g3_rm_tens": "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।",
    "vo_g3_sub": "और अब इसमें से 30 घटाते हैं, 30 में 3 दहाई और 0 इकाई हैं।",
+   "vo_h_order": "संख्याओं में से पहले इकाई घटाइए, फिर दहाई घटाइए।",
+   "vo_h_recount": "बची हुई दहाई और इकाई को दोबारा गिनिए।",
    "vo_landing": "नमस्ते दोस्त! मैं हूँ स्विफ्टी! आज हम संख्याओं को घटाना सीखेंगे।",
    "vo_p1_ask": "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।",
    "vo_p1_build": "सबसे पहले ब्लॉक्स की सहायता से 79 बनाइए, जिसमें 7 दहाई और 9 इकाई होते हैं।",
    "vo_p1_correct": "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।",
+   "vo_p1_h2": "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।",
    "vo_p1_prompt": "79 में से 34 घटाइए।",
    "vo_p1_reveal": "79 में से 34 घटाने पर 45 बचता है। तो सही संख्या यह है।",
    "vo_p1_rm_ones": "पहले इकाइयाँ घटाइए। 9 इकाई में से 4 इकाई हटाइए।",
    "vo_p1_rm_tens": "अब दहाइयाँ घटाइए। 7 दहाई में से 3 दहाई हटाइए।",
    "vo_p1_sub": "और अब इसमें से 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।",
    "vo_p2_correct": "शाबाश! आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।",
+   "vo_p2_h2": "86 में से 56 घटाने पर, 3 दहाई और 0 इकाई बचती हैं।",
    "vo_p2_prompt": "86 में से 56 घटाइए और सही संख्या चुनिए।",
    "vo_p2_remove": "दिए हुए ब्लॉक्स पर टैप करके 56 ब्लॉक्स हटाइए। पहले इकाई में से हटाइए, फिर दहाई में से।",
    "vo_p2_reveal": "86 में से 56 घटाने पर 30 बचता है। तो सही संख्या यह है।",
    "vo_p3_correct": "शाबाश! आपने सही संख्या चुन ली। 45 घटा 12 बराबर 33।",
+   "vo_p3_h2": "45 में से 12 घटाने पर, 3 दहाई और 3 इकाई बचती हैं।",
    "vo_p3_prompt": "45 में से 12 घटाइए और सही संख्या चुनिए।",
    "vo_p3_reveal": "45 में से 12 घटाने पर 33 बचता है। तो सही संख्या यह है।",
-   "vo_p3_try_again": "फिर से घटाइए।",
    "vo_p4_correct": "शाबाश! 90 घटा 40 बराबर 50।",
-   "vo_p4_hint": "संख्याओं में पहले इकाई के स्थान से घटाइए, फिर दहाई के स्थान से घटाइए।",
+   "vo_p4_h2": "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।",
    "vo_p4_prompt": "90 में से 40 घटाइए और डिब्बे पर टैप करके सही संख्या लिखिए।",
    "vo_p4_reveal": "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।",
-   "vo_p4_try_again": "फिर से कोशिश करिए।",
    "vo_pt_guided": "चलिए, साथ में करें!",
    "vo_pt_practice": "अब आपकी बारी!",
    "vo_pt_tutorial": "चलिए, शुरू करते हैं!",
@@ -199,8 +208,7 @@
    "vo_t2_total": "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12",
    "vo_t3_a": "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।",
    "vo_t3_b": "अब इस डिब्बे में 12 आएगा।",
-   "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।",
-   "vo_try_left": "फिर से सोचिए, कितने बचे।"
+   "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।"
   }
  },
  "slides": [
@@ -235,7 +243,7 @@
    "phase": "tutorial",
    "eis": "iconic",
    "type": "PV_SUB_DEMO",
-   "prompt_hi": "पहले 25 बनाते हैं।",
+   "prompt_hi": "",
    "audio": {
     "head": "vo_t2_head",
     "intro": "vo_t2_intro",
@@ -248,39 +256,17 @@
     "ones_left": "vo_t2_ones_left",
     "rm_tens": "vo_t2_rm_tens",
     "tens_left": "vo_t2_tens_left",
-    "total": "vo_t2_total"
+    "total": "vo_t2_total",
+    "story_a": "vo_t3_a",
+    "story_b": "vo_t3_b",
+    "story_c": "vo_t3_c"
    },
    "data": {
     "a": 25,
     "b": 13,
     "eq_prompt": "25 − 13 = ?",
-    "idle_ms": 3000
-   }
-  },
-  {
-   "id": "T3",
-   "phase": "tutorial",
-   "eis": "iconic",
-   "type": "STORY_SUB",
-   "prompt_hi": "कितने बचे?",
-   "audio": {
-    "a": "vo_t3_a",
-    "b": "vo_t3_b",
-    "c": "vo_t3_c"
-   },
-   "data": {
-    "mode": "answer",
-    "a": 25,
-    "b": 13,
-    "fill_at": 0.5,
-    "people": [
-     {
-      "who": "meera"
-     },
-     {
-      "who": "aman"
-     }
-    ]
+    "idle_ms": 3000,
+    "fill_at": 0.5
    }
   },
   {
@@ -307,7 +293,13 @@
     "answer": "fill",
     "build": true,
     "steps": false,
-    "right_table": true
+    "right_table": true,
+    "cues": {
+     "remove": {
+      "o": 0.13,
+      "t": 0.573
+     }
+    }
    }
   },
   {
@@ -326,7 +318,8 @@
     "sub": "vo_g2_sub",
     "remove": "vo_g2_remove",
     "ask": "vo_ask_pick",
-    "try_again": "vo_try_left",
+    "recount": "vo_h_recount",
+    "h2": "vo_g2_h2",
     "reveal": "vo_g2_reveal",
     "correct": "vo_g2_correct",
     "eq": "vo_g2_eq"
@@ -343,7 +336,23 @@
      27,
      67
     ],
-    "reveal_hand": true
+    "reveal_hand": true,
+    "cues": {
+     "h2": {
+      "a": 0.054,
+      "b": 0.256,
+      "t": 0.513,
+      "o": 0.675
+     },
+     "recount": {
+      "t": 0.254,
+      "o": 0.424
+     },
+     "remove": {
+      "o": 0.209,
+      "t": 0.689
+     }
+    }
    }
   },
   {
@@ -363,7 +372,8 @@
     "rm_ones": "vo_g3_rm_ones",
     "rm_tens": "vo_g3_rm_tens",
     "ask": "vo_ask_pick",
-    "try_again": "vo_try_left",
+    "recount": "vo_h_recount",
+    "h2": "vo_g3_h2",
     "reveal": "vo_g3_reveal",
     "correct": "vo_g3_correct",
     "eq": "vo_g3_eq"
@@ -379,7 +389,25 @@
      88,
      28,
      82
-    ]
+    ],
+    "cues": {
+     "h2": {
+      "a": 0.053,
+      "b": 0.256,
+      "t": 0.513,
+      "o": 0.675
+     },
+     "recount": {
+      "t": 0.254,
+      "o": 0.424
+     },
+     "rm_ones": {
+      "o": 0.336
+     },
+     "rm_tens": {
+      "t": 0.382
+     }
+    }
    }
   },
   {
@@ -399,7 +427,8 @@
     "rm_ones": "vo_p1_rm_ones",
     "rm_tens": "vo_p1_rm_tens",
     "ask": "vo_p1_ask",
-    "try_again": "vo_try_left",
+    "recount": "vo_h_recount",
+    "h2": "vo_p1_h2",
     "reveal": "vo_p1_reveal",
     "correct": "vo_p1_correct"
    },
@@ -409,7 +438,20 @@
     "answer": "numpad",
     "build": true,
     "steps": true,
-    "right_table": true
+    "right_table": true,
+    "ones_first": true,
+    "cues": {
+     "h2": {
+      "a": 0.056,
+      "b": 0.257,
+      "t": 0.512,
+      "o": 0.673
+     },
+     "recount": {
+      "t": 0.254,
+      "o": 0.424
+     }
+    }
    }
   },
   {
@@ -426,7 +468,8 @@
     "prompt": "vo_p2_prompt",
     "remove": "vo_p2_remove",
     "ask": "vo_ask_pick",
-    "try_again": "vo_try_left",
+    "recount": "vo_h_recount",
+    "h2": "vo_p2_h2",
     "reveal": "vo_p2_reveal",
     "correct": "vo_p2_correct"
    },
@@ -441,7 +484,20 @@
      30,
      40,
      13
-    ]
+    ],
+    "ones_first": true,
+    "cues": {
+     "h2": {
+      "a": 0.049,
+      "b": 0.254,
+      "t": 0.513,
+      "o": 0.677
+     },
+     "recount": {
+      "t": 0.254,
+      "o": 0.424
+     }
+    }
    }
   },
   {
@@ -452,7 +508,8 @@
    "prompt_hi": "संख्याएँ घटाइए।",
    "audio": {
     "prompt": "vo_p3_prompt",
-    "try_again": "vo_p3_try_again",
+    "order": "vo_h_order",
+    "h2": "vo_p3_h2",
     "reveal": "vo_p3_reveal",
     "correct": "vo_p3_correct"
    },
@@ -464,7 +521,19 @@
      57,
      23,
      33
-    ]
+    ],
+    "cues": {
+     "h2": {
+      "a": 0.053,
+      "b": 0.256,
+      "t": 0.513,
+      "o": 0.675
+     },
+     "order": {
+      "o": 0.423,
+      "t": 0.714
+     }
+    }
    }
   },
   {
@@ -475,15 +544,28 @@
    "prompt_hi": "संख्याएँ घटाइए।",
    "audio": {
     "prompt": "vo_p4_prompt",
-    "try_again": "vo_p4_try_again",
-    "hint": "vo_p4_hint",
+    "order": "vo_h_order",
+    "h2": "vo_p4_h2",
     "reveal": "vo_p4_reveal",
     "correct": "vo_p4_correct"
    },
    "data": {
     "a": 90,
     "b": 40,
-    "answer": "numpad"
+    "answer": "numpad",
+    "pad_below": true,
+    "cues": {
+     "h2": {
+      "a": 0.052,
+      "b": 0.255,
+      "t": 0.513,
+      "o": 0.676
+     },
+     "order": {
+      "o": 0.423,
+      "t": 0.714
+     }
+    }
    }
   },
   {

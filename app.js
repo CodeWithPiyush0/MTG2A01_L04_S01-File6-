@@ -844,6 +844,24 @@ function pvChar(w, full){
   if(full){ const f = base + (full === true ? "_full" : "_" + full) + ".webp"; return has(f) ? f : null; }
   return has(base + ".webp") ? base + ".webp" : base + ".svg";
 }
+const PVSFX = (function(){
+  const last = {}, ok = (k, ms)=>{ const t = performance.now(); if(last[k] && t - last[k] < ms) return false; last[k] = t; return true; };
+  function blip(f0, f1, dur, vol, type){ const c = _ac(); if(!c) return; const t0 = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g).connect(c.destination); o.start(t0); o.stop(t0 + dur + 0.02); }
+  function click(dur, freq, vol){ const c = _ac(); if(!c) return; const t0 = c.currentTime, n = Math.floor(c.sampleRate * dur);
+    const buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0); for(let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; f.Q.value = 1.4;
+    g.gain.value = vol; s.connect(f).connect(g).connect(c.destination); s.start(t0); }
+  return {
+    tap(){ if(!ok("tap", 40)) return; blip(1500, 950, .05, .14, "triangle"); click(.025, 3200, .22); },
+    pop(){ if(!ok("pop", 55)) return; blip(360, 860, .09, .15, "sine"); },
+    unpop(){ blip(760, 300, .1, .14, "sine"); },
+    whoosh(){ if(!ok("whoosh", 160)) return; try{ playSfxFile("sfx_whoosh", .3); }catch(e){} },
+    land(){ if(!ok("land", 45)) return; blip(300, 170, .08, .17, "triangle"); click(.035, 900, .16); }
+  };
+})();
 const PVK = (function(){
   const reduce = ()=> !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   const px = v => (Math.round(v * 10) / 10) + "px";
@@ -861,7 +879,7 @@ const PVK = (function(){
   function add(parent, tag, cls, css){ const e = document.createElement(tag); if(cls) e.className = cls; if(css) e.style.cssText = css; parent.appendChild(e); return e; }
   const setXY = (e, x, y)=>{ e._x = x; e._y = y; e.style.left = px(x); e.style.top = px(y); };
   const xy = e => ({ x: e._x, y: e._y });
-  const knock = ()=> _tone([392, 311], "sine", 0.14, 0.09);      // a soft wooden set-down
+  const knock = ()=> PVSFX.land();      // a block set down (was a soft sine, too quiet - user 2026-10-18)
   /* the pop-in plays once and its class goes: left on, any later animation on the element (a pulse, a highlight)
      would replace it and, when that one ends, bring the pop back - replayed from nothing */
   const pop = e =>{ if(!e) return; e.classList.remove("pv-pop"); void e.offsetWidth; e.classList.add("pv-pop");
@@ -1078,7 +1096,7 @@ Object.assign(PVK, (function(){
         if([...T.rods, ...T.cubes].some(b => b._gl)){ T._settle = setTimeout(again, 120); return; } T.relayout(220, null, true); }, ms + 80); } };
     T.list = kind => kind === "t" ? T.rods : T.cubes;
     /* a new block on the next place of its column, popping in */
-    T.addBlock = kind =>{ const list = T.list(kind), p = T.slot(kind, list.length, list.length + 1);
+    T.addBlock = kind =>{ PVSFX.pop(); const list = T.list(kind), p = T.slot(kind, list.length, list.length + 1);
       const b = K.block(sc, kind, p.x, p.y, kind === "t" ? rH : G); list.push(b); pop(b); T.relayout(260, b); return b; };
     /* the number built "one by one" (deck: "Show the PV tables with the numbers built using blocks one by one") */
     T.fill = async (n, step)=>{ const t = Math.floor(n / 10), u = n % 10;
@@ -1093,7 +1111,7 @@ Object.assign(PVK, (function(){
     T.lightHead = (which, on)=> (which === "t" ? T.th : T.oh).classList.toggle("hl", on !== false);
     /* the whole table with everything standing on it (blocks, digits, its number card) */
     T.all = ()=> [T.el, ...T.rods, ...T.cubes, ...T.extra];
-    T.move = (dx, dy, ms)=>{ T.x += dx; T.y += dy; return Promise.all(T.all().map(e => K.shift(e, dx, dy, ms))); };
+    T.move = (dx, dy, ms)=>{ if(ms && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) PVSFX.whoosh(); T.x += dx; T.y += dy; return Promise.all(T.all().map(e => K.shift(e, dx, dy, ms))); };
     T.fade = ()=>{ [...T.all(), ...T.ghosts].forEach(e => e.classList.add("pv-gone")); };
     return T;
   }
@@ -1371,7 +1389,10 @@ Object.assign(PVK, (function(){
     return new Promise(res =>{
       const slide = C.slide, sc = C.sc;
       const box = add(sc, "div", "mq-opts"); box.style.top = px(cfg.y); box.style.width = "1333px";
-      const els = cfg.options.map(v =>{ const o = add(box, "button", "mq-opt"); o.type = "button"; o.textContent = devNumeral(v); o._v = v; return o; });
+      /* a new order every time the page opens (user 2026-10-16: the right card was always in the same place) */
+      const opts = cfg.options.slice();
+      for(let i = opts.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; }
+      const els = opts.map(v =>{ const o = add(box, "button", "mq-opt"); o.type = "button"; o.textContent = devNumeral(v); o._v = v; return o; });
       const right = els.find(o => o._v === cfg.answer);
       let wrong = 0, busy = true, idleT = 0, layer3 = false, over = false;
       const M = { box, els, right,
@@ -1471,7 +1492,7 @@ Object.assign(PVK, (function(){
         if(!open) placeNudge(ans); else if(guide != null) lightKey(); else if(typed.length >= N) K.repulse(ok);   // the answer counter's hand (the decks)
         busy = true; C.say(cfg.reask || "prompt").then(()=>{ busy = false; arm(); }, ()=>{}); }, IDLE_MS); };
       const openPad = ()=>{ if(open || over) return; open = true; stopNudge(); pad.classList.remove("pv-hide"); pop(pad); ans.classList.add("open"); render(); arm(); };
-      ans.onclick = ()=>{ if(!C.alive() || busy) return; openPad(); };
+      ans.onclick = ()=>{ if(!C.alive() || busy) return; if(!open) PVSFX.tap(); openPad(); };
       async function check(){
         busy = true; clearTimeout(idleT); stopNudge(); okState();
         const v = typed.join("");
@@ -1497,7 +1518,7 @@ Object.assign(PVK, (function(){
       }
       Object.values(keys).forEach(b => b.addEventListener("click", ()=>{
         if(!C.alive() || busy || over || !open || b.classList.contains("locked")) return;
-        stopNudge(); arm();
+        stopNudge(); arm(); PVSFX.tap();
         if(b._k === "⌫"){ typed.pop(); render(); return; }
         if(b._k === "✓"){ if(!typed.length) return; K.knock(); check().catch(()=>{}); return; }   // the answer goes in on the tick only
         if(typed.length >= N) return;
@@ -1540,7 +1561,7 @@ Object.assign(PVK, (function(){
   /* T.live: the heads always show how many blocks stand (and are not taken away) in each column */
   function liveHeads(T){ T.live = true; T.counts = ()=>{ headCount(T, "t", left(T, "t").length); headCount(T, "o", left(T, "o").length); }; T.counts(); }
   /* the last block of a column goes (the - button) */
-  function dropBlock(T, kind){ const b = T.list(kind).pop(); if(!b) return; b.classList.add("pv-gone"); setTimeout(()=> b.remove(), 450); if(T.relayout) T.relayout(260); }
+  function dropBlock(T, kind){ const b = T.list(kind).pop(); if(!b) return; PVSFX.unpop(); b.classList.add("pv-gone"); setTimeout(()=> b.remove(), 450); if(T.relayout) T.relayout(260); }
 
   /* the two block buttons under a table being built: [- rod +] (दहाई) and [- cube +] (इकाई), as the deck draws them */
   function sources(sc, T, y){
@@ -1557,7 +1578,7 @@ Object.assign(PVK, (function(){
   /* Swiftee's hand taps a + button n times (deck page 3: "Swiftee will tap two times on the rod button (+)") */
   async function demoAdd(C, H, g, T, n, kind){
     for(let j = 0; j < n; j++){
-      await H.tap(K.centre(g.plus, C.sc)); C.guard();
+      await H.tap(K.centre(g.plus, C.sc)); C.guard(); PVSFX.tap();
       T.addBlock(kind); K.knock(); if(T.counts) T.counts(); await C.wait(260);
     }
   }
@@ -1575,15 +1596,16 @@ Object.assign(PVK, (function(){
           g.classList.toggle("pulse", k === nx); });
         if(T.counts) T.counts(); };
       const arm = ()=>{ clearTimeout(idleT); idleT = setTimeout(()=>{ if(!C.alive() || fin) return;
-        const k = next(); if(k) K.repulse(S[k]); arm(); }, IDLE_MS); };   // the sibling's idle cue: pulse again, no hand
+        const k = next(); if(k){ if(cnt(k) > want[k]) T.list(k).slice(want[k]).forEach(b => K.shake(b, 7));   // the extra ones wiggle (user 2026-10-16)
+          K.repulse(S[k]); } arm(); }, IDLE_MS); };   // the sibling's idle cue: pulse again, no hand
       const check = ()=>{ clearTimeout(settleT); if(next()) return;
         settleT = setTimeout(()=>{ if(!C.alive() || fin || next()) return; fin = true; clearTimeout(idleT); stopNudge();
           ["t", "o"].forEach(k =>{ S[k].plus.onclick = S[k].minus.onclick = null; S[k].classList.remove("pulse"); });
           res(); }, 900); };
       ["t", "o"].forEach(k =>{ const g = S[k];
-        g.plus.onclick = ()=>{ if(!C.alive() || fin || cnt(k) >= max[k]) return; stopNudge(); T.addBlock(k); K.knock();
+        g.plus.onclick = ()=>{ if(!C.alive() || fin || cnt(k) >= max[k]) return; stopNudge(); PVSFX.tap(); T.addBlock(k); K.knock();
           GameBus.emit("pv_block_added", { slide_id: C.slide.id, kind: k, count: cnt(k) }); sync(); check(); arm(); };
-        g.minus.onclick = ()=>{ if(!C.alive() || fin || cnt(k) <= 0) return; stopNudge(); dropBlock(T, k); try{ sfxTap(); }catch(e){}
+        g.minus.onclick = ()=>{ if(!C.alive() || fin || cnt(k) <= 0) return; stopNudge(); PVSFX.tap(); dropBlock(T, k);
           sync(); check(); arm(); };
       });
       sync(); arm(); check();
@@ -1593,7 +1615,7 @@ Object.assign(PVK, (function(){
   /* TAKE AWAY one block: it turns into a grey copy where it stood, and a copy of it flies to `to` (the number being
      taken away) and fades there. Deck page 3: "each tapped block moves to the 13 card, leaving a greyed-out image". */
   function takeAway(C, b, to){
-    b._removed = true; b.classList.remove("pv-tap", "pulse", "hl", "pv-allowed"); b.classList.add("pv-taken");
+    b._removed = true; b.classList.remove("pv-tap", "pulse", "hl", "pv-allowed"); b.classList.add("pv-taken"); PVSFX.whoosh();
     try{ K.knock(); }catch(e){}
     if(!to || K.reduce()) return Promise.resolve();
     const f = add(C.sc, "img", "pv-blk pv-" + (b._kind === "t" ? "rod" : "cube") + " pv-flyaway"); f.src = b.src; f.alt = "";
@@ -1602,7 +1624,7 @@ Object.assign(PVK, (function(){
     return glide(f, { x: to.x - b._w / 2, y: to.y - b._h / 2 }, 700, true).then(()=> f.remove());
   }
   /* PUT BACK (the reset of the help ladder: "all the blocks should return to their original positions") */
-  function putBack(C, b, from){
+  function putBack(C, b, from){ PVSFX.whoosh();
     b._removed = false; b.classList.remove("pv-taken");
     if(!from || K.reduce()){ pop(b); return Promise.resolve(); }
     b.style.opacity = "0";
@@ -1636,6 +1658,7 @@ Object.assign(PVK, (function(){
       const tappable = b =>{
         if(fin || busy || b._removed) return false;
         if(cfg.only && b._kind !== cfg.only) return false;
+        if(cfg.onesFirst && b._kind === "t" && gone("o") < need.o) return false;      // the ones first, always
         if(guided) return !!b._allowed && (b._kind === "o" || gone("o") >= need.o);
         return true;
       };
@@ -1682,6 +1705,8 @@ Object.assign(PVK, (function(){
       }
       all().forEach(b =>{
         b.onclick = ()=>{
+          if(cfg.onesFirst && C.alive() && !fin && !busy && !b._removed && b._kind === "t" && gone("o") < need.o){   // the ones first
+            K.shake(b, 6); left(T, "o").forEach(x => K.repulse(x)); return; }
           if(!C.alive() || fin || busy || b._removed || !b.classList.contains("pv-tap")) return;
           stopNudge(); unpulse(); clearTimeout(settleT);
           const k = b._kind;
@@ -1703,7 +1728,7 @@ Object.assign(PVK, (function(){
     for(const b of left(T, kind)){
       const p = S.slot(kind, S.list(kind).length, S.list(kind).length + 1);
       const c = K.block(C.sc, kind, b._x, b._y, kind === "t" ? T.rH : T.G); S.list(kind).push(c);
-      c.style.zIndex = 30; S.relayout(620, c); glide(c, p, 620, true).then(()=>{ c.style.zIndex = ""; K.knock(); S.relayout(220); });
+      c.style.zIndex = 30; S.relayout(620, c); PVSFX.whoosh(); glide(c, p, 620, true).then(()=>{ c.style.zIndex = ""; K.knock(); S.relayout(220); });
       await C.wait(step || 170);
     }
     await C.wait(650);
@@ -1725,8 +1750,8 @@ const PV_LAY = {
   /* blk / pad: the blocks' width and the tables' inner margin - as big as each screen's two rows of tables allow
      (the sibling's review 2026-10-14 "make the cubes look bigger"; a rod is 6.7 blocks tall). eqY / eqH: this lesson's
      take-away row on the tutorial card stands where its number cards do */
-  tut:  { numY: 206, numH: 46, eqY: 206, eqH: 46, tableY: 260, sumY: 476, cube: 23, blk: 23, pad: 10, cxL: 451, cxR: 881, cx: 666 },   // inside the tutorial card
-  main: { eqY: 160, eqH: 62, tableY: 232, sumY: 466, cube: 29, blk: 25, pad: 10, cxL: 410, cxR: 922, cx: 666 }    // under the header band
+  tut:  { numY: 176, numH: 46, eqY: 176, eqH: 46, tableY: 258, sumY: 476, cube: 23, blk: 23, pad: 10, cxL: 451, cxR: 881, cx: 666 },   // inside the tutorial card
+  main: { eqY: 166, eqH: 62, tableY: 254, sumY: 466, cube: 29, blk: 25, pad: 10, cxL: 410, cxR: 922, cx: 666 }    // under the header band
 };
 const pvSplit = n =>({ t: Math.floor(n / 10), o: n % 10 });
 function pvReplay(C){ state.replayAudio = ()=>{ if(!isPlaying && C.cur && C.alive()) C.say(C.cur).catch(()=>{}); }; }
@@ -1764,7 +1789,7 @@ const PVModules = {
       const place = (list, L, ms)=>{ let j = 0, i = 0;
         return Promise.all(list.map((x, n)=>{ const p = x._kind === "t" ? L.rod(j++) : L.cube(i++);
           return ms ? K.wait(n * 70).then(()=> K.glide(x, p, ms, true)) : K.glide(x, p, 0, false); })); };
-      async function give(ms){
+      async function give(ms){ if(ms) PVSFX.whoosh();
         await place(given, LB, ms); if(ms) K.knock();
         await place(kept, LA, ms ? 380 : 0);
       }
@@ -1845,11 +1870,35 @@ const PVModules = {
         await C.say("rm_tens");
         await K.removeChild(C, TA, { t: B.t, o: B.o }, { to, only: "t", idle: d.idle_ms || 3000, settle: 0, hand: true }); C.guard();
         await C.cue("tens_left", [[0.25, ()=>{ K.copyLeft(C, TA, TB, "t").catch(()=>{}); }], [0.85, ()=> K.headCount(TB, "t", R.t)]]);
+        /* the blocks are across: the take-away table goes, the answer table takes the middle (as the sibling's T2) */
+        await C.wait(300); TA.fade(); await C.wait(380);
+        await TB.move(L.cx - (TB.x + TB.W / 2), 0, 650); C.guard();
+        const midY = TB.y + TB.head + TB.pad + TB.inH / 2;
+        const eqS = K.add(sc, "div", "pv-op pv-sym pv-hide", "font-size:46px"); eqS.textContent = "="; K.setXY(eqS, TB.x + TB.W + 32, midY - 26);
+        const tot = K.numCard(sc, d.a - d.b, TB.x + TB.W + 100, midY - 28, 56); tot.classList.add("pv-hide", "pv-total");
+        TB.extra.push(eqS, tot);
         await C.cue("total", [[0.3, ()=>{ K.sweep(TB.rods, 120); TB.lightHead("t"); }], [0.55, ()=>{ TB.lightHead("t", false); K.sweep(TB.cubes, 90); TB.lightHead("o"); }],
-                              [0.86, ()=>{ TB.lightHead("o", false); E.fill(d.a - d.b); }]]);
+                              [0.86, ()=>{ TB.lightHead("o", false); K.show(eqS); K.show(tot); }]]);
         H.el.remove();
-        pvCelebrate();
-        await C.wait(900);
+        /* page 3's lines, here (user 2026-10-16: "combine page2 and 3"): the 12 lands in the "?" on "12 आएगा" */
+        const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
+        if(C.has("story_a")) await C.cue("story_a", [[0.2, ()=> say(E.a)], [0.42, ()=> say(E.b)], [0.72, ()=>{ K.sweep(TB.rods, 120); K.sweep(TB.cubes, 90); }]]);
+        /* "अब इस डिब्बे में 12 आएगा।": the 12 beside the table goes into the "?", the table goes, the equation grows and
+           takes the card's middle (user 2026-10-17) */
+        let landing = null;
+        const land = async ()=>{
+          const a = K.centre(tot, sc), b = K.centre(E.q, sc);
+          const f = K.add(sc, "div", "pv-num pv-fly", "height:56px;font-size:39px;min-width:87px;border-radius:16px"); f.innerHTML = K.numHTML(d.a - d.b);
+          K.setXY(f, a.x, a.y - 28); tot.style.visibility = "hidden";
+          await K.glide(f, { x: b.x, y: b.y - 28 }, 650, true); f.remove(); E.q.classList.remove("pulse"); E.fill(d.a - d.b); sfxCorrect();
+          await K.wait(350); TB.fade(); await K.wait(300);
+          await K.glide(E.el, { x: L.cx, y: 318 }, 600, false); E.el.classList.add("pv-eq-hero"); await K.wait(450); };
+        if(C.has("story_b")) await C.cue("story_b", [[0.12, ()=> E.q.classList.add("pulse")], [d.fill_at || 0.5, ()=>{ landing = land(); }]]);
+        else landing = land();
+        if(landing) await landing; C.guard();
+        try{ confettiCannon(); }catch(e){} setSwMood("happy");
+        if(C.has("story_c")) await C.cue("story_c", [[0.6, ()=> say(E.q)]]);
+        await C.wait(600);
         setNavActive(true);
       });
     }
@@ -1858,8 +1907,11 @@ const PVModules = {
     /* deck pages 7-11 - "संख्याएँ घटाइए।", "a − b = ?": the child BUILDS a with the -/+ buttons (or it is given: data.build
        false, the heads counting), TAKES b away (ones first; the help ladder of removeChild), the blocks left move into
        the answer table (data.right_table), then answers: "fill" (the answer comes by itself into the "?"), "mcq"
-       (three cards) or "numpad". The answer's ladder: 1 try_again, 2 reveal (the right card glows / the right keys
-       light one by one, the rest locked, the hand on it). After the right answer: correct, then eq (in sync).
+       (three cards) or "numpad". The answer's ladder (user 2026-10-16): 1 recount (the answer table's tens, then ones
+       light as they are named), 2 h2 ("a में से b घटाने पर ..." - a, then b light), 3 the column digits under the blocks,
+       then the reveal (the right card glows / the right keys light one by one, the rest locked; G2: + the hand). The
+       options come in a new order each time. data.ones_first: the tens stay locked until the ones are taken (practice).
+       After the right answer: correct, then eq (in sync).
        data: { a, b, answer, options, build, steps, right_table }. audio: prompt, build, sub, remove | rm_ones + rm_tens,
        ask, try_again, reveal, correct, eq + rm_ones_more, rm_ones_less, rm_tens_more, rm_guide. */
     mount(host, slide){
@@ -1872,7 +1924,22 @@ const PVModules = {
       if(TB) TB.el.classList.add("pv-hide");
       if(d.build){ K.liveHeads(TA); const f = TA.counts; TA.counts = ()=>{ if(TA.rods.length + TA.cubes.length) f(); else { K.headCount(TA, "t", null); K.headCount(TA, "o", null); } }; TA.counts(); }
       else K.liveHeads(TA);
-      const ansY = d.answer === "numpad" ? L.tableY + TA.H + 18 : L.tableY + TA.H + 40;   // (the sibling's: pad + cards)
+      const GAP = 26, ansY = d.answer === "numpad" ? L.tableY + TA.H + GAP - 13 : L.tableY + TA.H + GAP;   // the pad stands 13px above its y
+      const AT = ()=> TB || TA;                                            // the table that holds the answer
+      const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
+      const CU = d.cues || {};
+      const lightT = T =>{ T.lightHead("t"); K.sweep(K.left(T, "t"), 120); }, lightO = T =>{ T.lightHead("t", false); T.lightHead("o"); K.sweep(K.left(T, "o"), 90); };
+      const recount = async ()=>{ const T = AT(), c = CU.recount || { t: .22, o: .46 };
+        await C.cue("recount", [[c.t, ()=> lightT(T)], [c.o, ()=> lightO(T)]]);
+        T.lightHead("o", false); };
+      /* 6) "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।": 79, 34 light; then the tens and the ones that are left */
+      const sayH2 = async ()=>{ const T = AT(), c = CU.h2 || { a: .06, b: .27, t: .55, o: .75 };
+        await C.cue("h2", [[c.a, ()=> say(E.a)], [c.b, ()=> say(E.b)], [c.t, ()=> lightT(T)], [c.o, ()=> lightO(T)]]);
+        T.lightHead("o", false); };
+      /* 4, 7) the digits stand under the table, clear of its edge */
+      /* the digits under the table; the answer below moves down to make room for them (shift) */
+      const digitsUnder = async shift =>{ if(shift) shift(36); const g = AT().digits(R.t, R.o);   /* 36: clear of the digits by 10px */ [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
+      const down = els => dy => els.forEach(e => K.glide(e, { x: e._x, y: e._y + dy }, 420, false));
       async function finale(fillNow){
         if(fillNow) await C.cue("correct", [[0.88, ()=> E.fill(diff)]]); else await C.say("correct");
         if(C.has("eq")) await K.eqSync(C, E, "eq");
@@ -1892,17 +1959,21 @@ const PVModules = {
           src.fade(); await C.wait(300);
         }
         const to = K.centre(E.b, sc);
-        let cfg = { to, settle: 1100 };
+        let cfg = { to, settle: 1100, onesFirst: !!d.ones_first };
         if(C.has("sub")) await C.cue("sub", [[0.05, ()=> K.pop(E.b)], [0.6, ()=> K.lightDigit(E.b, "t")], [0.82, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]);
         K.lightDigit(E.b, "o", false);
-        if(d.steps){ await C.say("rm_ones"); cfg.onOnes = ()=> C.say("rm_tens"); }
-        else if(C.has("remove")) await C.say("remove");
+        const sweepO = ()=> K.sweep(K.left(TA, "o"), 90), sweepT = ()=> K.sweep(K.left(TA, "t"), 120);
+        if(d.steps){ await C.cue("rm_ones", CU.rm_ones ? [[CU.rm_ones.o, sweepO]] : []);
+          cfg.onOnes = ()=> C.cue("rm_tens", CU.rm_tens ? [[CU.rm_tens.t, sweepT]] : []); }
+        else if(C.has("remove")) await C.cue("remove", CU.remove ? [[CU.remove.o, sweepO], [CU.remove.t, sweepT]] : []);
         const wrongMoves = await K.removeChild(C, TA, { t: B.t, o: B.o }, cfg); C.guard();
         state.removeWrongs = wrongMoves;
         if(TB){
           K.headCount(TB, "t", null); K.headCount(TB, "o", null);
           await pvPair(TA, TB, L.cx, 34, 256); C.guard(); K.showTable(TB); await C.wait(350);
           await K.copyLeft(C, TA, TB, "o"); await K.copyLeft(C, TA, TB, "t"); C.guard();
+          await C.wait(250); TA.fade(); await C.wait(380);                    // one table on the screen (user 2026-10-17)
+          await TB.move(L.cx - (TB.x + TB.W / 2), 0, 650); C.guard();
         }
         if(d.answer === "fill"){
           recordResult(slide, wrongMoves === 0);
@@ -1915,48 +1986,89 @@ const PVModules = {
             onReady: M =>{ M.open(); C.say("ask").then(()=> M.ready(), ()=>{}); },
             onRight: o => K.flyToQ(C, o, E),
             after: ()=> C.has("eq") ? K.eqSync(C, E, "eq") : null,
-            ladder: async (n, M)=>{ if(n === 1) await C.say("try_again");
-              else { M.lock(); if(d.reveal_hand) setTimeout(()=>{ if(C.alive()) placeNudge(M.right); }, 300); await C.say("reveal"); } } });
+            ladder: async (n, M)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
+              else { await digitsUnder(dy => M.moveTo(ansY + dy)); M.lock(); if(d.reveal_hand) setTimeout(()=>{ if(C.alive()) placeNudge(M.right); }, 300); await C.say("reveal"); } } });
           return;
         }
         await K.numpad(C, { answer: diff, x: L.cx, y: ansY, reask: "ask",
           onReady: P =>{ P.hide(true); C.cue("ask", [[0.55, ()=>{ P.hide(false); K.pop(P.ans); }]]).then(()=> P.ready(), ()=>{}); },
           onRight: ans => K.flyAnsToQ(C, ans, E, diff),
-          ladder: async (n, P)=>{ if(n === 1) await C.say("try_again"); else { P.guideKeys(); await C.say("reveal"); } } });
+          ladder: async (n, P)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
+            else { await digitsUnder(down([P.ans, P.pad])); P.guideKeys(); await C.say("reveal"); } } });
       });
     }
   },
   MENTAL_SUB: {
     /* deck pages 13 and 15 - only "a − b = ?" and the answer: three cards (data.answer "mcq") or the number pad
-       ("numpad"). Ladder: 1 try_again; [numpad: 2 the hint - the ones digits light, then the tens digits]; last: the
-       reveal (the right card glows / the right keys light one by one, the rest locked).
-       data: { a, b, answer, options }. audio: prompt, try_again, hint?, reveal, correct. */
+       ("numpad"; data.pad_below: the pad under its answer box - user 2026-10-17). The ladder (user 2026-10-16/17):
+       1 "संख्याओं में से पहले इकाई घटाइए, फिर दहाई घटाइए।" - the ones digits light on "इकाई", the tens digits on "दहाई";
+       2 the blocks, told by "a में से b घटाने पर, x दहाई और y इकाई बचती हैं।": on "a" a's blocks light, on "b" b is taken away
+       (ones, then tens - grey copies, each flying to b), on "x दहाई" / "y इकाई" the tens / ones left light; the table stays
+       (its heads count what is left); 3 the column digits under the table, then the right answer is shown (+ the reveal).
+       data: { a, b, answer, options, pad_below, cues }. audio: prompt, order, h2, reveal, correct. */
     mount(host, slide){
-      const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), L = PV_LAY.main;
+      const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), L = PV_LAY.main, CU = d.cues || {};
       state.ownsAudio = true; state.locked = false; setNavActive(false); $("navBtn").style.display = "none"; setSwMood("point"); pvReplay(C);
-      const diff = d.a - d.b, pad = d.answer === "numpad";
-      const E = K.equation(sc, d.a, d.b, L.cx, pad ? 196 : 282, L.eqH, "−"); E.el.classList.add("big");
-      const digits = async ()=>{
-        await C.cue("hint", [[0.12, ()=>{ K.lightDigit(E.a, "o"); K.lightDigit(E.b, "o"); }],
-                             [0.58, ()=>{ K.lightDigit(E.a, "o", false); K.lightDigit(E.b, "o", false); K.lightDigit(E.a, "t"); K.lightDigit(E.b, "t"); }]]);
-        K.lightDigit(E.a, "t", false); K.lightDigit(E.b, "t", false);
-      };
+      const diff = d.a - d.b, pad = d.answer === "numpad", A = pvSplit(d.a), B = pvSplit(d.b), R = pvSplit(diff);
+      const GAP = 26, Y0 = pad ? (d.pad_below ? 322 : 330) : 452;              // the answer's first place (the box stands at Y0 + 40)
+      /* the table of the 2nd help: a number pad under its box needs a shorter table (90 = nine rods) */
+      const TY = L.tableY, BLK = pad && d.pad_below ? 13 : L.blk;          // page 9's table shorter: its pad stands under the box
+      const E = K.equation(sc, d.a, d.b, L.cx, pad ? (d.pad_below ? 252 : 196) : 282, L.eqH, "−"); E.el.classList.add("big");
+      const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
+      const order = async ()=>{ const c = CU.order || { o: .36, t: .68 };
+        await C.cue("order", [[c.o, ()=>{ K.lightDigit(E.a, "o"); K.lightDigit(E.b, "o"); }],
+                              [c.t, ()=>{ K.lightDigit(E.a, "o", false); K.lightDigit(E.b, "o", false); K.lightDigit(E.a, "t"); K.lightDigit(E.b, "t"); }]]);
+        K.lightDigit(E.a, "t", false); K.lightDigit(E.b, "t", false); };
+      let T = null;
+      /* the blocks: the answer hidden, the equation up, a's blocks, then the line - b taken away as it is said */
+      async function blocks(hide, moveTo){
+        if(T) return;
+        hide(true);
+        E.el.classList.remove("big"); await K.glide(E.el, { x: L.cx, y: L.eqY }, 500, false); C.guard();
+        T = K.table(sc, { cx: L.cx, y: TY, cube: L.cube, blk: BLK, pad: L.pad, tensMax: Math.max(A.t, 3), tensFinal: A.t, onesMax: 9 });
+        K.liveHeads(T); K.showTable(T); await C.wait(250);
+        await T.fill(d.a, 90); C.guard(); T.counts(); await C.wait(300);
+        const to = K.centre(E.b, sc), take = [];
+        for(const [k, n] of [["o", B.o], ["t", B.t]]){ const l = K.left(T, k); for(let j = 0; j < n; j++) take.push(l[l.length - 1 - j]); }
+        const keep = [...T.rods, ...T.cubes].filter(x => !take.includes(x));
+        let taking = null;
+        const takeAll = async ()=>{ for(const x of take){ K.takeAway(C, x, to); T.counts(); await K.wait(300); } };
+        const c = CU.h2 || { a: .06, b: .27, t: .55, o: .75 };
+        await C.cue("h2", [[c.a, ()=>{ say(E.a); K.sweep([...T.rods, ...T.cubes], 40); }], [c.b, ()=>{ say(E.b); taking = takeAll(); }],
+                           [c.t, ()=>{ T.lightHead("t"); K.sweep(keep.filter(x => x._kind === "t"), 120); }],
+                           [c.o, ()=>{ T.lightHead("t", false); T.lightHead("o"); K.sweep(keep.filter(x => x._kind === "o"), 90); }]]);
+        if(taking) await taking; C.guard(); T.lightHead("o", false); T.counts();
+        await C.wait(300);
+        moveTo(TY + T.H + GAP - (pad ? 40 : 0)); hide(false);      // the box (Y0 + 40) / the cards GAP under the table
+      }
+      /* the digits under the table, clear of its edge */
+      const digitsUnder = async shift =>{ if(shift) shift(26); const g = T.digits(R.t, R.o); [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
+      let optY = Y0;
       K.run(C, async ()=>{
         await C.wait(300);
         if(!pad){
-          await K.mcq(C, { options: d.options, answer: diff, y: 452, reask: "prompt",
+          await K.mcq(C, { options: d.options, answer: diff, y: Y0, reask: "prompt",
             onReady: M =>{ M.open(); C.say("prompt").then(()=> M.ready(), ()=>{}); },
             onRight: o => K.flyToQ(C, o, E),
-            ladder: async (n, M)=>{ if(n === 1) await C.say("try_again"); else { M.lock(); await C.say("reveal"); } } });
+            ladder: async (n, M)=>{
+              if(n === 1) await order();
+              else if(n === 2) await blocks(on => M.hide(on), y =>{ optY = y; M.moveTo(y); });
+              else { await blocks(on => M.hide(on), y =>{ optY = y; M.moveTo(y); }); await digitsUnder(dy => M.moveTo(optY + dy + 10)); M.lock(); await C.say("reveal"); }
+            } });
           return;
         }
-        await K.numpad(C, { answer: diff, x: L.cx, y: 330, reask: "prompt",
-          onReady: P =>{ P.hide(true); C.cue("prompt", [[0.6, ()=>{ P.hide(false); K.pop(P.ans); }]]).then(()=> P.ready(), ()=>{}); },
+        await K.numpad(C, { answer: diff, x: L.cx, y: Y0, reask: "prompt",
+          onReady: P =>{
+            if(d.pad_below){                                                     // 9) the pad under its answer box
+              const aw = P.ans.offsetWidth, ah = P.ans.offsetHeight, pw = P.pad.offsetWidth;
+              K.setXY(P.pad, P.ans._x + aw / 2 - pw / 2, P.ans._y + ah + GAP); }
+            P.hide(true); C.cue("prompt", [[0.6, ()=>{ P.hide(false); K.pop(P.ans); }]]).then(()=> P.ready(), ()=>{}); },
           onRight: ans => K.flyAnsToQ(C, ans, E, diff),
           ladder: async (n, P)=>{
-            if(n === 1) await C.say("try_again");
-            else if(n === 2 && C.has("hint")) await digits();
-            else { P.guideKeys(); await C.say("reveal"); }
+            const moveTo = y =>{ const dy = y - Y0; [P.ans, P.pad].forEach(e => K.setXY(e, e._x, e._y + dy)); };
+            if(n === 1) await order();
+            else if(n === 2) await blocks(on => P.hide(on), moveTo);
+            else { await blocks(on => P.hide(on), moveTo); await digitsUnder(dy => [P.ans, P.pad].forEach(e => K.glide(e, { x: e._x, y: e._y + dy }, 420, false))); P.guideKeys(); await C.say("reveal"); }
           } });
       });
     }
@@ -2712,6 +2824,7 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_g2_build.ogg": 32766,
   "assets/voiceover/vo_g2_correct.ogg": 31210,
   "assets/voiceover/vo_g2_eq.ogg": 17071,
+  "assets/voiceover/vo_g2_h2.ogg": 20644,
   "assets/voiceover/vo_g2_prompt.ogg": 11576,
   "assets/voiceover/vo_g2_remove.ogg": 39576,
   "assets/voiceover/vo_g2_reveal.ogg": 20053,
@@ -2719,33 +2832,37 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_g3_build.ogg": 28609,
   "assets/voiceover/vo_g3_correct.ogg": 29569,
   "assets/voiceover/vo_g3_eq.ogg": 18011,
+  "assets/voiceover/vo_g3_h2.ogg": 20699,
   "assets/voiceover/vo_g3_prompt.ogg": 9295,
   "assets/voiceover/vo_g3_reveal.ogg": 23183,
   "assets/voiceover/vo_g3_rm_ones.ogg": 22118,
   "assets/voiceover/vo_g3_rm_tens.ogg": 19888,
   "assets/voiceover/vo_g3_sub.ogg": 21842,
+  "assets/voiceover/vo_h_order.ogg": 17045,
+  "assets/voiceover/vo_h_recount.ogg": 12823,
   "assets/voiceover/vo_landing.ogg": 22225,
   "assets/voiceover/vo_p1_ask.ogg": 16750,
   "assets/voiceover/vo_p1_build.ogg": 29852,
   "assets/voiceover/vo_p1_correct.ogg": 32744,
+  "assets/voiceover/vo_p1_h2.ogg": 19718,
   "assets/voiceover/vo_p1_prompt.ogg": 10030,
   "assets/voiceover/vo_p1_reveal.ogg": 22068,
   "assets/voiceover/vo_p1_rm_ones.ogg": 19104,
   "assets/voiceover/vo_p1_rm_tens.ogg": 17573,
   "assets/voiceover/vo_p1_sub.ogg": 24818,
   "assets/voiceover/vo_p2_correct.ogg": 24862,
+  "assets/voiceover/vo_p2_h2.ogg": 22129,
   "assets/voiceover/vo_p2_prompt.ogg": 18546,
   "assets/voiceover/vo_p2_remove.ogg": 27323,
   "assets/voiceover/vo_p2_reveal.ogg": 22208,
   "assets/voiceover/vo_p3_correct.ogg": 25695,
+  "assets/voiceover/vo_p3_h2.ogg": 20648,
   "assets/voiceover/vo_p3_prompt.ogg": 16425,
   "assets/voiceover/vo_p3_reveal.ogg": 21408,
-  "assets/voiceover/vo_p3_try_again.ogg": 5194,
   "assets/voiceover/vo_p4_correct.ogg": 20015,
-  "assets/voiceover/vo_p4_hint.ogg": 21265,
+  "assets/voiceover/vo_p4_h2.ogg": 21228,
   "assets/voiceover/vo_p4_prompt.ogg": 19528,
   "assets/voiceover/vo_p4_reveal.ogg": 19528,
-  "assets/voiceover/vo_p4_try_again.ogg": 5654,
   "assets/voiceover/vo_pt_guided.ogg": 6941,
   "assets/voiceover/vo_pt_practice.ogg": 4376,
   "assets/voiceover/vo_pt_tutorial.ogg": 5830,
@@ -2771,8 +2888,7 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_t2_total.ogg": 25285,
   "assets/voiceover/vo_t3_a.ogg": 17160,
   "assets/voiceover/vo_t3_b.ogg": 10980,
-  "assets/voiceover/vo_t3_c.ogg": 13724,
-  "assets/voiceover/vo_try_left.ogg": 8217
+  "assets/voiceover/vo_t3_c.ogg": 13724
 };
 /* @asset-sizes:end */
 const Assets = (function(){

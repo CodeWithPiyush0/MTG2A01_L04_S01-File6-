@@ -38,7 +38,10 @@ RM = {
     "rm_guide": vo("vo_rm_guide", "इनमें से इतने हटाइए।"),
 }
 ASK_PICK = vo("vo_ask_pick", "अब कितने बचे? सही संख्या चुनिए।")
-TRY_LEFT = vo("vo_try_left", "फिर से सोचिए, कितने बचे।")
+# the answer's help ladder (user, 2026-10-16) - blocks on the page: 1 recount, 2 "a में से b घटाने पर ... बचती हैं",
+# 3 the column digits under the blocks + the reveal; no blocks: 1 the order, 2 the blocks taken away, 3 as before
+RECOUNT = vo("vo_h_recount", "बची हुई दहाई और इकाई को दोबारा गिनिए।")
+ORDER = vo("vo_h_order", "संख्याओं में से पहले इकाई घटाइए, फिर दहाई घटाइए।")
 
 
 def split(n):
@@ -59,7 +62,7 @@ slides.append({
 
 # deck page 3 - Swiftee builds 25, takes away 13 (the ones by Swiftee, the ten by the child)
 slides.append({
-    "id": "T2", "phase": "tutorial", "eis": "iconic", "type": "PV_SUB_DEMO", "prompt_hi": "पहले 25 बनाते हैं।",
+    "id": "T2", "phase": "tutorial", "eis": "iconic", "type": "PV_SUB_DEMO", "prompt_hi": "",
     "audio": {"head": vo("vo_t2_head", "आइए, पहले 25 बनाते हैं।"),
               "intro": vo("vo_t2_intro", "सबसे पहले ब्लॉक्स की सहायता से 25 बनाते हैं।"),
               "digits": vo("vo_t2_digits", "25 में 2 दहाई और 5 इकाई हैं।"),
@@ -71,16 +74,12 @@ slides.append({
               "ones_left": vo("vo_t2_ones_left", "5 इकाई में से 3 इकाई घटाने पर बचीं, 2 इकाई।"),
               "rm_tens": vo("vo_t2_rm_tens", "अब आप दहाइयाँ घटाइए। 2 दहाई में से 1 दहाई हटाइए।"),
               "tens_left": vo("vo_t2_tens_left", "बहुत बढ़िया! 2 दहाई में से 1 दहाई घटाने पर बचे, 1 दहाई।"),
-              "total": vo("vo_t2_total", "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12")},
-    "data": {"a": 25, "b": 13, "eq_prompt": "25 − 13 = ?", "idle_ms": 3000}})
-
-# deck "Appear the first screen" - the story, answered
-slides.append({
-    "id": "T3", "phase": "tutorial", "eis": "iconic", "type": "STORY_SUB", "prompt_hi": "कितने बचे?",
-    "audio": {"a": vo("vo_t3_a", "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।"),
-              "b": vo("vo_t3_b", "अब इस डिब्बे में 12 आएगा।"),
-              "c": vo("vo_t3_c", "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।")},
-    "data": {"mode": "answer", "a": 25, "b": 13, "fill_at": 0.5, "people": [{"who": "meera"}, {"who": "aman"}]}})
+              "total": vo("vo_t2_total", "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12"),
+              # the deck's "Appear the first screen" lines, now the end of this page (its T3 page is folded in)
+              "story_a": vo("vo_t3_a", "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।"),
+              "story_b": vo("vo_t3_b", "अब इस डिब्बे में 12 आएगा।"),
+              "story_c": vo("vo_t3_c", "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।")},
+    "data": {"a": 25, "b": 13, "eq_prompt": "25 − 13 = ?", "idle_ms": 3000, "fill_at": 0.5}})
 
 # deck page 6 (MAKE_SET): deleted
 
@@ -116,7 +115,7 @@ slides.append(pv_sub("G2", "guided", 47, 20, {
     "build": vo("vo_g2_build", "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।"),
     "sub": vo("vo_g2_sub", "और अब 20 घटाते हैं, 20 में 2 दहाई और 0 इकाई हैं।"),
     "remove": vo("vo_g2_remove", "पहले इकाइयाँ घटाइए, 7 इकाई में से 0 इकाई हटाइए, और फिर दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।"),
-    "ask": ASK_PICK, "try_again": TRY_LEFT,
+    "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g2_h2", "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।"), 
     "reveal": vo("vo_g2_reveal", "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_g2_correct", "शाबाश! 47 में से 20 घटाने पर हमें मिलीं 2 दहाई और 7 इकाई, यानी 27।"),
     "eq": vo("vo_g2_eq", "इसलिए 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67], extra_data={"reveal_hand": True}))
@@ -128,7 +127,7 @@ slides.append(pv_sub("G3", "guided", 58, 30, {
     "sub": vo("vo_g3_sub", "और अब इसमें से 30 घटाते हैं, 30 में 3 दहाई और 0 इकाई हैं।"),
     "rm_ones": vo("vo_g3_rm_ones", "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।"),
     "rm_tens": vo("vo_g3_rm_tens", "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।"),
-    "ask": ASK_PICK, "try_again": TRY_LEFT,
+    "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g3_h2", "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।"), 
     "reveal": vo("vo_g3_reveal", "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_g3_correct", "शाबाश! 58 में से 30 घटाने पर हमें मिलीं 2 दहाई और 8 इकाई, यानी 28।"),
     "eq": vo("vo_g3_eq", "इसलिए 58 घटा 30 बराबर 28।")}, answer="mcq", options=[88, 28, 82], steps=True))
@@ -141,10 +140,10 @@ slides.append(pv_sub("P1", "practice", 79, 34, {
     "rm_ones": vo("vo_p1_rm_ones", "पहले इकाइयाँ घटाइए। 9 इकाई में से 4 इकाई हटाइए।"),
     "rm_tens": vo("vo_p1_rm_tens", "अब दहाइयाँ घटाइए। 7 दहाई में से 3 दहाई हटाइए।"),
     "ask": vo("vo_p1_ask", "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।"),
-    "try_again": TRY_LEFT,
+    "recount": RECOUNT, "h2": vo("vo_p1_h2", "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।"), 
     "reveal": vo("vo_p1_reveal", "79 में से 34 घटाने पर 45 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_p1_correct", "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।")},
-    answer="numpad", steps=True))
+    answer="numpad", steps=True, extra_data={"ones_first": True}))
 
 # deck page 10 (MAKE_SET): deleted
 
@@ -152,10 +151,10 @@ slides.append(pv_sub("P1", "practice", 79, 34, {
 slides.append(pv_sub("P2", "practice", 86, 56, {
     "prompt": vo("vo_p2_prompt", "86 में से 56 घटाइए और सही संख्या चुनिए।"),
     "remove": vo("vo_p2_remove", "दिए हुए ब्लॉक्स पर टैप करके 56 ब्लॉक्स हटाइए। पहले इकाई में से हटाइए, फिर दहाई में से।"),
-    "ask": ASK_PICK, "try_again": TRY_LEFT,
+    "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_p2_h2", "86 में से 56 घटाने पर, 3 दहाई और 0 इकाई बचती हैं।"), 
     "reveal": vo("vo_p2_reveal", "86 में से 56 घटाने पर 30 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_p2_correct", "शाबाश! आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।")},
-    answer="mcq", options=[30, 40, 13], build=False, right_table=False))
+    answer="mcq", options=[30, 40, 13], build=False, right_table=False, extra_data={"ones_first": True}))
 
 # deck page 12 (MAKE_SET): deleted
 
@@ -163,7 +162,7 @@ slides.append(pv_sub("P2", "practice", 86, 56, {
 slides.append({
     "id": "P3", "phase": "practice", "eis": "symbolic", "type": "MENTAL_SUB", "prompt_hi": "संख्याएँ घटाइए।",
     "audio": {"prompt": vo("vo_p3_prompt", "45 में से 12 घटाइए और सही संख्या चुनिए।"),
-              "try_again": vo("vo_p3_try_again", "फिर से घटाइए।"),
+              "order": ORDER, "h2": vo("vo_p3_h2", "45 में से 12 घटाने पर, 3 दहाई और 3 इकाई बचती हैं।"),
               "reveal": vo("vo_p3_reveal", "45 में से 12 घटाने पर 33 बचता है। तो सही संख्या यह है।"),
               "correct": vo("vo_p3_correct", "शाबाश! आपने सही संख्या चुन ली। 45 घटा 12 बराबर 33।")},
     "data": {"a": 45, "b": 12, "answer": "mcq", "options": [57, 23, 33]}})
@@ -174,11 +173,10 @@ slides.append({
 slides.append({
     "id": "P4", "phase": "practice", "eis": "symbolic", "type": "MENTAL_SUB", "prompt_hi": "संख्याएँ घटाइए।",
     "audio": {"prompt": vo("vo_p4_prompt", "90 में से 40 घटाइए और डिब्बे पर टैप करके सही संख्या लिखिए।"),
-              "try_again": vo("vo_p4_try_again", "फिर से कोशिश करिए।"),
-              "hint": vo("vo_p4_hint", "संख्याओं में पहले इकाई के स्थान से घटाइए, फिर दहाई के स्थान से घटाइए।"),
+              "order": ORDER, "h2": vo("vo_p4_h2", "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।"),
               "reveal": vo("vo_p4_reveal", "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।"),
               "correct": vo("vo_p4_correct", "शाबाश! 90 घटा 40 बराबर 50।")},
-    "data": {"a": 90, "b": 40, "answer": "numpad"}})
+    "data": {"a": 90, "b": 40, "answer": "numpad", "pad_below": True}})
 
 # deck slides 1 (cover notes) and 18 (hidden): the boat game - not built (review 2026-10-09: "we don't need it")
 
@@ -200,6 +198,54 @@ for s in slides:
 phase_n = {}
 for s in slides:
     phase_n[s["phase"]] = phase_n.get(s["phase"], 0) + 1
+
+import subprocess
+def clip_len(cid):
+    f = os.path.join(ROOT, "assets", "voiceover", cid + ".ogg")
+    if not os.path.exists(f):
+        return None
+    try:
+        return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f],
+                                    capture_output=True, text=True).stdout.strip())
+    except Exception:
+        return None
+
+
+def weight(t):
+    """a rough spoken length: a number is a word (two digits ~ 7 letters), a pause mark a beat"""
+    t = re.sub(r"\d{2,}", "ooooooo", t); t = re.sub(r"\d", "ooo", t)
+    return len(re.sub(r"[।,.!?—]", "oo", t))
+
+
+def frac(cid, phrase, after=None):
+    text = VO[cid]; i0 = text.index(after) + len(after) if after else 0
+    i = text.index(phrase, i0); dur = clip_len(cid)
+    pos = weight(text[:i]) / weight(text)
+    if not dur:
+        return round(.06 + .88 * pos, 3)
+    return round((0.28 + pos * (dur - 0.28 - 0.36)) / dur, 3)
+
+
+for sl in slides:
+    au, d = sl["audio"], sl["data"]; cues = {}
+    if "h2" in au:                                   # "a में से b घटाने पर, x दहाई और y इकाई बचती हैं।"
+        a, b = str(d["a"]), str(d["b"]); x, y = split(d["a"] - d["b"])
+        cues["h2"] = {"a": frac(au["h2"], a), "b": frac(au["h2"], b, after="में से"),
+                      "t": frac(au["h2"], f"{x} दहाई"), "o": frac(au["h2"], f"{y} इकाई")}
+    if "recount" in au:
+        cues["recount"] = {"t": frac(au["recount"], "दहाई"), "o": frac(au["recount"], "इकाई")}
+    if "order" in au:
+        cues["order"] = {"o": frac(au["order"], "इकाई"), "t": frac(au["order"], "दहाई")}
+    # 3) pages 3-5: the ones light as their step is said, then the tens
+    if sl["id"] in ("G1", "G2") and "remove" in au:
+        (at, ao), (bt, bo) = split(d["a"]), split(d["b"])
+        cues["remove"] = {"o": frac(au["remove"], f"{ao} इकाई"), "t": frac(au["remove"], f"{at} दहाई")}
+    if sl["id"] == "G3":
+        (at, ao) = split(d["a"]); (bt, bo) = split(d["b"])
+        cues["rm_ones"] = {"o": frac(au["rm_ones"], f"{bo} इकाई")}
+        cues["rm_tens"] = {"t": frac(au["rm_tens"], f"{at} दहाई")}
+    if cues:
+        d["cues"] = cues
 
 AUDIO_IDS = sorted(set(VO) | {"sfx_celebrate"})
 card = {

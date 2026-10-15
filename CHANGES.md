@@ -139,3 +139,39 @@ Merged three-way (her previous version as the base), so her kit changes came in 
 | Her T2 made fully automatic; the regrouping lane / ghost drag; her VO / cast renames | ✗ not relevant (this deck's T2 has the child take the ten; no regrouping) |
 Verified: landing, T1, T2, T3 captured / played; G1, G2, P1, P2, P4 played with every wrong-answer layer; the landing + all 11 slides load with 0 console errors.
 
+## User changes — 2026-10-16
+Page numbers below are the user's (dev navigator, before T3 was folded in): 2 = T2, 3 = T3, 5–8 = G2, G3, P1, P2, 9–10 = P3, P4.
+| # | Asked | Status | Proof |
+|---|---|---|---|
+| 1 | Page 2: once the blocks are in the right table the left table goes; pages 2 + 3 in one, as in Ananya's file | ✅ | T2: the take-away table fades, the answer table moves to the middle, "= 12" beside it (her T2's end); then T3's three lines on the same page, the 12 landing in the "?" on "12 आएगा". T3 slide removed — the lesson is now 10 slides (tutorial 2) |
+| 2 | Adding more blocks than needed: no overlap, placed beside the others; after 7 s they wiggle | ✅ | the table re-centres each column on every add (6 cubes → 6 distinct places); 7 s idle → only the extra blocks wiggle (+ the button pulses) — measured on G1 |
+| 3 | Options shuffle each time | ✅ | the cards are shuffled on every mount (G2 seen as 67 / 72 / 27, P2 as 13 / 30 / 40, P3 as 23 / 57 / 33) |
+| 4 | Practice pages: the ones always first | ✅ | P1, P2: the tens are dimmed and not tappable until the ones are taken (the scripted child could not tap a ten first) |
+| 5 | Pages 5–8 (blocks shown), wrong answers: 1 "बची हुई दहाई और इकाई को दोबारा गिनिए।" (tens light on दहाई, ones on इकाई); 2 "a में से b घटाने पर, x दहाई और y इकाई बचती हैं।" (a and b light); 3 digits under the tens / ones, then the answer | ✅ | G2, G3, P1, P2 played with three wrong answers each; new clips `vo_h_recount`, `vo_g2_h2`, `vo_g3_h2`, `vo_p1_h2`, `vo_p2_h2`; step 3 keeps the deck's reveal line (+ G2's hand) |
+| 6 | Pages 9–10 (no blocks): 1 "संख्याओं में से पहले इकाई घटाइए फिर दहाई घटाइए" (digits light); 2 the blocks of the first number, the second taken away, the answer table kept; 3 as in 5 | ✅ | P3, P4 played with three wrong answers; new clip `vo_h_order`; step 2 ends with the recount line (the user's list gives no line for it — remove if not wanted) |
+Removed clips (replaced by the new ladder): `vo_try_left`, `vo_p3_try_again`, `vo_p4_try_again`, `vo_p4_hint`. Verified: the landing + all 10 slides load with 0 console errors.
+
+## User changes — 2026-10-17
+Page numbers are the user's (10 slides): 2 = T2, 3–5 = G1–G3, 6–7 = P1–P2, 8–9 = P3–P4.
+| # | Asked | Status | Proof |
+|---|---|---|---|
+| 1 | Page 2: no "पहले 25 बनाते हैं।"; room between the table and the equation; on "इस डिब्बे में 12 आएगा" the 12 beside the table goes into the "?", the table goes, the equation grows and is centred | ✅ | T2's heading empty; the 25 card / equation row at 176, the tables at 258; played: the 12 flies into the box, the table fades, the equation grows (×1.75) into the card's middle, confetti, last line |
+| 2 | Every page with an equation + table: room between them | ✅ | under the header band the equation at 150, the tables at 252 (was 160 / 232) |
+| 3 | Every page: once the blocks are in the right table, the left table goes (never two tables at once) | ✅ | G1, G2, G3, P1: the left table fades after the copy, the answer table moves to the middle (T2 already) |
+| 3b | Pages 3–5: the ones light on "4 इकाई में से 1 इकाई हटाइए", the tens on "3 दहाई में से 2 दहाई हटाइए" | ✅ | G1 / G2 on their one line, G3 on its two step lines; cue times measured from the clips (card `data.cues`) |
+| 4, 7 | Third wrong answer: the digits below the table, not on its edge | ✅ | 30px under the table on G2, G3, P1, P2, P3, P4; the cards / number pad moved down to make room |
+| 5 | Practice, ones first: the tens not greyed | ✅ | the tens stay green; a tap on one before the ones are taken wiggles it and the ones pulse (no error, no line) |
+| 6 | Pages 6, 7 (and 4, 5 - the same line): on "…4 दहाई और 5 इकाई बचती हैं" the tens and ones light | ✅ | the answer table's tens, then ones light on their words |
+| 8 | Pages 8, 9: the 2nd wrong answer's animation had no VO | ✅ | new `vo_p3_h2` "45 में से 12 घटाने पर, 3 दहाई और 3 इकाई बचती हैं।", `vo_p4_h2` "90 में से 40 …, 5 दहाई और 0 इकाई …": the blocks light on 45, are taken away on 12, the tens / ones left light on their words (replaces the recount line there) |
+| 9 | Page 9: the number pad under the box | ✅ | P4: the pad centred under the answer box, before and after the blocks (a shorter table there so it all fits) |
+Verified: T2, G1, G2, P1, P2, P3, P4 played (wrong paths included); the landing + all 10 slides load with 0 console errors. New clips checked by transcription.
+
+## User changes — 2026-10-18
+| # | Asked | Status | Proof |
+|---|---|---|---|
+| 1 | The equation's highlight (it grows) was cut at the top | ✅ | the slide area under the header band clips at y 150 and the equation stood at 150; it now stands at 166 (room for the grow + glow) |
+| 2 | Sounds for the −/+ buttons, the number pad, and blocks appearing / moving | ✅ | `PVSFX` (WebAudio, throttled): tap (−/+, Swiftee's +, pad keys, opening the pad), pop (a block appears), unpop (− takes one off), whoosh (blocks fly: taken away, put back, copied across, a table sliding, the story's give - `sfx_whoosh.ogg` low), land (a block set down - replaces the old near-silent knock) |
+| 3 | Page 9's spacing uneven | ✅ | one 26px gap equation → table → box → pad on every answer screen; on the third wrong answer the answer moves down to make room for the digits (36px where the digits sit above it, 26px on page 9 where the box stands between them); page 9's opening layout uses the same gaps |
+Verified: P4, P1, G2 played with three wrong answers each, frames checked for spacing / overlap; the landing + all 10 slides load with 0 console errors.
+EAR-CHECK: the new synthesised sounds (tap, pop, unpop, land) have not been listened to by a person - please play the build once with sound on.
+
