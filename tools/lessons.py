@@ -55,7 +55,7 @@ slides.append({
               "b": vo("vo_t1_b", "उनमें से तेरह ब्लॉक्स मीरा ने अमन को दिए हैं।"),
               "ask": vo("vo_t1_ask", "चलिए, पता करते हैं, मीरा के पास अब कितने ब्लॉक्स बचे हैं?"),
               "learn": vo("vo_t1_learn", "इसके लिए हम सीखते हैं, पच्चीस में से तेरह घटाने पर कितने बचते हैं?")},
-    "data": {"mode": "ask", "a": 25, "b": 13}})
+    "data": {"mode": "ask", "a": 25, "b": 13, "people": [{"who": "meera"}, {"who": "aman"}]}})
 
 # deck page 3 - Swiftee builds 25, takes away 13 (the ones by Swiftee, the ten by the child)
 slides.append({
@@ -80,12 +80,12 @@ slides.append({
     "audio": {"a": vo("vo_t3_a", "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।"),
               "b": vo("vo_t3_b", "अब इस डिब्बे में 12 आएगा।"),
               "c": vo("vo_t3_c", "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।")},
-    "data": {"mode": "answer", "a": 25, "b": 13, "fill_at": 0.5}})
+    "data": {"mode": "answer", "a": 25, "b": 13, "fill_at": 0.5, "people": [{"who": "meera"}, {"who": "aman"}]}})
 
 # deck page 6 (MAKE_SET): deleted
 
 
-def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=False, right_table=True, extra_audio=None):
+def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=False, right_table=True, extra_audio=None, extra_data=None):
     """a guided / practice screen: build a (or it is given), take b away, then answer"""
     t, o = split(a)
     au = dict(RM)
@@ -95,6 +95,8 @@ def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=Fals
     d = {"a": a, "b": b, "answer": answer, "build": build, "steps": steps, "right_table": right_table}
     if options:
         d["options"] = options
+    if extra_data:
+        d.update(extra_data)
     return {"id": sid, "phase": phase, "eis": "iconic", "type": "PV_SUB", "prompt_hi": "संख्याएँ घटाइए।",
             "audio": au, "data": d}
 
@@ -117,7 +119,7 @@ slides.append(pv_sub("G2", "guided", 47, 20, {
     "ask": ASK_PICK, "try_again": TRY_LEFT,
     "reveal": vo("vo_g2_reveal", "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_g2_correct", "शाबाश! 47 में से 20 घटाने पर हमें मिलीं 2 दहाई और 7 इकाई, यानी 27।"),
-    "eq": vo("vo_g2_eq", "इसलिए 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67]))
+    "eq": vo("vo_g2_eq", "इसलिए 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67], extra_data={"reveal_hand": True}))
 
 # deck page 8 - 58 - 30 (the column steps spoken one by one)
 slides.append(pv_sub("G3", "guided", 58, 30, {
@@ -210,7 +212,7 @@ card = {
     "part_label": "",
     "theme": "toybox",
     "title": {"hi": "संख्याओं का घटाव", "en": "Subtract horizontally without regrouping"},
-    "landing_hero": {"kind": "pv_eq", "a": 20, "b": 10, "op": "−", "title_look": "wall"},
+    "landing_hero": {"kind": "pv_story", "people": ["aman", "meera"], "build": "castle", "title_look": "wall", "eq": [20, "−", 10]},
     "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
     "phase_distribution": phase_n,
     "scaffold_rules": {"nudge_timeout_ms": {"tutorial": 7000, "guided": 7000, "practice": 7000, "independent": 7000},

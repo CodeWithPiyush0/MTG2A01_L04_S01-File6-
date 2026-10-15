@@ -20,8 +20,8 @@ by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 ## The lesson
 | slide | deck | type | what happens |
 |---|---|---|---|
-| landing | p1 | — | "संख्याओं का घटाव", "20 − 10 = ?", greeting |
-| T1 | p2 | STORY_SUB ask | "कितने बचे?" — 25, − 13, = ? appear with Meera's story |
+| landing | p1 | — | "संख्याओं का घटाव", "20 − 10 = ?", the sibling's castle scene with Aman (boy) and Meera (girl), greeting |
+| T1 | p2 | STORY_SUB ask | "कितने बचे?" — Meera's 25 blocks, 13 fly to Aman; 25, − 13, = ? appear with the VO |
 | T2 | p3 | PV_SUB_DEMO | Swiftee builds 25 (+ ×2, + ×5); 25 − 13: Swiftee takes 3 ones, 2 move across; the child takes 1 ten, 1 moves across; "…यानी 12" |
 | T3 | p5 | STORY_SUB answer | the same boxes; 12 lands on "12 आएगा" |
 | G1 | p7 | PV_SUB fill | 34 − 21: build, take away, 13 fills the box, number sync |
@@ -36,7 +36,8 @@ by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 Deleted (deck): pages 6, 10, 12, 14. The boat game (deck slide 18, hidden; cover-slide notes) is not part of this lesson.
 
 ## Assets
-- **Blocks / shell art:** from MTG2A01_L03_S01 (`pv_rod.webp`, `pv_cube.webp`, Swiftie, the landing courtyard `bg_landing_soft2.webp`, end screen, SFX).
+- **Blocks / shell art:** from MTG2A01_L03_S01 (`pv_rod11.webp`, `pv_cube10.webp`, Swiftie, the landing courtyard `bg_landing_soft2.webp`, the castle `castle_*.webp`, end screen, SFX incl. `sfx_whoosh.ogg`).
+- **People:** `char_meera*.webp` (girl) and `char_aman*.webp` (boy) - the sibling's Tara / Kabir art (round portrait, `_full`, `_cheer`), named for this story.
 - **VO:** 72 Hindi clips, Gemini TTS voice "Kore" (the voice of v1), finished like the sibling's (`tools/build_vo.py`).
 
 ## Rebuilding

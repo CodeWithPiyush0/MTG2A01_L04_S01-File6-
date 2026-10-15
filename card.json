@@ -12,11 +12,18 @@
   "en": "Subtract horizontally without regrouping"
  },
  "landing_hero": {
-  "kind": "pv_eq",
-  "a": 20,
-  "b": 10,
-  "op": "−",
-  "title_look": "wall"
+  "kind": "pv_story",
+  "people": [
+   "aman",
+   "meera"
+  ],
+  "build": "castle",
+  "title_look": "wall",
+  "eq": [
+   20,
+   "−",
+   10
+  ]
  },
  "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
  "phase_distribution": {
@@ -212,7 +219,15 @@
    "data": {
     "mode": "ask",
     "a": 25,
-    "b": 13
+    "b": 13,
+    "people": [
+     {
+      "who": "meera"
+     },
+     {
+      "who": "aman"
+     }
+    ]
    }
   },
   {
@@ -257,7 +272,15 @@
     "mode": "answer",
     "a": 25,
     "b": 13,
-    "fill_at": 0.5
+    "fill_at": 0.5,
+    "people": [
+     {
+      "who": "meera"
+     },
+     {
+      "who": "aman"
+     }
+    ]
    }
   },
   {
@@ -319,7 +342,8 @@
      72,
      27,
      67
-    ]
+    ],
+    "reveal_hand": true
    }
   },
   {

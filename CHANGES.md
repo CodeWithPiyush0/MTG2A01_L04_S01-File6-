@@ -123,3 +123,19 @@ Compared screen by screen with the sibling's build (side-by-side captures) and b
 | Number pad (P1) | — | her layout, except the pad is kept on the stage: hers starts at 473 and ends at 765 on the 750px stage, cutting off its bottom row (⌫ 0) - here it starts at 454 at the latest |
 Verified: G2, P1, P4 played (wrong paths included), G1, G3, P2 played; the landing + all 11 slides load with 0 console errors.
 
+## Sync with MTG2A01_L03_S01 — 2026-10-15 (her commit 86269cc; look only - the deck's numbers, text and VO unchanged)
+Merged three-way (her previous version as the base), so her kit changes came in as written and only the overlaps were resolved by hand.
+| Her change | Here |
+|---|---|
+| Boy + girl characters (Kabir, Tara - the "Gogo and Friends" art) | ✅ used as this story's Aman (boy) and Meera (girl): `char_aman*.webp` = her `char_kabir*`, `char_meera*.webp` = her `char_tara*` (round portrait, full figure, cheering pose). Names in the VO stay the deck's मीरा / अमन |
+| Landing: half-built toy-block castle, the two children zip in (whoosh, dust), finish it, cheer | ✅ with Aman and Meera; **plus** the deck's "20 − 10 = ?" as a small pill under the title (her landing has no equation; the deck's page 1 has one), the title a little higher to make room |
+| Story pages: portraits over each person's blocks, number cards under them | ✅ T1: Meera's 25 blocks, 13 of them fly to Aman as the VO says so; T3: a copy of her 12 moves into the "?" column as 12 fills in |
+| New blocks (`pv_rod11.webp`, `pv_cube10.webp`; a rod = exactly 10 cubes), centred in their column, bigger | ✅ every table; old `pv_rod.webp` / `pv_cube.webp` removed |
+| Number pad: one answer box with a cursor, a two-row pad beside it, ← back and a green ✓ that sends the answer; pad goes when right | ✅ P1, P4 (the pad now stays on the stage - the old overflow is gone) |
+| Right MCQ card goes up into the "?", the others go | ✅ |
+| Idle 7 s: what to tap pulses again (no hand); third-layer reveal: highlight only, no hand | ✅ - except where this deck asks for the hand: T2 (3 s, "hand nudge will appear") and G2 ("Glow number 27 and Hand nudge") |
+| Buttons pop like the play button and pulse when live | ✅ incl. this lesson's −/+ buttons |
+| Cache-busting `?v=` on style.css / app.js | ✅ |
+| Her T2 made fully automatic; the regrouping lane / ghost drag; her VO / cast renames | ✗ not relevant (this deck's T2 has the child take the ten; no regrouping) |
+Verified: landing, T1, T2, T3 captured / played; G1, G2, P1, P2, P4 played with every wrong-answer layer; the landing + all 11 slides load with 0 console errors.
+
