@@ -91,7 +91,7 @@ def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=Fals
     au.update(lines)
     if extra_audio:
         au.update(extra_audio)
-    d = {"a": a, "b": b, "answer": answer, "build": build, "steps": steps, "right_table": right_table}
+    d = {"a": a, "b": b, "answer": answer, "build": build, "steps": steps, "right_table": False}   # one table (SME review 3)
     if options:
         d["options"] = options
     if extra_data:
@@ -123,19 +123,17 @@ slides.append(pv_sub("G2", "guided", 47, 20, {
 # deck page 8 - 58 - 30 (the column steps spoken one by one)
 slides.append(pv_sub("G3", "guided", 58, 30, {
     "prompt": vo("vo_g3_prompt", "58 में से 30 घटाइए।"),
-    "build": vo("vo_g3_build", "सबसे पहले ब्लॉक्स की सहायता से 58 बनाइए, जिसमें 5 दहाई और 8 इकाई होते हैं।"),
     "sub": vo("vo_g3_sub", "और अब इसमें से 30 घटाते हैं, 30 में 3 दहाई और 0 इकाई हैं।"),
     "rm_ones": vo("vo_g3_rm_ones", "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।"),
     "rm_tens": vo("vo_g3_rm_tens", "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g3_h2", "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।"), 
     "reveal": vo("vo_g3_reveal", "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_g3_correct", "शाबाश! 58 में से 30 घटाने पर हमें मिलीं 2 दहाई और 8 इकाई, यानी 28।"),
-    "eq": vo("vo_g3_eq", "इसलिए 58 घटा 30 बराबर 28।")}, answer="mcq", options=[88, 28, 82], steps=True))
+    "eq": vo("vo_g3_eq", "इसलिए 58 घटा 30 बराबर 28।")}, answer="mcq", options=[88, 28, 82], steps=True, build=False))
 
 # deck page 9 - 79 - 34, the answer typed on the number pad
 slides.append(pv_sub("P1", "practice", 79, 34, {
     "prompt": vo("vo_p1_prompt", "79 में से 34 घटाइए।"),
-    "build": vo("vo_p1_build", "सबसे पहले ब्लॉक्स की सहायता से 79 बनाइए, जिसमें 7 दहाई और 9 इकाई होते हैं।"),
     "sub": vo("vo_p1_sub", "और अब इसमें से 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।"),
     "rm_ones": vo("vo_p1_rm_ones", "पहले इकाइयाँ घटाइए। 9 इकाई में से 4 इकाई हटाइए।"),
     "rm_tens": vo("vo_p1_rm_tens", "अब दहाइयाँ घटाइए। 7 दहाई में से 3 दहाई हटाइए।"),
@@ -143,7 +141,7 @@ slides.append(pv_sub("P1", "practice", 79, 34, {
     "recount": RECOUNT, "h2": vo("vo_p1_h2", "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।"), 
     "reveal": vo("vo_p1_reveal", "79 में से 34 घटाने पर 45 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_p1_correct", "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।")},
-    answer="numpad", steps=True, extra_data={"ones_first": True}))
+    answer="numpad", steps=True, build=False, extra_data={"ones_first": True}))
 
 # deck page 10 (MAKE_SET): deleted
 
@@ -244,6 +242,15 @@ for sl in slides:
         (at, ao) = split(d["a"]); (bt, bo) = split(d["b"])
         cues["rm_ones"] = {"o": frac(au["rm_ones"], f"{bo} इकाई")}
         cues["rm_tens"] = {"t": frac(au["rm_tens"], f"{at} दहाई")}
+    if "build" in au and sl["type"] == "PV_SUB":
+        (at, ao) = split(d["a"])
+        cues["build"] = {"t": frac(au["build"], f"{at} दहाई"), "o": frac(au["build"], f"{ao} इकाई")}
+    if sl["id"] == "T2":
+        (at, ao), (bt, bo) = split(d["a"]), split(d["b"]); (rt, ro) = split(d["a"] - d["b"])
+        cues["digits"] = {"t": frac(au["digits"], f"{at} दहाई"), "o": frac(au["digits"], f"{ao} इकाई")}
+        cues["ones_left"] = {"o": frac(au["ones_left"], f"{ro} इकाई", after="बचीं")}
+        cues["tens_left"] = {"t": frac(au["tens_left"], f"{rt} दहाई", after="बचे")}
+        cues["total"] = {"t": frac(au["total"], f"{rt} दहाई"), "o": frac(au["total"], f"{ro} इकाई"), "n": frac(au["total"], "यानी")}
     if cues:
         d["cues"] = cues
 
@@ -258,7 +265,7 @@ card = {
     "part_label": "",
     "theme": "toybox",
     "title": {"hi": "संख्याओं का घटाव", "en": "Subtract horizontally without regrouping"},
-    "landing_hero": {"kind": "pv_story", "people": ["aman", "meera"], "build": "castle", "title_look": "wall", "eq": [20, "−", 10]},
+    "landing_hero": {"kind": "pv_story", "people": ["aman", "meera"], "build": "pile", "title_look": "wall", "eq": [20, "−", 10]},
     "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
     "phase_distribution": phase_n,
     "scaffold_rules": {"nudge_timeout_ms": {"tutorial": 7000, "guided": 7000, "practice": 7000, "independent": 7000},

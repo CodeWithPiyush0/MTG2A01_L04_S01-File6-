@@ -2148,3 +2148,21 @@ body.is-start .sg-sky{
 .sg-content.has-eq .sg-title{top:-40px;}
 /* page 2's end: the equation, answered, grows in the middle of the card (user 2026-10-17) */
 .pv-eq.pv-eq-hero{scale:1.75;}
+
+/* ==================== SME review 3 (2026-10-19) ==================== */
+/* the + buttons: one per column; greyed once its column holds its number */
+.pv-src2.pv-done{opacity:.45;filter:grayscale(.85);transition:opacity .3s,filter .3s;}
+.pv-src2.pv-done .pv-pm{pointer-events:none;}
+/* T1: Aman's 13 - his own, grey (not picked out of Meera's 25) */
+.pv-blk.pv-given{filter:grayscale(1) brightness(1.15) drop-shadow(0 2px 2px rgba(12,46,92,.2));opacity:.75;}
+/* a taken block's sparkle: small gold / white four-point stars */
+.pv-spark{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:42;pointer-events:none !important;background:#FFC93C;
+  clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 3px rgba(255,200,60,.9));}
+.pv-spark.pv-spark-w{background:#fff;width:10px;height:10px;margin:-5px 0 0 -5px;}
+/* between two questions: the old screen slides out, the new one slides in */
+.slide-host.q-out{animation:qOut .34s ease-in forwards;}
+.slide-host.q-in{animation:qIn .62s cubic-bezier(.2,.9,.3,1.08) both;}
+@keyframes qOut{to{opacity:0;translate:-110px 0;scale:.97;}}
+@keyframes qIn{from{opacity:0;translate:140px 0;scale:.96;}to{opacity:1;translate:0 0;scale:1;}}
+@media (prefers-reduced-motion:reduce){ .slide-host.q-out,.slide-host.q-in{animation:none;} }
+

@@ -175,3 +175,21 @@ Verified: T2, G1, G2, P1, P2, P3, P4 played (wrong paths included); the landing 
 Verified: P4, P1, G2 played with three wrong answers each, frames checked for spacing / overlap; the landing + all 10 slides load with 0 console errors.
 EAR-CHECK: the new synthesised sounds (tap, pop, unpop, land) have not been listened to by a person - please play the build once with sound on.
 
+
+## SME review 3 (doc tab "MTG2A01_L04_S01_Saif") + user — 2026-10-19
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| G1 | One table size on every screen | ✅ | every table is 9 rods wide, blocks 28px (`pvTable`, tut + main layouts alike); P4's pad sits beside its box once the table appears |
+| G2 | Only the Add (+) button | ✅ | the − buttons are gone; over-building is impossible, so the 7 s "extra blocks wiggle" step is gone too |
+| G3 | The buttons go inactive once the number is built | ✅ | each column's + greys out when it holds its number; both fade when the number is built |
+| G4 | The same table for the take-away, grey blocks included | ✅ | no answer / right table anywhere (T2, G1–G3, P1): what is left stays in the one table, the taken blocks grey in place; hints and the digits use that table |
+| G5 | A clear change between two guided / practice questions | ✅ | the old screen slides out (0.34 s), the new one slides in (0.62 s) with a soft swish |
+| G6 + user | Taken blocks vanish in place and go grey, not fly to the numbers; **user: "popped out at their place with some magic effect"** | ✅ | a bright copy swells and fades, gold/white stars burst out, the grey copy stays; the ladder's reset turns them back to colour with a pop |
+| user | New sounds for a block appearing and moving, and a sound for the pop | ✅ | `PVSFX`: appear = a round "bloop", move = a soft synthesised swish (replaces `sfx_whoosh.ogg` in the game), magic = pop + sparkle + shimmer; tap and land kept |
+| 1 | Landing: the game's real blocks; the two children each pick one up and walk away | ✅ | `landing_hero.build: "pile"`: 2 rods + 5 cubes in the middle; Aman takes a rod, Meera a cube, each walks off on their own side; the "20 − 10 = ?" pill stays |
+| 2 | T1: Meera keeps all 25; Aman's 13 are his own, grey, not picked from her 25 | ✅ | on Aman's line his 13 appear under him in grey; Meera's 25 never move |
+| 3 | T2: the same table only; no glow; the table pops and beats with the VO | ✅ | one table throughout; every `K.sweep` glow is now a beat (the named column's head + blocks pulse on their words, cue times from the clips); "= 12" beside the table; it goes into the "?" and the equation grows into the middle as before |
+| 4 | G1: bigger table, all tables one size, no −; the tens / ones + pulse on "3 दहाई और 4 इकाई" | ✅ | see G1–G3; `cues.build` from the clip: the rod + beats on "3 दहाई", the cube + on "4 इकाई" (G2 the same) |
+| 5 | G3: no build screen — the child takes away from the built table | ✅ | 58 comes built; `vo_g3_build` removed |
+| 6 | P1: no build screen | ✅ | 79 comes built; `vo_p1_build` removed |
+| 7 | P2: no numerals in the column heads ("0 दहाई – 0 इकाई") | ✅ | every head reads just दहाई / इकाई on every page |

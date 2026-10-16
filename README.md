@@ -11,23 +11,25 @@ confetti, the nudge hand, the loader, the xAPI / SwiftPAL bridge and the end scr
 by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 
 - **build** a number with the deck's `[−] rod [+]` / `[−] cube [+]` buttons (Swiftee's hand, or the child)
-- **take away**: a tapped block turns grey where it stood and a copy flies to the number being taken away
+- **take away**: a tapped block pops out where it stands with a sparkle (a bright copy swells and fades, stars burst) and its grey copy stays — nothing flies
 - **the help ladder** for taking away (deck pages 7–8): a ten before the ones, or one block too many → the blocks fly
   back + "आपने इकाई/दहाई में ज़्यादा/कम हटाए हैं। दोबारा कोशिश करिए।"; the 2nd time → "इनमें से इतने हटाइए।" and
-  only the blocks to take stay tappable
-- the blocks left are copied into the **answer table**; then the answer: it fills by itself, three cards, or the number pad
+  only the blocks to take stay tappable (the grey blocks turn back to colour with a pop)
+- **one table** on every page, all the same size (9 rods wide); the build has only + buttons, each greys out when its column is full
+- the blocks left stay in that table; then the answer: it fills by itself, three cards, or the number pad
+- between two questions of the same phase the old screen slides out and the new one slides in
 
 ## The lesson
 | slide | deck | type | what happens |
 |---|---|---|---|
-| landing | p1 | — | "संख्याओं का घटाव", "20 − 10 = ?", the sibling's castle scene with Aman (boy) and Meera (girl), greeting |
-| T1 | p2 | STORY_SUB ask | "कितने बचे?" — Meera's 25 blocks, 13 fly to Aman; 25, − 13, = ? appear with the VO |
-| T2 | p3 + p5 | PV_SUB_DEMO | Swiftee builds 25 (+ ×2, + ×5); 25 − 13: Swiftee takes 3 ones, 2 move across; the child takes 1 ten, 1 moves across; the left table goes, the answer table takes the middle, "…यानी 12"; then the story's answer lines, 12 lands in the "?" on "12 आएगा" |
+| landing | p1 | — | "संख्याओं का घटाव", "20 − 10 = ?", a pile of the game's blocks; Aman (boy) and Meera (girl) run in, each picks up a block and walks away; greeting |
+| T1 | p2 | STORY_SUB ask | "कितने बचे?" — Meera keeps her 25 blocks; Aman's 13 appear under him in grey; 25, − 13, = ? appear with the VO |
+| T2 | p3 + p5 | PV_SUB_DEMO | Swiftee builds 25 (+ ×2, + ×5); 25 − 13 in the same table: Swiftee takes 3 ones, the child takes 1 ten; the columns beat with the VO (no glow), "= 12" beside the table, "…यानी 12"; then the story's answer lines, 12 lands in the "?" on "12 आएगा" |
 | G1 | p7 | PV_SUB fill | 34 − 21: build, take away, 13 fills the box, number sync |
 | G2 | p7b | PV_SUB mcq | 47 − 20 (72 / 27 / 67) |
-| G3 | p8 | PV_SUB mcq | 58 − 30 (88 / 28 / 82), column steps spoken one by one |
-| P1 | p9 | PV_SUB numpad | 79 − 34 → 45 |
-| P2 | p11 | PV_SUB mcq | 86 − 56 given as blocks, heads count what is left (30 / 40 / 13) |
+| G3 | p8 | PV_SUB mcq | 58 − 30 (88 / 28 / 82), comes built; column steps spoken one by one |
+| P1 | p9 | PV_SUB numpad | 79 − 34 → 45, comes built |
+| P2 | p11 | PV_SUB mcq | 86 − 56 given as blocks, heads show words only (30 / 40 / 13) |
 | P3 | p13 | MENTAL_SUB mcq | 45 − 12 (57 / 23 / 33) |
 | P4 | p15 | MENTAL_SUB numpad | 90 − 40 → 50 |
 | CEL | p16 | CELEBRATION | "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।" |
