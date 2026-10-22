@@ -22,7 +22,7 @@ by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 ## The lesson
 | slide | deck | type | what happens |
 |---|---|---|---|
-| landing | p1 | — | "संख्याओं का घटाव", "20 − 10 = ?", a pile of the game's blocks; Aman (boy) and Meera (girl) run in, each picks up a block and walks away; greeting |
+| landing | p1 | — | "संख्याओं का घटाव" (arched, painted on the wall), the sibling's cube castle: Aman and Meera glide in, each lifts a red top off and cheers holding it; greeting |
 | T1 | p2 | STORY_SUB ask | "कितने बचे?" — Meera keeps her 25 blocks; Aman's 13 appear under him in grey; 25, − 13, = ? appear with the VO |
 | T2 | p3 + p5 | PV_SUB_DEMO | Swiftee builds 25 (+ ×2, + ×5); 25 − 13 in the same table: Swiftee takes 3 ones, the child takes 1 ten; the columns beat with the VO (no glow), "= 12" beside the table, "…यानी 12"; then the story's answer lines, 12 lands in the "?" on "12 आएगा" |
 | G1 | p7 | PV_SUB fill | 34 − 21: build, take away, 13 fills the box, number sync |

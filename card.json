@@ -17,13 +17,9 @@
    "aman",
    "meera"
   ],
-  "build": "pile",
+  "build": "castle",
   "title_look": "wall",
-  "eq": [
-   20,
-   "−",
-   10
-  ]
+  "start_at": 2.9
  },
  "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
  "phase_distribution": {

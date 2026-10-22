@@ -265,7 +265,7 @@ card = {
     "part_label": "",
     "theme": "toybox",
     "title": {"hi": "संख्याओं का घटाव", "en": "Subtract horizontally without regrouping"},
-    "landing_hero": {"kind": "pv_story", "people": ["aman", "meera"], "build": "pile", "title_look": "wall", "eq": [20, "−", 10]},
+    "landing_hero": {"kind": "pv_story", "people": ["aman", "meera"], "build": "castle", "title_look": "wall", "start_at": 2.9},   # (no equation on the cover - user 2026-10-22)   # (start_at: "आज हम" in vo_landing)
     "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
     "phase_distribution": phase_n,
     "scaffold_rules": {"nudge_timeout_ms": {"tutorial": 7000, "guided": 7000, "practice": 7000, "independent": 7000},

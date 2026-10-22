@@ -203,3 +203,21 @@ EAR-CHECK: the new synthesised sounds (tap, pop, unpop, land) have not been list
 Verified: P1 and P4 played (right path, and three wrong answers); the landing + all 10 slides load with 0 console errors.
 | 4 | The keypad pages in the sibling's layout (her PV_NUMPAD page): the equation spread out, the pad's place, the answer typed into the "?" | ✅ | P1 and P4: the equation big (cards 100px) across the top - the first number over the दहाई column, the second over the इकाई column, the − between, the = midway to the "?", which stands over the pad; the one table on the left, level with the pad's middle; the 3 × 4 pad on the right under the "?"; the child types straight into the "?" (no separate answer box) and the right answer turns it green there. P4's table (the 2nd help) comes in at the same place. This replaces the column layout of item 1 |
 Verified: P1 and P4 played again (right path, and three wrong answers); the landing + all 10 slides load with 0 console errors.
+
+## User changes — 2026-10-22 (2)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | The sibling's cover page and its animation, turned round for subtraction | ✅ | her cover taken whole (MTG2A01_L03_S01 22f1525): the cube castle (`castle_cubes`, `castle_cube_l/_r`), her room (`bg_landing_v3`), the arched painted title, her calm glide-in (all moves ×2.2), the shadows, the eye blinks (`PVBlink` + `char_aman/meera_*_blink`, her Kabir/Tara art) and "the picture comes in on आज हम…" (`start_at` 2.9s in our `vo_landing`). Subtraction: the castle stands whole; the two glide in, each leans in and lifts a red top off its tower, and they walk away with it out of the picture. The deck's "20 − 10 = ?" pill stays, between the title and the castle. The old castle drawing pieces are removed |
+| 2 | A mistake in the tens reset the ones too | ✅ | a wrong tap now puts back only its own column's blocks (and the ones' step line is not said again when only the tens went back) |
+| 3 | A mistake in the ones: the help showed on both columns | ✅ | the 2nd help ("इनमें से इतने हटाइए।") marks and dims one column at a time - the ones until they are done, then the tens |
+| 4 | Keypad, 3rd help: only the key to tap is live | ✅ | every other key is locked and looks off; 45: only 4, then only 5, then only ✓ |
+Verified: cover frames checked; P1 scripted (a tens mistake keeps the 4 ones taken; two ones mistakes - the help on the ones only, then the tens only); P1 / P4 third help logs one live key at a time; G1, G2, P1, P4 played on the wrong path; the landing + all 10 slides load with 0 console errors.
+
+## User changes — 2026-10-22 (3)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | Cover: the same as the sibling's - the children must not disappear; no equation | ✅ | the two stay: they glide in, each lifts a red top off its tower, then her cheer (hops, sparkles, chime) holding it up; the "20 − 10 = ?" pill removed (card `landing_hero.eq` dropped) - the title, the castle and the two now stand exactly where hers do |
+| 2 | Page 2: the top number bigger | ✅ | the 25 card and the 25 − 13 = ? row 84px high (was 46); the table moved down to 276 to keep the gap |
+| 3 | Every page: दहाई / इकाई bigger | ✅ | the table heads 46px high (was 38), the words 28px (was 20) |
+| 4 | The + buttons bigger | ✅ | the buttons 58px (was 42), the + 50px, the rod / cube pictures beside them bigger, the two 200px apart |
+Verified: cover frames compared with hers; T2 and G1 played; the landing + all 10 slides load with 0 console errors.
