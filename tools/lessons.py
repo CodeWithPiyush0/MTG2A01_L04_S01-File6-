@@ -242,6 +242,11 @@ for sl in slides:
         (at, ao) = split(d["a"]); (bt, bo) = split(d["b"])
         cues["rm_ones"] = {"o": frac(au["rm_ones"], f"{bo} इकाई")}
         cues["rm_tens"] = {"t": frac(au["rm_tens"], f"{at} दहाई")}
+    if "sub" in au and sl["type"] == "PV_SUB":   # "और अब (इसमें से) 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।"
+        (bt, bo) = split(d["b"]); txt = VO[au["sub"]]
+        cues["sub"] = {"b": frac(au["sub"], str(d["b"])), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
+        if "इसमें" in txt:
+            cues["sub"]["this"] = frac(au["sub"], "इसमें")   # SME review 4: the whole table lights on "इसमें"
     if "build" in au and sl["type"] == "PV_SUB":
         (at, ao) = split(d["a"])
         cues["build"] = {"t": frac(au["build"], f"{at} दहाई"), "o": frac(au["build"], f"{ao} इकाई")}
@@ -251,6 +256,11 @@ for sl in slides:
         cues["ones_left"] = {"o": frac(au["ones_left"], f"{ro} इकाई", after="बचीं")}
         cues["tens_left"] = {"t": frac(au["tens_left"], f"{rt} दहाई", after="बचे")}
         cues["total"] = {"t": frac(au["total"], f"{rt} दहाई"), "o": frac(au["total"], f"{ro} इकाई"), "n": frac(au["total"], "यानी")}
+        # SME review 4: 25 − 13 = ? comes in with "अब 25 में से 13 घटाते हैं"; the story lines on T1's screen
+        cues["sub"] = {"a": frac(au["sub"], str(d["a"])), "op": frac(au["sub"], "में से"), "b": frac(au["sub"], str(d["b"]), after="में से"),
+                       "q": frac(au["sub"], "घटाते"), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
+        cues["story"] = {"a": frac(au["story_a"], "पच्चीस"), "b": frac(au["story_a"], "तेरह"), "n": frac(au["story_a"], "बचे"),
+                         "c": frac(au["story_c"], str(d["a"] - d["b"]))}
     if cues:
         d["cues"] = cues
 

@@ -221,3 +221,22 @@ Verified: cover frames checked; P1 scripted (a tens mistake keeps the 4 ones tak
 | 3 | Every page: दहाई / इकाई bigger | ✅ | the table heads 46px high (was 38), the words 28px (was 20) |
 | 4 | The + buttons bigger | ✅ | the buttons 58px (was 42), the + 50px, the rod / cube pictures beside them bigger, the two 200px apart |
 Verified: cover frames compared with hers; T2 and G1 played; the landing + all 10 slides load with 0 console errors.
+
+## SME review 4 — 2026-10-23
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1a | T2: sync "अब 25 में से 13 घटाते हैं" with the screen | ✅ | 25 − 13 = ? comes in part by part as it is said: 25 on "25", − on "में से", 13 on "13", = ? on "घटाते"; the 13's tens / ones digits light on "1 दहाई" / "3 इकाई" (cue times from the clip, card `cues.sub`) |
+| 1b | T2: at the end bring back T1's last screen (with the blocks) | ✅ | after "…यानी 12" the table and equation go and T1's screen comes back (the people, Meera's 25, Aman's 13 in grey, 25 − 13 = ?; one builder `pvStoryScene` for T1 and T2); "…तो बचे 12।" - 1 rod + 2 cubes come in under the "?"; "अब इस डिब्बे में 12 आएगा।" - the "?" becomes 12, confetti; "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।" - the 12 blocks beat |
+| 2 | G1: while the ones are asked for, only the ones can be tapped | ✅ | the "ones first" lock now on every page (was practice only): a ten tapped before the ones are done only wiggles - it is not taken and no wrong line plays |
+| 3 | G2: the option numbers bigger | ✅ | every answer card 224 × 104, its number 58px (was 34px) - G2, G3, P2, P3 |
+| 4 | P1 (and G3, same line): the whole table lights on "इसमें" in "इसमें से 34 घटाते हैं" | ✅ | the table's frame glows gold and the table pops on "इसमें"; the 34 pops on "34", its digits light on "3 दहाई" / "4 इकाई" (G1, G2 the same for their numbers) |
+
+## User changes — 2026-10-23
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | G1: while the ones are to go, a ten must not react at all - no wiggle, no sound | ✅ | a tap on a ten then does nothing (the wiggle and the nudge sound are gone; every page) |
+| 2 | Background music at 30 % | ✅ | `BGM.VOL` 0.3 (was 1); its dip under the voice 0.1 (was .35 - the same proportion) |
+| 3 | Switching tab / minimising pauses the game; coming back resumes it | ✅ | `GamePause` (top of app.js): while the page is hidden every timer of the game is frozen with the time it had left, every CSS / WAAPI animation is paused, the voice, effects and music pause, WebAudio is suspended; on return all of it carries on (the VO-synced steps follow the clip's own time) |
+| 4 | The three transition screens of HI02H11_L02_S02 | ✅ | its r142 screen taken as it is: `peeking_talk_up.webp` (talking Swifty, lifted in, sinking out on the first one), its whoosh (`sfx_gate_whoosh`), the magenta headline wiping in as Swifty says it (280 ms into our clips), its title fit, its timing (shown ≥ 1.2 s, the line whole ≥ .7 s, 12 s watchdog). Our three lines and clips unchanged. The old peeking clip and its player removed |
+| 5 | Pages 1, 2: the next button where HI02H11 has it | ✅ | centred, 30px (screen) above the tutorial card's bottom edge, as on HI02H11's pages 1, 2 (was 60px up) |
+Verified: G1 scripted (a ten tapped in the ones step: no animation, no sound, nothing taken); pause / resume mid-T2 (the voice held at the same second, no animation ran, no block came for 6 s, then all carried on); the tab-hidden event pauses / resumes; the three screens captured; T2 → G1 and G3 → P1 played through their screens; the landing + all 10 slides load with 0 console errors.

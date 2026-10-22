@@ -1,3 +1,38 @@
+/* [pause] user 2026-10-23: "when I switch tab or minimise the browser the game should be paused, and when I come back it
+   should resume". While the page is hidden: every timer the game set is frozen with the time it had left (the steps of a
+   page, its waits, its 7s reminders, the clip watchdogs), every animation (CSS and WAAPI) is paused, the voice, the sound
+   effects and the music pause and WebAudio is suspended. Back on the page all of it carries on from where it stopped -
+   the voice-synced steps follow the clip's own time, so they stay in sync. (setInterval is left alone: the blinks and
+   twinkles it drives already skip a hidden page.) */
+const GamePause = (function(){
+  const _st = window.setTimeout.bind(window), _ct = window.clearTimeout.bind(window);
+  const T = new Map(); let seq = 1e7, paused = false, anims = [], media = [], ctxs = [];
+  const arm = (id, t)=>{ t.at = performance.now(); t.real = _st(()=>{ T.delete(id); t.fn(...t.args); }, t.ms); };
+  window.setTimeout = function(fn, ms, ...args){
+    if(typeof fn !== "function") return _st(fn, ms);
+    const id = ++seq, t = { fn, args, ms: Math.max(0, +ms || 0), at: 0, real: 0 };
+    T.set(id, t); if(!paused) arm(id, t); return id; };
+  window.clearTimeout = function(id){ const t = T.get(id); if(t){ _ct(t.real); T.delete(id); } else _ct(id); };
+  function pause(){
+    if(paused) return; paused = true; const now = performance.now();
+    T.forEach(t =>{ _ct(t.real); t.ms = Math.max(0, t.ms - (now - t.at)); });
+    try{ anims = document.getAnimations().filter(a => a.playState === "running"); anims.forEach(a => a.pause()); }catch(e){ anims = []; }
+    media = [...document.querySelectorAll("audio, video")].concat(typeof voEl !== "undefined" ? [voEl] : [],
+              typeof _sfxPool !== "undefined" ? _sfxPool : [], (typeof BGM !== "undefined" && BGM.el) ? [BGM.el] : []);
+    media = [...new Set(media)].filter(m => m && !m.paused && !m.ended); media.forEach(m =>{ try{ m.pause(); }catch(e){} });
+    ctxs = [typeof _juiceAC !== "undefined" ? _juiceAC : null, typeof _actx !== "undefined" ? _actx : null].filter(c => c && c.state === "running");
+    ctxs.forEach(c =>{ try{ c.suspend(); }catch(e){} });
+  }
+  function resume(){
+    if(!paused) return; paused = false;
+    ctxs.forEach(c =>{ try{ c.resume(); }catch(e){} }); ctxs = [];
+    media.forEach(m =>{ try{ m.play().catch(()=>{}); }catch(e){} }); media = [];
+    anims.forEach(a =>{ try{ if(a.playState === "paused") a.play(); }catch(e){} }); anims = [];
+    T.forEach((t, id)=> arm(id, t));
+  }
+  document.addEventListener("visibilitychange", ()=>{ if(document.hidden) pause(); else resume(); });
+  return { pause, resume, get paused(){ return paused; } };
+})();
 const CARD = JSON.parse(document.getElementById('cardData').textContent);
   const AUDIO_EXT = (CARD.assets && CARD.assets.audio_ext) || "ogg";  // Ogg/Opus (every lesson's audio since 2026-10-06; Chrome/Edge/Firefox, Safari 18.4+)
   const IMG_EXT   = (CARD.assets && CARD.assets.img_ext)   || "webp"; // WebP (all still art; Chrome/Edge/Firefox/Safari 14+) — twin of AUDIO_EXT (fixes A3)
@@ -356,7 +391,7 @@ const sfxNudge     = ()=> playSfxFile("sfx_nudge", 0.45);
    that would repeat ~30x a lesson). Its quietness is BAKED INTO THE FILE (-33 LUFS, ~14.5dB under the VO's -18.5): iOS
    Safari ignores media .volume, so a loud file would play at full VO level there. VOL/DUCK only add the dip under VO
    (0.35 = -9dB, ~24dB under the voice); the dip is a short fade, not a jump, so the bed never pumps. */
-var BGM = { el: null, track: "", VOL: 1, DUCK: 0.35, raf: 0 };   // (var: setPlaying, above, may reach it)
+var BGM = { el: null, track: "", VOL: 0.3, DUCK: 0.1, raf: 0 };   // user 2026-10-23: the music at 30 % (was 100 %); under the voice 0.1 (was .35 of 1 - the same dip)   // (var: setPlaying, above, may reach it)
 function bgmDuck(){
   if(!BGM || !BGM.el) return;
   const el = BGM.el, from = el.volume, to = isPlaying ? BGM.DUCK : BGM.VOL, ms = to < from ? 180 : 600, t0 = performance.now();
@@ -385,8 +420,7 @@ function bgmPlay(track, onMissing){
   }catch(e){}
 }
 function bgmStart(){ if(!BGM.el) bgmPlay("bgm"); }
-document.addEventListener("visibilitychange", ()=>{ if(!BGM.el) return;
-  if(document.hidden) BGM.el.pause(); else BGM.el.play().catch(()=>{}); });
+/* (the music pauses / resumes with the rest of the game while the page is hidden: GamePause, at the top) */
 /* dynamic Swiftie buddy: swap pose + a little pop on every reaction (correct/wrong/explain/celebrate) */
 // [20a mascot-01] moods -> production EXPRESSIONS (head webp), not idle-gif basenames.
 //   Ported verbatim from HI01H01_L02_S04_dist (its app lines 2474-2493) together with the
@@ -1624,6 +1658,9 @@ Object.assign(PVK, (function(){
   /* a column of a table beats: its head and the blocks still standing in it */
   function beatCol(T, kind){ beat([kind === "t" ? T.th : T.oh], 0); beat(left(T, kind), kind === "t" ? 90 : 60); }
   /* the whole table pops (it and every block on it, together) */
+  /* the whole table lights (its frame glows a moment) and pops - "इसमें" (SME review 4) */
+  function hlTable(T){ T.el.classList.remove("pv-table-hl"); void T.el.offsetWidth; T.el.classList.add("pv-table-hl");
+    setTimeout(()=> T.el.classList.remove("pv-table-hl"), 1600); popTable(T); }
   function popTable(T){ if(K.reduce()) return; const all = [T.el, ...T.rods, ...T.cubes].filter(e => !e.classList.contains("pv-gone"));
     all.forEach(e => e.animate([{ scale: "1" }, { scale: "1.06", offset: .35 }, { scale: ".985", offset: .7 }, { scale: "1" }], { duration: 520, easing: "ease-out" })); }
 
@@ -1770,8 +1807,7 @@ Object.assign(PVK, (function(){
       }
       all().forEach(b =>{
         b.onclick = ()=>{
-          if(cfg.onesFirst && C.alive() && !fin && !busy && !b._removed && b._kind === "t" && gone("o") < need.o){   // the ones first
-            K.shake(b, 6); left(T, "o").forEach(x => K.repulse(x)); return; }
+          if(cfg.onesFirst && b._kind === "t" && gone("o") < need.o) return;   // the ones first: a ten is not tappable yet - nothing happens (user 2026-10-23)
           if(!C.alive() || fin || busy || b._removed || !b.classList.contains("pv-tap")) return;
           stopNudge(); unpulse(); clearTimeout(settleT);
           const k = b._kind;
@@ -1807,7 +1843,7 @@ Object.assign(PVK, (function(){
     return C.cue(role, cues);
   }
 
-  return { headCount, liveHeads, dropBlock, beat, beatCol, popTable, sparkles, sources, demoAdd, childBuild, takeAway, putBack, demoRemove, removeChild, copyLeft,
+  return { headCount, liveHeads, dropBlock, beat, beatCol, popTable, hlTable, sparkles, sources, demoAdd, childBuild, takeAway, putBack, demoRemove, removeChild, copyLeft,
            eqSync, left };
 })());
 
@@ -1840,6 +1876,23 @@ function pvPair(TA, TB, cx, gap, minHalf){
   return Promise.all([TA.move(cx - half - (TA.x + TA.W / 2), 0, 650), TB.move(cx + half - (TB.x + TB.W / 2), 0, 0)]);
 }
 function pvCelebrate(){ sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMood("happy"); }
+/* the story screen of T1 (deck page 2): the two people's portraits over their blocks - Meera's 25, Aman's own 13 in grey -
+   and the cards under them, 25 − 13 = ?. gR: the blocks of the answer (a group under the "?", not made yet) */
+function pvStoryScene(sc, d){
+  const K = PVK, COL = [406, 666, 926], AV = 90, AVY = 214, BOT = 488, BH = 176, EY = 502, EH = 56;   // the sibling's STORY page
+  const [P0, P1] = d.people, diff = d.a - d.b;
+  const S = { COL, BOT, BH, diff };
+  S.pA = K.person(sc, P0.who, P0.name, COL[0], AVY, AV); S.pB = K.person(sc, P1.who, P1.name, COL[1], AVY, AV);
+  S.gA = K.group(sc, d.a, COL[0], BOT, BH).make();
+  S.gB = K.group(sc, d.b, COL[1], BOT, BH); S.gR = K.group(sc, diff, COL[2], BOT, BH);
+  const op = (t, x)=>{ const e = K.add(sc, "div", "pv-op pv-sym", "font-size:44px"); e.textContent = t; K.setXY(e, x, EY + 2); return e; };
+  S.cA = K.numCard(sc, d.a, COL[0], EY, EH); S.minus = op("−", 536); S.cB = K.numCard(sc, d.b, COL[1], EY, EH); S.eqs = op("=", 796);
+  S.cQ = K.numCard(sc, null, COL[2], EY, EH, "pv-q");
+  /* SME review 3: Meera keeps all 25 in view; Aman has his own 13, grey (they are not picked out of her 25) */
+  S.gAm = S.gB.make(); S.gAm.all().forEach(x => x.classList.add("pv-given"));
+  S.parts = ()=> [S.pA, S.pB, ...S.gA.all(), ...S.gAm.all(), S.cA, S.minus, S.cB, S.eqs, S.cQ];
+  return S;
+}
 const PVModules = {
   STORY_SUB: {
     /* deck page 2 / "Appear the first screen" - "कितने बचे?", in the sibling's STORY page: the two people's round
@@ -1852,20 +1905,12 @@ const PVModules = {
     mount(host, slide){
       const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc);
       state.ownsAudio = true; setNavActive(false); pvReplay(C);
-      const COL = [406, 666, 926], AV = 90, AVY = 214, BOT = 488, BH = 176, EY = 502, EH = 56;   // the sibling's STORY page
-      const [P0, P1] = d.people, diff = d.a - d.b, B = pvSplit(d.b), R = pvSplit(diff);
-      const pA = K.person(sc, P0.who, P0.name, COL[0], AVY, AV), pB = K.person(sc, P1.who, P1.name, COL[1], AVY, AV);
-      const gA = K.group(sc, d.a, COL[0], BOT, BH).make();
-      const gB = K.group(sc, d.b, COL[1], BOT, BH), gR = K.group(sc, diff, COL[2], BOT, BH);
-      const op = (t, x)=>{ const e = K.add(sc, "div", "pv-op pv-sym", "font-size:44px"); e.textContent = t; K.setXY(e, x, EY + 2); return e; };
-      const cA = K.numCard(sc, d.a, COL[0], EY, EH), minus = op("−", 536), cB = K.numCard(sc, d.b, COL[1], EY, EH), eqs = op("=", 796),
-            cQ = K.numCard(sc, null, COL[2], EY, EH, "pv-q");
+      const diff = d.a - d.b, R = pvSplit(diff);
+      const S = pvStoryScene(sc, d), { pA, pB, gA, gR, gAm, cA, minus, cB, eqs, cQ, BH } = S;
       const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
-      /* SME review 3: Meera keeps all 25 in view; Aman has his own 13, grey (they are not picked out of her 25) */
-      const gAm = gB.make(); gAm.all().forEach(x => x.classList.add("pv-given"));
       const kept = gA.all();
       const asking = d.mode === "ask";
-      if(asking) [pA, pB, ...gA.all(), ...gAm.all(), cA, minus, cB, eqs, cQ].forEach(e => e.classList.add("pv-hide"));
+      if(asking) S.parts().forEach(e => e.classList.add("pv-hide"));
       K.run(C, async ()=>{
         await C.wait(250);
         if(asking){
@@ -1922,9 +1967,14 @@ const PVModules = {
         /* the take-away, in the same table */
         src.fade(); card.classList.add("pv-gone"); prompt.classList.add("pv-gone");
         await C.wait(350);
-        K.show(E.el); sfxPop();
-        await C.wait(400);
-        await C.cue("sub", [[0.1, ()=> K.pop(E.b)], [0.55, ()=> K.lightDigit(E.b, "t")], [0.8, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]);
+        /* each part of 25 − 13 = ? comes in as it is said: 25 on "25", − on "में से", 13 on "13", = ? on "घटाते"; then the 13's
+           tens / ones digits light on "1 दहाई" / "3 इकाई" */
+        const eqP = [E.a, E.op, E.b, E.eq, E.q]; eqP.forEach(e => e.classList.add("pv-hide")); K.show(E.el);
+        const inn = (...els)=>{ els.forEach(e => K.show(e)); sfxPop(); };
+        const cs = CU.sub || { a: .12, op: .2, b: .3, q: .4, t: .62, o: .8 };
+        await C.cue("sub", [[cs.a, ()=> inn(E.a)], [cs.op, ()=> inn(E.op)], [cs.b, ()=> inn(E.b)], [cs.q, ()=> inn(E.eq, E.q)],
+                            [cs.t, ()=> K.lightDigit(E.b, "t")], [cs.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]);
+        eqP.forEach(e => K.show(e));
         K.lightDigit(E.b, "o", false);
         TA.rods.forEach(x => x.classList.add("pv-dim"));                       // "Tens are disabled"
         await Promise.all([C.say("rm_ones"), C.wait(1400).then(()=> K.demoRemove(C, H, TA, "o", B.o))]);
@@ -1940,21 +1990,26 @@ const PVModules = {
         const ct = CU.total || { t: .5, o: .7, n: .85 };
         await C.cue("total", [[ct.t, ()=> K.beatCol(TA, "t")], [ct.o, ()=> K.beatCol(TA, "o")], [ct.n, ()=>{ K.show(eqS); K.show(tot); sfxPop(); }]]);
         H.el.remove();
-        if(C.has("story_a")) await C.cue("story_a", [[0.2, ()=> say(E.a)], [0.42, ()=> say(E.b)], [0.72, ()=> K.popTable(TA)]]);
-        /* "अब इस डिब्बे में 12 आएगा।": the 12 goes into the "?", the table goes, the equation grows into the middle */
-        let landing = null;
-        const land = async ()=>{
-          const p0 = K.centre(tot, sc), p1 = K.centre(E.q, sc);
-          const f = K.add(sc, "div", "pv-num pv-fly", "height:56px;font-size:39px;min-width:87px;border-radius:16px"); f.innerHTML = K.numHTML(d.a - d.b);
-          K.setXY(f, p0.x, p0.y - 28); tot.style.visibility = "hidden"; PVSFX.move();
-          await K.glide(f, { x: p1.x, y: p1.y - 28 }, 650, true); f.remove(); E.q.classList.remove("pulse"); E.fill(d.a - d.b); sfxCorrect();
-          await K.wait(350); TA.fade(); await K.wait(300); PVSFX.move();
-          await K.glide(E.el, { x: L.cx, y: 318 }, 600, false); E.el.classList.add("pv-eq-hero"); await K.wait(450); };
-        if(C.has("story_b")) await C.cue("story_b", [[0.12, ()=> E.q.classList.add("pulse")], [d.fill_at || 0.5, ()=>{ landing = land(); }]]);
-        else landing = land();
-        if(landing) await landing; C.guard();
-        try{ confettiCannon(); }catch(e){} setSwMood("happy");
-        if(C.has("story_c")) await C.cue("story_c", [[0.6, ()=> say(E.q)]]);
+        await C.wait(500);
+        /* SME review 4: "at the end of T2 bring back the last visual from T1": the table and the equation go, T1's screen (the
+           people, Meera's 25, Aman's 13 in grey, 25 − 13 = ?) comes back; "…तो बचे 12।" - the 12 come in under the "?";
+           "अब इस डिब्बे में 12 आएगा।" - the "?" becomes 12; "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।" - the 12 beat */
+        const SD = (CARD.slides.find(x => x.type === "STORY_SUB") || {}).data;
+        if(SD && C.has("story_a")){
+          TA.fade(); E.el.classList.add("pv-gone"); PVSFX.move();
+          await C.wait(550); C.guard();
+          const S = pvStoryScene(sc, SD), all = S.parts(); all.forEach(e => e.classList.add("pv-hide"));
+          S.gR.make(); const gRb = S.gR.all(); gRb.forEach(e => e.classList.add("pv-hide"));
+          all.forEach((e, i)=> setTimeout(()=>{ if(C.alive()){ K.show(e); if(i % 4 === 0) PVSFX.appear(); } }, i * 30));
+          await C.wait(all.length * 30 + 450); C.guard();
+          const cy = CU.story || { a: .25, b: .45, n: .78, c: .55 };
+          await C.cue("story_a", [[cy.a, ()=>{ say(S.cA); K.beat(S.gA.all(), 25); }], [cy.b, ()=>{ say(S.cB); K.beat(S.gAm.all(), 40); }],
+                                  [cy.n, ()=> gRb.forEach((x, i)=> setTimeout(()=>{ if(C.alive()){ K.show(x); K.pop(x); PVSFX.appear(); } }, i * 120))]]);
+          await C.cue("story_b", [[0.12, ()=> S.cQ.classList.add("pulse")],
+                                  [d.fill_at || 0.5, ()=>{ S.cQ.classList.remove("pulse"); S.cQ.innerHTML = K.numHTML(d.a - d.b); S.cQ.classList.add("filled"); K.pop(S.cQ); sfxCorrect(); }]]);
+          C.guard(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
+          if(C.has("story_c")) await C.cue("story_c", [[cy.c, ()=>{ K.beat(gRb, 90); say(S.cQ); }]]);
+        }
         await C.wait(600);
         setNavActive(true);
       });
@@ -2011,8 +2066,10 @@ const PVModules = {
           src.fade(); await C.wait(300); K.popTable(TA);
         }
         const to = K.centre(E.b, sc);
-        let cfg = { to, settle: 1100, onesFirst: !!d.ones_first };
-        if(C.has("sub")) await C.cue("sub", [[0.05, ()=> K.pop(E.b)], [0.6, ()=> K.lightDigit(E.b, "t")], [0.82, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]);
+        let cfg = { to, settle: 1100, onesFirst: true };   // (every page: only the ones can be tapped until they are done - SME review 4)
+        if(C.has("sub")){ const c = CU.sub || { b: .05, t: .6, o: .82 };
+          await C.cue("sub", [...(c.this != null ? [[c.this, ()=> K.hlTable(TA)]] : []), [c.b, ()=> K.pop(E.b)],
+                              [c.t, ()=> K.lightDigit(E.b, "t")], [c.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]); }
         K.lightDigit(E.b, "o", false);
         const sweepO = ()=> K.beatCol(TA, "o"), sweepT = ()=> K.beatCol(TA, "t");
         if(d.steps){ await C.cue("rm_ones", CU.rm_ones ? [[CU.rm_ones.o, sweepO]] : []);
@@ -2583,171 +2640,116 @@ function afterConfetti(fn){
 /* onscreen headline per gate (display only; distinct from any narration). Eligibility = phase IN this map. */
 const PHASE_GATE_TITLE = { tutorial:"चलिए, शुरू करते हैं!", guided:"चलिए, साथ में करें!", practice:"अब आपकी बारी!" };   // QA checklist 2026-10-05: the headlines are exactly the lines Swiftie speaks (each VO is now that line alone), so the text appears only as she says it
 const PHASE_GATE_VO    = { tutorial:"vo_pt_tutorial", guided:"vo_pt_guided", practice:"vo_pt_practice" };
-/* [peek-2] The clip's own length, and the CSS duck-down that follows it. Both are contracts
-   with assets/gif/peeking.webp and @keyframes pgDuck — if either is re-cut, change it here too. */
-const ANIM_ASSETS = ["loader.webp", "new_landing_swiftee_anim.webp", "peeking.webp", "sw_head_celebrate_anim.webp", "sw_head_hint_anim.webp", "sw_head_tryagain_anim.webp"];
-const PG_CLIP_MS = 8304;  // peeking.webp: hands arrive, peek, blink, come out, talk with blinks, duck back; 8.30s, plays once (9.72s before 2026-10-05).
-const PG_EXIT_MS = 520;    // .phase-gate.leaving / @keyframes pgDuck - a FALLBACK bound only; animationend is what actually closes the gate
-/* [peek-5] review 2026-09-30: the headline and VO came up the instant the gate opened, while
-   Swiftie was still peeking over the ledge - she "spoke" 4s before her mouth moved. They now
-   wait for her: PG_TALK_MS is peeking.webp's first open-mouth frame (frame 58 of 84, measured
-   from the clip's ANMF frame durations). Until then the gate is Swiftie alone. */
-/* review 2026-10-05: "fasten the gif a little before it starts speaking" - the clip's own frame timings were re-timed
-   (frames 1-58 only: its still holds halved, its motion frames 40 -> 32ms; every frame kept, nothing re-encoded), so she
-   reaches her first open-mouth frame at 2.72s instead of 4.14s. The talking part is untouched. */
-const PG_TALK_MS = 2724;
-const PG_TAIL_MS = 450;    // a VO that ends while her clip is still talking: hold this long after it, then duck
-const PG_LOAD_CAP_MS = 2500;   // never wait longer than this for the clip to decode
-/* [peek-6] review 2026-09-30: "Swifty is glitching very much in the transition screen". Three causes:
-   1. peeking.webp's ANIM loop count was 0 (= loop forever; the kit builds it as a play-once GIF and
-      the webp conversion dropped that). Every gate that outlived the clip's 9.72s snapped her back to
-      frame 0 - hands only - and she re-peeked while ducking. The file now says 1: play once, then hold
-      the last frame, which is what PG_CLIP_MS and the park-on-her-smile logic always assumed.
-   2. (asset only) At 1500x1500 the clip's frame decode stalled the whole page ~45 times per gate on an
-      Intel UHD laptop; it now ships at 900x900 - same 84 frames, same durations - and stalls ~6 times.
-   3. Each gate restarted her with a fresh ?r= URL, i.e. a new 3.7MB download - a blank blurred beat
-      before her hands appeared, seconds long on a school connection. The clip is now fetched ONCE and
-      each gate gets a new blob: URL of it; a new URL is a new image, so she starts from frame 0 with
-      no network. Where fetch() can't read the file (file:// hosts) the cache-bust remains the fallback. */
-let _peekUrl = "";
-/* [loading] the clip is the loader's GATE file (Assets): fetched once as a Blob, right after the landing's own files -
-   the gate's <img> no longer pulls it with the page, ahead of them. Each gate: a fresh blob: URL of it. */
-function restartPeek(img){
-  const old = _peekUrl;
-  img.src = _peekUrl = Assets.fresh("assets/gif/peeking.webp");
-  if(old && old.indexOf("blob:") === 0) URL.revokeObjectURL(old);
+const ANIM_ASSETS = ["loader.webp", "new_landing_swiftee_anim.webp", "peeking_talk_up.webp", "sw_head_celebrate_anim.webp", "sw_head_hint_anim.webp", "sw_head_tryagain_anim.webp"];
+/* [gate] THE THREE TRANSITION SCREENS OF HI02H11_L02_S02 (its r142 - Hindi-game-gender-identify's screen), user 2026-10-23:
+   "extract the same all three transition". Rule for rule:
+   - Swifty is peeking_talk_up.webp (900x900, already up and talking), bottom-anchored, square, 52.8% of the window's
+     height (max 624px, never wider than the screen); a .3s lift in (pgUpIn); on the first screen he sinks out (pgPeekDown).
+   - a soft whoosh as the screen opens (its sfx_gate_whoosh).
+   - the magenta headline with the white stroke is blank until Swifty says it, then wipes in left to right (pgWipe, .9s):
+     PHASE_GATE_CUE_MS = where the line starts in OUR clips (each is the line alone: speech at 0.28s), counted from when
+     the clip is heard; _fitGateTitle keeps it off his head on any screen.
+   - the screen lets go when the line ends (he is shown at least 1.2s, the line whole for at least .7s), with a 12s
+     watchdog; the next button is off while it is up; no remount if the child has moved on.
+   Our lines (PHASE_GATE_TITLE) and clips (vo_pt_*) are unchanged. Every screen starts the bird from frame 0: a fresh
+   blob: URL of the one download (Assets.fresh). */
+const PEEK_UP_SRC = "assets/gif/peeking_talk_up.webp";
+const PHASE_GATE_CUE_MS = { tutorial: 280, guided: 280, practice: 280 };
+function _fitGateTitle(){
+  try{
+    const t = $("phaseGateTitle"), im = $("phaseGateImg"), g = $("phaseGate");
+    if(!t || !im || !t.textContent || !g || !g.classList.contains("show")){ window.removeEventListener("resize", _fitGateTitle); return; }
+    t.style.removeProperty("top"); t.style.scale = "";
+    const ir = im.getBoundingClientRect(); if(!ir.height) return;
+    const crest = ir.top + ir.height * 0.38, GAP = 12, EDGE = 8, W = window.innerWidth;
+    const tr = t.getBoundingClientRect();
+    let sc = Math.min(1, (W - 2 * EDGE) / tr.width);                   // never wider than the screen
+    if(tr.top + tr.height * sc > crest - GAP){                          // reaches the bird: lift it
+      const room = crest - GAP - EDGE;
+      sc = Math.min(sc, room / tr.height);
+      sc = Math.max(0.35, sc);
+      const top = Math.max(EDGE, crest - GAP - tr.height * sc);
+      t.style.setProperty("top", top + "px", "important");
+    }
+    if(sc < 0.999){ t.style.transformOrigin = "50% 0"; t.style.scale = String(sc); }
+  }catch(e){}
 }
-/* [peek-7] review 2026-10-05: "swifty gif in the transition screen is glitching a lot". The clip itself is clean
-   (84 frames, a smooth rise, no jumps between frames); the glitch is the browser playing a big animated <img> with
-   alpha under the gate's full-screen backdrop blur - frame steps stall and, as measured on the landing (see
-   [landing mascot player]), Chrome sometimes paints nothing for a frame or two. Same cure as the landing: decode the
-   clip ourselves (WebCodecs ImageDecoder, the next frame always decoded ahead) and draw it on a canvas at its
-   displayed size - a canvas keeps its last picture until the next is drawn. play() resolves true once frame 0 is
-   on screen (the gate's clip clock starts there), false = no ImageDecoder / no bytes / an error: use the <img>. */
-const PeekPlayer = (()=>{
-  const SRC = "assets/gif/peeking.webp", TYPE = "image/webp";
-  let run = 0;
-  function stop(){ run++; }
-  function play(cv, img){
-    const my = ++run, blob = Assets.blob(SRC);
-    if(!cv || !blob || typeof ImageDecoder === "undefined") return Promise.resolve(false);
-    if(img) img.style.display = "none";
-    cv.style.display = "";
-    cv.width = cv.height = 900;                  // the clip's 1:1 shape, so the CSS height + width:auto lays it out
-    const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    const W = Math.max(1, Math.round(r.width * dpr)), H = Math.max(1, Math.round(r.height * dpr));
-    cv.width = W; cv.height = H;                 // (this also wipes the last gate's parked smile)
-    const ctx = cv.getContext("2d"); ctx.imageSmoothingQuality = "high";
-    const draw = f =>{ ctx.clearRect(0, 0, W, H); ctx.drawImage(f, 0, 0, W, H); };
-    return (async ()=>{
-      if(ImageDecoder.isTypeSupported && !(await ImageDecoder.isTypeSupported(TYPE))) return false;
-      const dec = new ImageDecoder({ data: await blob.arrayBuffer(), type: TYPE });
-      await dec.tracks.ready;
-      const count = dec.tracks.selectedTrack.frameCount;
-      const first = count > 0 ? (await dec.decode({ frameIndex: 0 })).image : null;
-      if(!first || my !== run){ if(first) first.close(); dec.close(); return false; }
-      draw(first);
-      let i = 0, cur = first, due = performance.now() + (cur.duration || 90000) / 1000;   // VideoFrame.duration: us
-      let next = count > 1 ? dec.decode({ frameIndex: 1 }) : null;
-      (async ()=>{
-        while(next){
-          let n; try { n = (await next).image; } catch(e){ break; }   // a failed decode: the frame on show stays
-          const wait = due - performance.now();
-          if(wait > 1) await new Promise(res => setTimeout(res, wait));
-          if(my !== run){ n.close(); break; }                        // a newer gate, or this one closed
-          draw(n); cur.close(); cur = n; i++;
-          due = Math.max(due, performance.now() - 30) + (n.duration || 90000) / 1000;
-          next = i + 1 < count ? dec.decode({ frameIndex: i + 1 }) : null;   // decoded while this one is on show
-        }
-        cur.close(); dec.close();                                    // plays once: the last frame stays drawn
-      })();
-      return true;
-    })().catch(()=> false);
-  }
-  return { play, stop };
-})();
+let _peekUrl = "";
 const _gatedPhases = new Set();   // each phase gate plays ONCE (Start→tutorial, →guided, →practice)
 let _gateToken = 0;
 function phaseBlurTransition(cb, toPhase){
   const tok = ++_gateToken;
+  const _idxAtGateOpen = (typeof state !== "undefined") ? state.idx : -1;
   stopNudge(); stopAudio();
   const gate = $("phaseGate"), img = $("phaseGateImg"), cv = $("phaseGateCv");
-  gate.classList.remove("talking");   // headline stays hidden until she talks
-  const title = $("phaseGateTitle"); if(title) title.textContent = PHASE_GATE_TITLE[toPhase] || "";
+  if(cv) cv.style.display = "none";
+  let _peekStart = Date.now();
+  gate.classList.toggle("pg-talk", toPhase === "tutorial");   /* carries the sink on the first gate */
+  gate.classList.add("pg-up");
+  if(img){ img.style.display = ""; img.removeAttribute("src"); void img.offsetWidth;
+           img.onload = function(){ _peekStart = Date.now(); };
+           const old = _peekUrl; img.src = _peekUrl = Assets.fresh(PEEK_UP_SRC);
+           if(old && old.indexOf("blob:") === 0) setTimeout(()=> URL.revokeObjectURL(old), 1000); }
+  const title = $("phaseGateTitle");
+  if(title){ title.textContent = ""; title.classList.remove("pg-pop"); title.style.removeProperty("top"); title.style.scale = ""; }
   $("stage").classList.add("blurred", "gating");
   document.body.classList.add("gating");
-  gate.classList.remove("leaving");   // a gate interrupted mid-exit would open her already off-screen
   gate.classList.add("show");
+  playSfxFile("sfx_gate_whoosh", 0.7);   /* the screen changes - a soft swish, well before Swifty speaks */
   GameBus.emit("phase_transition", { to: toPhase });
-  const closeGate = ()=>{ gate.classList.remove("show", "leaving", "talking"); $("stage").classList.remove("blurred", "gating"); document.body.classList.remove("gating"); };
-  // VO only if the card actually ships it; else a silent beat — the clip floor keeps the peek visible.
+  const closeGate = ()=>{ gate.classList.remove("show"); $("stage").classList.remove("blurred", "gating"); document.body.classList.remove("gating"); };
+  setNavActive(false);
+  let _gateDone = false, _capT = null, _capAt = 0;
+  const finishGate = ()=>{
+    if(_gateDone) return;                       // cb() must mount the next slide exactly once
+    _gateDone = true;
+    gate.classList.add("pg-sink");
+    setTimeout(()=> _tearDownGate(), gate.classList.contains("pg-talk") ? 340 : 0);
+  };
+  const _tearDownGate = ()=>{
+    gate.classList.remove("show", "pg-sink");
+    clearTimeout(_capT); if(title){ title.textContent = ""; title.classList.remove("pg-pop"); }
+    $("stage").classList.remove("blurred");
+    if(cb && (_idxAtGateOpen < 0 || state.idx === _idxAtGateOpen)) cb();   // mounts the next slide
+    $("stage").classList.remove("gating");      // header returns once the slide is in
+    document.body.classList.remove("gating");
+  };
+  const GATE_WATCHDOG_MS = 12000;
+  setTimeout(()=>{ if(tok === _gateToken) finishGate(); }, GATE_WATCHDOG_MS);
   const voId = PHASE_GATE_VO[toPhase];
   const voSrc = (voId && CARD.assets && CARD.assets.audio && CARD.assets.audio[voId]) || null;
-  /* The clip's clock starts when it can actually paint, NOT when the gate opens: decoding a
-     fresh 1500px clip (or downloading it, on the ?r= fallback) takes a moment, and timing from
-     the open would put the VO ahead of her mouth by however long that took. */
-  let clipAt = 0;
-  const startClock = ()=>{
-    if(clipAt || tok !== _gateToken) return;
-    clipAt = Date.now();
-    setTimeout(talk, PG_TALK_MS);
-  };
-  /* [peek-7] the canvas player first (it needs the gate shown, to measure her); the <img> only if it can't */
-  const useImg = ()=>{
-    if(tok !== _gateToken) return;
-    if(cv) cv.style.display = "none";
-    if(!img){ startClock(); return; }
-    img.style.display = "";
-    restartPeek(img);                 // from frame 0, every gate
-    if(img.decode) img.decode().then(startClock, startClock); else startClock();
-  };
-  PeekPlayer.play(cv, img).then(ok =>{ if(tok !== _gateToken) return; if(ok) startClock(); else useImg(); }, useImg);
-  setTimeout(startClock, PG_LOAD_CAP_MS);   // a stalled download never strands the gate
-  function talk(){
-    if(tok !== _gateToken) return;          // a newer gate superseded us
-    gate.classList.add("talking");          // headline pops in (CSS) on the same tick the VO starts
-    play(voSrc, afterVo);
-  }
-  function afterVo(){
-    if(tok !== _gateToken){ closeGate(); return; }               // a newer gate superseded us
-    /* peeking.webp plays ONCE: rise, talk, then park on her smile (PG_CLIP_MS).
-       A line that outlasts the clip still governs - she holds the parked smile until
-       it ends, then ducks at once. A line that ends while she is still talking (the
-       2.3s practice line against 4.4s of mouth) ducks her PG_TAIL_MS after it, so her
-       beak is not flapping in silence. With no VO at all the whole clip plays out. */
-    const clipLeft = Math.max(0, PG_CLIP_MS - (Date.now() - clipAt));
-    const hold = voSrc ? Math.min(clipLeft, PG_TAIL_MS) : clipLeft;
-    const finish = ()=>{
-      PeekPlayer.stop();
-      gate.classList.remove("show", "leaving", "talking");
-      $("stage").classList.remove("blurred");
-      if(cb) cb();                              // mounts the next slide
-      $("stage").classList.remove("gating");    // header returns once the slide is in
-      document.body.classList.remove("gating");
+  /* the headline arrives with its words: PHASE_GATE_CUE_MS into the clip, counted from when it is heard */
+  const _cue = PHASE_GATE_CUE_MS[toPhase];
+  const _capText = PHASE_GATE_TITLE[toPhase] || "";
+  const _armCaption = ()=>{
+    if(!title || !_capText) return;
+    const show = ()=>{
+      if(tok !== _gateToken || _gateDone) return;
+      _capAt = Date.now();
+      title.textContent = _capText; title.classList.remove("pg-pop"); void title.offsetWidth; title.classList.add("pg-pop");
+      _fitGateTitle(); window.addEventListener("resize", _fitGateTitle);
     };
-    /* Send her back down BEFORE the gate is torn down, not with it - the clip no longer
-       ducks on its own (it can't: it would have to know how long the VO is). The close
-       waits on animationend, NOT on a matching setTimeout: a fixed PG_EXIT_MS timer
-       raced the animation and lost - decoding the clip's tail delayed the animation's
-       first frame by ~270ms, so the gate vanished with Swiftie still barely moved. */
-    setTimeout(()=>{
-      if(tok !== _gateToken){ closeGate(); return; }   // a newer gate superseded us
-      let done = false, fallback = 0;
-      const once = ()=>{
-        if(done) return; done = true;
-        clearTimeout(fallback);
-        if(img) img.removeEventListener("animationend", once);
-        if(cv) cv.removeEventListener("animationend", once);
-        if(tok !== _gateToken){ closeGate(); return; }
-        finish();
-      };
-      if(img) img.addEventListener("animationend", once);   // only the one on show runs the duck
-      if(cv) cv.addEventListener("animationend", once);
-      gate.classList.add("leaving");
-      // reduced-motion, a missing clip, a backgrounded tab: nothing to end, so close anyway
-      fallback = setTimeout(once, PG_EXIT_MS + 500);
-    }, hold);
-  }
+    if(_cue == null || !voSrc){ _capT = setTimeout(show, 0); return; }
+    const t0 = performance.now();
+    (function waitVoice(){
+      if(tok !== _gateToken) return;
+      const on = !!(currentAudio && !currentAudio.paused && currentAudio.currentTime > 0);
+      if(on || performance.now() - t0 > 1500){ _capT = setTimeout(show, _cue); return; }
+      requestAnimationFrame(waitVoice);
+    })();
+  };
+  _armCaption();
+  play(voSrc, ()=>{
+    if(tok !== _gateToken){ closeGate(); return; }               // a newer gate superseded us
+    const PEEK_MS = 1200;                                          // he is shown at least this long
+    const CAP_HOLD_MS = 1600;                                      // and the line whole for .7s (wipe .9s + .7s)
+    (function waitPeek(){
+      if(tok !== _gateToken){ closeGate(); return; }
+      const left = Math.max(PEEK_MS - (Date.now() - _peekStart), _capAt ? CAP_HOLD_MS - (Date.now() - _capAt) : 0);
+      if(left > 0){ setTimeout(waitPeek, Math.min(left, 120)); return; }
+      finishGate();
+    })();
+  });
 }
 
 function completeSlide(success){
@@ -2881,7 +2883,7 @@ const ASSET_SIZES = {
   "assets/fonts/baloo2-800.woff2": 74512,
   "assets/gif/loader.webp": 137428,
   "assets/gif/new_landing_swiftee_anim.webp": 641710,
-  "assets/gif/peeking.webp": 1252974,
+  "assets/gif/peeking_talk_up.webp": 1561680,
   "assets/gif/sw_head_celebrate_anim.webp": 293618,
   "assets/gif/sw_head_hint_anim.webp": 316076,
   "assets/gif/sw_head_tryagain_anim.webp": 313414,
@@ -2898,6 +2900,7 @@ const ASSET_SIZES = {
   "assets/sfx/bgm.ogg": 1443997,
   "assets/sfx/sfx_confetti.ogg": 11582,
   "assets/sfx/sfx_correct.ogg": 10099,
+  "assets/sfx/sfx_gate_whoosh.ogg": 22384,
   "assets/sfx/sfx_next.ogg": 1538,
   "assets/sfx/sfx_nudge.ogg": 3537,
   "assets/sfx/sfx_play.ogg": 3094,
@@ -3083,7 +3086,7 @@ const Assets = (function(){
     if(s.phase === "tutorial" && s.type !== "CELEBRATION") img("start_mascot");      // the tutorial card's Swiftie
     return out;
   }
-  const PEEK = art("peeking.webp");
+  const PEEK = art("peeking_talk_up.webp");
   const FONTS = ["assets/fonts/baloo2-800.woff2", "assets/fonts/baloo2-700.woff2", "assets/fonts/baloo2-600.woff2"];
   function gateFiles(phase){ return [PEEK, vo(PHASE_GATE_VO[phase])].filter(Boolean); }
   function init(){

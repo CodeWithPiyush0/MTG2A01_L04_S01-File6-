@@ -2249,3 +2249,77 @@ body.is-start .sg-sky{
 .pv-src2 img{height:60px;}
 .pv-src2 img[src*="pv_cube"]{height:40px;}
 .pv-pm{width:58px;height:58px;font-size:50px;line-height:58px;}
+/* SME review 4: the answer cards' numbers bigger (G2 and every page with three cards) */
+.mq-opt{width:224px;min-width:224px;height:104px;font-size:58px;border-radius:20px;}
+/* SME review 4: "इसमें" - the whole table lights: its frame glows gold a moment */
+.pv-table.pv-table-hl{animation:pvTableHl 1.5s ease-in-out 1;}
+@keyframes pvTableHl{0%,100%{border-color:#A9CDF2;box-shadow:0 5px 0 #D2E4F6,0 12px 24px rgba(0,47,118,.10);}
+  25%,70%{border-color:#FFB81C;box-shadow:0 5px 0 #D2E4F6,0 0 0 6px rgba(255,190,40,.55),0 0 22px 6px rgba(255,190,40,.45);}}
+@media (prefers-reduced-motion:reduce){ .pv-table.pv-table-hl{animation:none;border-color:#FFB81C;} }
+
+/* ==================== 2026-10-23 ==================== */
+/* the three transition screens of HI02H11_L02_S02 (its r142 CSS, taken as it is) */
+/* [r142] THE TRANSITION SCREEN OF Hindi-game-gender-identify (HI02H11_L03_S02), rule for rule.
+   Yasir: "extract and replace the exact same all three transition screens and their animation from
+   this repo". The grey blurred wash was already the same; what changes is everything on it:
+   - Swifty is that repo's peeking_talk_up.webp (900x900, already up and talking), bottom-anchored,
+     square, 52.8% of the window's height, at most 624px and never wider than the screen. He comes in
+     with a short .3s lift (pgUpIn); on the first transition he sinks out (pgPeekDown, .34s) at the end.
+   - the line is its magenta headline with the white stroke, sized by --pgf, 271px down (higher on a
+     short screen), and it WIPES in left to right (pgWipe, .9s) when Swifty says it.
+   The engine's _fitGateTitle (same repo) keeps the line off his head on any screen. */
+.pg-title{font-family:var(--font-hi) !important;font-weight:800 !important;letter-spacing:0 !important;}
+.pg-title.pg-pop{animation:pgWipe .9s cubic-bezier(.25,.6,.3,1) both;}
+@keyframes pgWipe{from{clip-path:inset(-24px 100% -24px -24px);}to{clip-path:inset(-24px -24px -24px -24px);}}
+html.no-anim .pg-title.pg-pop{animation:none !important;}
+.phase-gate.pg-up #phaseGateImg{animation:pgUpIn .3s ease-out both !important;}
+@keyframes pgUpIn{from{transform:translate(-50%,28%);}to{transform:translate(-50%,0);}}
+html.no-anim .phase-gate.pg-up #phaseGateImg{animation:none !important;}
+.phase-gate.pg-talk.pg-sink #phaseGateImg{
+  animation:pgPeekDown .34s ease-in both !important;}
+@keyframes pgPeekDown{
+  from{transform:translate(-50%,0);}
+  to  {transform:translate(-50%,100%);}}
+html.no-anim .phase-gate.pg-talk #phaseGateImg{animation:none !important;}
+.phase-gate{align-items:center !important;}
+.phase-gate{--pgf:min(96px, 12.8vh, 13vw);}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+.phase-gate .pg-title{z-index:3 !important;}
+.phase-gate #phaseGateImg{z-index:1;}
+@supports (height: 1svh){
+  .phase-gate{--pgf:min(96px, 12.8svh, 13vw);}
+  .pg-title{top:max(8px, min(271px, calc(58.8svh - 1.2 * var(--pgf) - 12px))) !important;}
+  .phase-gate #phaseGateImg{height:min(52.8svh,624px,92vw) !important;width:min(52.8svh,624px,92vw) !important;}
+}
+.pg-title{left:50% !important;transform:translateX(-50%) !important;
+          top:max(8px, min(271px, calc(58.8vh - 1.2 * var(--pgf) - 12px))) !important;
+          width:max-content !important;max-width:94vw !important;white-space:nowrap !important;
+          font-size:var(--pgf) !important;line-height:1.14 !important;color:#CD0FD5 !important;
+          -webkit-text-stroke:calc(var(--pgf) * 0.104) #FFFFFF !important;paint-order:stroke fill !important;}
+.phase-gate #phaseGateImg{position:fixed !important;left:50% !important;bottom:0 !important;
+          height:min(52.8vh,624px,92vw) !important;width:min(52.8vh,624px,92vw) !important;
+          object-fit:contain !important;
+          transform:translateX(-50%);
+          animation:none !important;}
+/* (ours that would fight it: the old clip's canvas, its hidden-until-talking headline, its duck, its sunk margin) */
+.phase-gate #phaseGateCv{display:none !important;}
+.phase-gate .pg-title{opacity:1 !important;}
+.pg-title:empty{display:none;}
+.phase-gate.leaving #phaseGateImg{animation:none;}
+.phase-gate #phaseGateImg{margin:0 !important;}
+/* pages 1, 2 (the tutorial card): the next button where HI02H11 has it - centred, 30px (screen) above the card's bottom
+   edge (its card is shorter: the same gap here sits 89px from the stage's bottom) */
+.stage.tut .nav-btn{bottom:89px;}
+
+/* the next button's pulse: HI02H11_L02_S02's (its r97), exactly (user 2026-10-23) - from the moment it is live, 1.3s
+   ease-in-out, 1 -> 1.09 -> 1 about its centre, the pill's translateX(-50%) kept in every frame; no pop before it.
+   It replaces ours (the play button's pop, then a 1.15s 1.08 / .985 pulse, scaled from the pill's left edge). */
+@keyframes ltNavPulse{
+  0%,100%{ transform:translateX(-50%) scale(1); }
+  50%    { transform:translateX(-50%) scale(1.09); }
+}
+.nav-btn,.stage .nav-btn,.stage.tut .nav-btn{transform-origin:50% 50%;}
+.nav-btn.active,.stage .nav-btn.active,.stage.tut .nav-btn.active{animation:none;scale:none;}
+.nav-btn.active:not(:disabled),.stage .nav-btn.active:not(:disabled),.stage.tut .nav-btn.active:not(:disabled){animation:ltNavPulse 1.3s ease-in-out infinite;}
+.nav-btn.active:not(:disabled):active,.stage .nav-btn.active:not(:disabled):active,.stage.tut .nav-btn.active:not(:disabled):active{animation:none;}
+@media (prefers-reduced-motion:reduce){ .nav-btn.active:not(:disabled),.stage .nav-btn.active:not(:disabled),.stage.tut .nav-btn.active:not(:disabled){ animation:none; } }

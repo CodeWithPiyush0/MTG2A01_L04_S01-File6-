@@ -9,7 +9,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261022c">
+<link rel="stylesheet" href="style.css?v=20261023c">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -128,7 +128,7 @@
      and shrink the gate with the stage - production pattern). -->
 <div class="phase-gate" id="phaseGate">
     <div class="pg-title" id="phaseGateTitle"></div>
-    <img id="phaseGateImg" alt="">   <!-- (its picture: a blob: URL of peeking.webp per gate, app.js restartPeek) -->
+    <img id="phaseGateImg" alt="">   <!-- (its picture: a blob: URL of peeking_talk_up.webp per gate, app.js phaseBlurTransition) -->
     <canvas id="phaseGateCv" style="display:none" aria-hidden="true"></canvas>   <!-- [peek-7] the same clip, drawn by app.js PeekPlayer; the <img> is its fallback -->
 </div>
 
@@ -422,6 +422,20 @@
       "t": 0.55,
       "o": 0.685,
       "n": 0.808
+     },
+     "sub": {
+      "a": 0.079,
+      "op": 0.167,
+      "b": 0.245,
+      "q": 0.333,
+      "t": 0.599,
+      "o": 0.731
+     },
+     "story": {
+      "a": 0.216,
+      "b": 0.43,
+      "n": 0.72,
+      "c": 0.489
      }
     }
    }
@@ -455,6 +469,11 @@
      "remove": {
       "o": 0.13,
       "t": 0.573
+     },
+     "sub": {
+      "b": 0.136,
+      "t": 0.574,
+      "o": 0.739
      },
      "build": {
       "t": 0.629,
@@ -513,6 +532,11 @@
       "o": 0.209,
       "t": 0.689
      },
+     "sub": {
+      "b": 0.134,
+      "t": 0.575,
+      "o": 0.741
+     },
      "build": {
       "t": 0.62,
       "o": 0.75
@@ -570,6 +594,12 @@
      },
      "rm_tens": {
       "t": 0.382
+     },
+     "sub": {
+      "b": 0.232,
+      "t": 0.62,
+      "o": 0.765,
+      "this": 0.123
      }
     }
    }
@@ -613,6 +643,12 @@
      "recount": {
       "t": 0.254,
       "o": 0.424
+     },
+     "sub": {
+      "b": 0.23,
+      "t": 0.622,
+      "o": 0.769,
+      "this": 0.119
      }
     }
    }
@@ -748,6 +784,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261022c"></script>
+<script src="app.js?v=20261023c"></script>
 </body>
 </html>
