@@ -1041,6 +1041,14 @@ const PVK = (function(){
     E.fill = n =>{ E.q.innerHTML = numHTML(n); E.q.classList.add("filled"); pop(E.q); };
     setXY(row, cx, y); return E;
   }
+  /* the equation spread out (the sibling's number-pad page): each part placed by its own centre - xs { a, op, b, eq, q } */
+  function spreadEq(sc, a, b, op, xs, y, h){
+    const sym = (t, x)=>{ const e = add(sc, "div", "pv-op pv-sym", "font-size:" + px(h * .73)); e.textContent = t; setXY(e, x, y + h / 2 - h * .35); return e; };
+    const E = { a: numCard(sc, a, xs.a, y, h, "pv-ea"), op: sym(op || "+", xs.op), b: numCard(sc, b, xs.b, y, h, "pv-eb"), eq: sym("=", xs.eq), q: numCard(sc, null, xs.q, y, h, "pv-q") };
+    E.plus = E.op; E.spread = true;
+    E.fill = n =>{ E.q.innerHTML = numHTML(n); E.q.classList.add("filled"); pop(E.q); };
+    return E;
+  }
   /* ---- one person of a story page: the round portrait and the name under it ---- */
   function person(sc, who, name, cx, y, size){
     const list = Array.isArray(who) ? who : [who];
@@ -1052,7 +1060,7 @@ const PVK = (function(){
   }
 
   return { reduce, px, wait, ROD, CUBE, FIT, dashBox, kNow, add, setXY, xy, knock, pop, show, shake, repulse, softGlow, scene, ctx, run, block, glide, shift,
-           hand, centre, numHTML, numCard, lightDigit, equation, person };
+           hand, centre, numHTML, numCard, lightDigit, equation, spreadEq, person };
 })();
 
 /* ---- [pv kit] the place-value table, block groups, moving blocks between tables, making a ten ---- */
@@ -1472,23 +1480,30 @@ Object.assign(PVK, (function(){
       const slide = C.slide, sc = C.sc, digits = String(cfg.answer).split(""), N = digits.length;
       const slotW = Math.max(120, N * 30 + 60), ansW = slotW + 26;
       const x0 = cfg.x - ansW / 2;                                   // the answer box stands at the centre
-      const ans = add(sc, "div", "pv-ans"); setXY(ans, x0, cfg.y + 40);
-      const slot = add(ans, "div", "pv-slot pv-slot-one", "width:" + px(slotW));
-      /* the pad: two rows (1-5 + back, 6-0) beside the box, level with it - it stays on the stage under the tables
-         (review 2026-10-14 "place the calculator correctly"; the 4-row pad ran past the stage's bottom) */
-      const pad = add(sc, "div", "pv-pad pv-pad-2 pv-hide"); setXY(pad, x0 + ansW + 40, cfg.y + 40 + 51 - 78);
+      /* cfg.target (the sibling's layout, user 2026-10-22): no answer box - the child types into the equation's "?" */
+      const T = cfg.target;
+      const ans = T || add(sc, "div", "pv-ans"); if(!T) setXY(ans, x0, cfg.y + 40);
+      const slot = T || add(ans, "div", "pv-slot pv-slot-one", "width:" + px(slotW));
+      if(T) T.classList.add("pv-typein");
+      /* the pad: the sibling's 3 x 4 phone pad (MTG2A01_L03_S01, user 2026-10-22) - 1-9, then back 0 tick. It is tall
+         (4 rows), so it stands beside the table column (cfg.padAt), else beside the box, level with its middle */
+      const pad = add(sc, "div", "pv-pad pv-pad-3 pv-hide");
       const keys = {};
       /* review 2026-10-14: a backspace ARROW (the ⌫ glyph read as a cross) and a green tick that sends the answer */
       const ICON = { "⌫": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5.5M11 5.5 4.5 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                      "✓": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' };
-      ["1","2","3","4","5","⌫","6","7","8","9","0","✓"].forEach(k =>{
+      ICON["⌫"] = '<svg viewBox="0 0 40 26" aria-hidden="true"><path d="M13 2h23a2.5 2.5 0 0 1 2.5 2.5v17A2.5 2.5 0 0 1 36 24H13L2 13z" fill="#fff" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>' +
+        '<path d="M19 8.5l9 9M28 8.5l-9 9" stroke="#E5282E" stroke-width="3.4" stroke-linecap="round"/></svg>';
+      ["1","2","3","4","5","6","7","8","9","⌫","0","✓"].forEach(k =>{
         const b = add(pad, "button", "pv-key" + (k === "⌫" ? " pv-back" : k === "✓" ? " pv-ok off" : "")); b.type = "button";
         if(ICON[k]){ b.innerHTML = ICON[k]; b.setAttribute("aria-label", k === "⌫" ? "मिटाएँ" : "जाँचें"); } else b.textContent = k;
         b._k = k; keys[k] = b; });
       const ok = keys["✓"];
+      if(cfg.padAt) setXY(pad, cfg.padAt.cx != null ? cfg.padAt.cx - pad.offsetWidth / 2 : cfg.padAt.x, cfg.padAt.y);
+      else setXY(pad, x0 + ansW + 40, cfg.y + 40 + ans.offsetHeight / 2 - pad.offsetHeight / 2);
       let typed = [], wrong = 0, busy = false, open = false, over = false, idleT = 0, guide = null;
       const P = { ans, pad,
-        hide(on){ ans.classList.toggle("pv-hide", on !== false); pad.classList.toggle("pv-hide", on !== false || !open); },
+        hide(on){ if(!T) ans.classList.toggle("pv-hide", on !== false); pad.classList.toggle("pv-hide", on !== false || !open); },
         guideKeys(){ guide = 0; Object.values(keys).forEach(b => b.classList.add("locked")); lightKey(); } };
       /* the third layer: the right digit keys light one after the other, then the tick */
       const lightKey = ()=>{ Object.values(keys).forEach(b => b.classList.remove("hint-on"));
@@ -1497,6 +1512,7 @@ Object.assign(PVK, (function(){
       /* the tick: dim until a digit is in, pulsing once the box holds the whole answer */
       const okState = ()=>{ ok.classList.toggle("off", !typed.length); ok.classList.toggle("pulse", typed.length >= N && !over && !busy); };
       const render = ()=>{ const full = typed.length >= N || over;
+        if(T && !open && !typed.length){ if(ok) okState(); return; }          // (the "?" stays until the pad opens)
         slot.innerHTML = typed.map(d => '<span class="pv-ch">' + d + '</span>').join("") + (full ? "" : '<span class="pv-caret">|</span>');
         slot.classList.toggle("on", open && !full); if(ok) okState(); };
       render();                                                    // the cursor shows from the start
@@ -1505,6 +1521,7 @@ Object.assign(PVK, (function(){
         busy = true; C.say(cfg.reask || "prompt").then(()=>{ busy = false; arm(); }, ()=>{}); }, IDLE_MS); };
       const openPad = ()=>{ if(open || over) return; open = true; stopNudge(); pad.classList.remove("pv-hide"); pop(pad); ans.classList.add("open"); render(); arm(); };
       ans.onclick = ()=>{ if(!C.alive() || busy) return; if(!open) PVSFX.tap(); openPad(); };
+      P.open = openPad;
       async function check(){
         busy = true; clearTimeout(idleT); stopNudge(); okState();
         const v = typed.join("");
@@ -1766,6 +1783,18 @@ const PV_LAY = {
   main: { eqY: 166, eqH: 62, tableY: 254, sumY: 466, cube: 29, blk: 28, pad: 10, cxL: 410, cxR: 922, cx: 666 }    // under the header band
 };
 const pvSplit = n =>({ t: Math.floor(n / 10), o: n % 10 });
+/* the keypad pages (P1, P4) in the sibling's layout (MTG2A01_L03_S01 PV_NUMPAD, user 2026-10-22): the one table on the left,
+   level with the 3 x 4 pad's middle; the pad on the right under the "?"; the equation spread over them - a over the दहाई
+   column, b over the इकाई column, the − between, the "=" midway to the "?" - and the child types into the "?" */
+const PV_PADL = { eqY: 162, eqH: 100, tcx: 470, qx: 1100, padY: 296, padH: 356 };
+function pvPadPage(sc, L, d){
+  const K = PVK, P = PV_PADL, T = pvTable(sc, L, P.tcx, L.tableY);
+  T.move(0, Math.round(P.padY + P.padH / 2 - T.H / 2) - T.y, 0);
+  const mid = h => T.x + h.offsetLeft + h.offsetWidth / 2, ca = mid(T.th), cb = mid(T.oh);   // (layout sizes: right during a slide-in too)
+  const E = K.spreadEq(sc, d.a, d.b, "−", { a: ca, op: (ca + cb) / 2, b: cb, eq: 0, q: P.qx }, P.eqY, P.eqH);
+  K.setXY(E.eq, (cb + E.b.offsetWidth / 2 + P.qx - E.q.offsetWidth / 2) / 2, E.eq._y);
+  return { T, E, padAt: { cx: P.qx, y: P.padY } };
+}
 /* every table of the lesson is the same size (SME review 3): its tens column is wide enough for nine rods */
 const pvTable = (sc, L, cx, y)=> PVK.table(sc, { cx, y, cube: L.cube, blk: L.blk, pad: L.pad, tensMax: 9, tensFinal: 0, onesMax: 9 });
 function pvReplay(C){ state.replayAudio = ()=>{ if(!isPlaying && C.cur && C.alive()) C.say(C.cur).catch(()=>{}); }; }
@@ -1907,11 +1936,11 @@ const PVModules = {
        data: { a, b, answer, options, build, steps, right_table }. audio: prompt, build, sub, remove | rm_ones + rm_tens,
        ask, try_again, reveal, correct, eq + rm_ones_more, rm_ones_less, rm_tens_more, rm_guide. */
     mount(host, slide){
-      const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), L = PV_LAY.main;
+      const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), L = PV_LAY.main, PAD = d.answer === "numpad" ? pvPadPage(sc, L, d) : null;
       state.ownsAudio = true; state.locked = false; setNavActive(false); $("navBtn").style.display = "none"; setSwMood("point"); pvReplay(C);
       const A = pvSplit(d.a), B = pvSplit(d.b), diff = d.a - d.b, R = pvSplit(diff);
-      const E = K.equation(sc, d.a, d.b, L.cx, L.eqY, L.eqH, "−");
-      const TA = pvTable(sc, L, L.cx, L.tableY), TB = null;                   // one table throughout (SME review 3)
+      const E = PAD ? PAD.E : K.equation(sc, d.a, d.b, L.cx, L.eqY, L.eqH, "−");
+      const TA = PAD ? PAD.T : pvTable(sc, L, L.cx, L.tableY), TB = null;     // one table throughout (SME review 3)
       const GAP = 26, ansY = d.answer === "numpad" ? L.tableY + TA.H + GAP - 13 : L.tableY + TA.H + GAP;   // the pad stands 13px above its y
       const AT = ()=> TB || TA;                                            // the table that holds the answer
       const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
@@ -1971,30 +2000,32 @@ const PVModules = {
               else { await digitsUnder(dy => M.moveTo(ansY + dy)); M.lock(); if(d.reveal_hand) setTimeout(()=>{ if(C.alive()) placeNudge(M.right); }, 300); await C.say("reveal"); } } });
           return;
         }
-        await K.numpad(C, { answer: diff, x: L.cx, y: ansY, reask: "ask",
-          onReady: P =>{ P.hide(true); C.cue("ask", [[0.55, ()=>{ P.hide(false); K.pop(P.ans); }]]).then(()=> P.ready(), ()=>{}); },
-          onRight: ans => K.flyAnsToQ(C, ans, E, diff),
+        await K.numpad(C, { answer: diff, x: L.cx, y: ansY, reask: "ask", target: E.q, padAt: PAD.padAt,
+          onReady: P =>{ P.hide(true); C.cue("ask", [[0.55, ()=>{ P.hide(false); P.open(); }]]).then(()=> P.ready(), ()=>{}); },
+          onRight: ()=> E.fill(diff),
           ladder: async (n, P)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
-            else { await digitsUnder(down([P.ans, P.pad])); P.guideKeys(); await C.say("reveal"); } } });
+            else { await digitsUnder(); P.guideKeys(); await C.say("reveal"); } } });
       });
     }
   },
   MENTAL_SUB: {
     /* deck pages 13 and 15 - only "a − b = ?" and the answer: three cards (data.answer "mcq") or the number pad
-       ("numpad"; data.pad_below: the pad under its answer box - user 2026-10-17). The ladder (user 2026-10-16/17):
+       ("numpad": the sibling's keypad layout, pvPadPage - the child types into the "?", user 2026-10-22). The ladder (user 2026-10-16/17):
        1 "संख्याओं में से पहले इकाई घटाइए, फिर दहाई घटाइए।" - the ones digits light on "इकाई", the tens digits on "दहाई";
        2 the blocks, told by "a में से b घटाने पर, x दहाई और y इकाई बचती हैं।": on "a" a's blocks light, on "b" b is taken away
        (ones, then tens - grey copies, each flying to b), on "x दहाई" / "y इकाई" the tens / ones left light; the table stays
        (its heads count what is left); 3 the column digits under the table, then the right answer is shown (+ the reveal).
-       data: { a, b, answer, options, pad_below, cues }. audio: prompt, order, h2, reveal, correct. */
+       data: { a, b, answer, options, cues }. audio: prompt, order, h2, reveal, correct. */
     mount(host, slide){
-      const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), L = PV_LAY.main, CU = d.cues || {};
+      const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), CU = d.cues || {};
       state.ownsAudio = true; state.locked = false; setNavActive(false); $("navBtn").style.display = "none"; setSwMood("point"); pvReplay(C);
       const diff = d.a - d.b, pad = d.answer === "numpad", A = pvSplit(d.a), B = pvSplit(d.b), R = pvSplit(diff);
-      const GAP = 26, Y0 = pad ? (d.pad_below ? 322 : 330) : 452;              // the answer's first place (the box stands at Y0 + 40)
+      const L = PV_LAY.main, PAD = pad ? pvPadPage(sc, L, d) : null;          // the keypad page: the sibling's layout
+      if(PAD) PAD.T.el.classList.add("pv-hide");
+      const GAP = 26, Y0 = 452;                                                // the cards' first place
       /* the table of the 2nd help: a number pad under its box needs a shorter table (90 = nine rods) */
       const TY = L.tableY;
-      const E = K.equation(sc, d.a, d.b, L.cx, pad ? (d.pad_below ? 252 : 196) : 282, L.eqH, "−"); E.el.classList.add("big");
+      const E = PAD ? PAD.E : K.equation(sc, d.a, d.b, L.cx, 282, L.eqH, "−"); if(!PAD) E.el.classList.add("big");
       const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
       const order = async ()=>{ const c = CU.order || { o: .36, t: .68 };
         await C.cue("order", [[c.o, ()=>{ K.lightDigit(E.a, "o"); K.lightDigit(E.b, "o"); }],
@@ -2005,8 +2036,8 @@ const PVModules = {
       async function blocks(hide, moveTo){
         if(T) return;
         hide(true);
-        E.el.classList.remove("big"); await K.glide(E.el, { x: L.cx, y: L.eqY }, 500, false); C.guard();
-        T = pvTable(sc, L, L.cx, TY);
+        if(PAD) T = PAD.T;
+        else { E.el.classList.remove("big"); await K.glide(E.el, { x: L.cx, y: L.eqY }, 500, false); C.guard(); T = pvTable(sc, L, L.cx, TY); }
         K.showTable(T); await C.wait(250);
         await T.fill(d.a, 90); C.guard(); K.popTable(T); await C.wait(300);
         const to = K.centre(E.b, sc), take = [];
@@ -2019,7 +2050,7 @@ const PVModules = {
                            [c.t, ()=> K.beatCol(T, "t")], [c.o, ()=> K.beatCol(T, "o")]]);
         if(taking) await taking; C.guard();
         await C.wait(300);
-        moveTo(TY + T.H + GAP - (pad ? 13 : 0)); hide(false);      // the pad / the cards GAP under the table
+        moveTo(TY + T.H + GAP); hide(false);                        // the box / the cards GAP under the table
       }
       /* the digits under the table, clear of its edge */
       const digitsUnder = async shift =>{ if(shift) shift(26); const g = T.digits(R.t, R.o); [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
@@ -2037,20 +2068,15 @@ const PVModules = {
             } });
           return;
         }
-        await K.numpad(C, { answer: diff, x: L.cx, y: Y0, reask: "prompt",
+        await K.numpad(C, { answer: diff, x: L.cx, y: Y0, reask: "prompt", target: E.q, padAt: PAD.padAt,
           onReady: P =>{
-            if(d.pad_below){                                                     // 9) the pad under its answer box
-              const aw = P.ans.offsetWidth, ah = P.ans.offsetHeight, pw = P.pad.offsetWidth;
-              K.setXY(P.pad, P.ans._x + aw / 2 - pw / 2, P.ans._y + ah + GAP); }
-            P.hide(true); C.cue("prompt", [[0.6, ()=>{ P.hide(false); K.pop(P.ans); }]]).then(()=> P.ready(), ()=>{}); },
-          onRight: ans => K.flyAnsToQ(C, ans, E, diff),
+            P.hide(true); C.cue("prompt", [[0.6, ()=>{ P.hide(false); P.open(); }]]).then(()=> P.ready(), ()=>{}); },
+          onRight: ()=> E.fill(diff),
           ladder: async (n, P)=>{
-            /* under the table the pad stands beside its box (as on page 6) - under it there is no room for both */
-            const moveTo = y =>{ const aw = P.ans.offsetWidth, ax = L.cx - (aw + 40 + P.pad.offsetWidth) / 2;
-              K.setXY(P.ans, ax, y + 40); K.setXY(P.pad, ax + aw + 40, y + 13); };
+            const moveTo = ()=>{};                                        // (the "?" and the pad stay where they are)
             if(n === 1) await order();
             else if(n === 2) await blocks(on => P.hide(on), moveTo);
-            else { await blocks(on => P.hide(on), moveTo); await digitsUnder(dy => [P.ans, P.pad].forEach(e => K.glide(e, { x: e._x, y: e._y + dy }, 420, false))); P.guideKeys(); await C.say("reveal"); }
+            else { await blocks(on => P.hide(on), moveTo); await digitsUnder(); P.guideKeys(); await C.say("reveal"); }
           } });
       });
     }

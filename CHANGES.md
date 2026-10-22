@@ -193,3 +193,13 @@ EAR-CHECK: the new synthesised sounds (tap, pop, unpop, land) have not been list
 | 5 | G3: no build screen — the child takes away from the built table | ✅ | 58 comes built; `vo_g3_build` removed |
 | 6 | P1: no build screen | ✅ | 79 comes built; `vo_p1_build` removed |
 | 7 | P2: no numerals in the column heads ("0 दहाई – 0 इकाई") | ✅ | every head reads just दहाई / इकाई on every page |
+
+## User changes — 2026-10-22
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | The new keypad from MTG2A01_L03_S01 (only the keypad) | ✅ | her 3 × 4 phone pad (commit 22f1525): 1–9, then a red ⌫, 0, a green ✓; its CSS block copied as it is, its key order and ⌫ icon in `K.numpad`. It is 4 rows tall, so on P1 and P4 the equation, table and answer box stand in a column on the left (centred at x 484) and the pad beside them on the right (as on her page). Nothing else from her repo was taken |
+| 2 | The top equation still cut at the top on many screens | ✅ | the slide box now clips sideways only (for the slide-in / out); vertically the equation may rise past its top edge when a number grows as it is said or the "?" pops - nothing above covers it. At smaller screen sizes there was only ~9 px of room for the ~13 px grow + glow |
+| 3 | No highlight on the blocks - only the pulse | ✅ | the block / rod pulse, the "named by the VO" blink and the ladder's "these can be tapped" blocks now only scale (no brightening, no green glow) |
+Verified: P1 and P4 played (right path, and three wrong answers); the landing + all 10 slides load with 0 console errors.
+| 4 | The keypad pages in the sibling's layout (her PV_NUMPAD page): the equation spread out, the pad's place, the answer typed into the "?" | ✅ | P1 and P4: the equation big (cards 100px) across the top - the first number over the दहाई column, the second over the इकाई column, the − between, the = midway to the "?", which stands over the pad; the one table on the left, level with the pad's middle; the 3 × 4 pad on the right under the "?"; the child types straight into the "?" (no separate answer box) and the right answer turns it green there. P4's table (the 2nd help) comes in at the same place. This replaces the column layout of item 1 |
+Verified: P1 and P4 played again (right path, and three wrong answers); the landing + all 10 slides load with 0 console errors.

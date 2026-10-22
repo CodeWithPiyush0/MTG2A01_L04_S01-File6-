@@ -2166,3 +2166,72 @@ body.is-start .sg-sky{
 @keyframes qIn{from{opacity:0;translate:140px 0;scale:.96;}to{opacity:1;translate:0 0;scale:1;}}
 @media (prefers-reduced-motion:reduce){ .slide-host.q-out,.slide-host.q-in{animation:none;} }
 
+/* ==================== 2026-10-22 ==================== */
+/* the number pad: the sibling's 3 x 4 phone pad, its CSS taken as it is (MTG2A01_L03_S01 22f1525) */
+/* ---------- [phone pad] the 3 x 4 pad from the user's art (2026-10-15): a thick glossy sky-blue frame round a pale panel;
+   pale-blue glossy keys with a blue rim and navy numerals; a red backspace and a green tick ---------- */
+.pv-pad.pv-pad-3{grid-template-columns:repeat(3,76px);gap:12px;padding:16px;border-radius:34px;
+  background:linear-gradient(#EAF6FF,#DDEFFF);border:9px solid #39B2F7;
+  box-shadow:inset 0 0 0 3px #A7E2FF,0 0 0 2px #1C8EE0,0 10px 22px rgba(12,46,92,.18);}
+.pv-pad.pv-pad-3 .pv-key{position:relative;overflow:hidden;width:76px;height:64px;border-radius:18px;
+  background:linear-gradient(#FBFDFF 0%,#E3F2FF 55%,#C8E5FF 100%);border:2.5px solid #2E9BF2;color:#0B1F4D;text-shadow:none;
+  box-shadow:0 5px 0 #3A9BF0,0 7px 10px rgba(12,46,92,.14);font-size:36px;}
+.pv-pad.pv-pad-3 .pv-key::before{content:"";position:absolute;left:9px;top:6px;width:16px;height:9px;border-radius:50%;
+  background:rgba(255,255,255,.95);rotate:-28deg;pointer-events:none;}
+.pv-pad.pv-pad-3 .pv-key:active{translate:0 4px;box-shadow:0 1px 0 #3A9BF0;}
+.pv-pad.pv-pad-3 .pv-key.pv-back{background:linear-gradient(#FFA2A2,#F25A5A);border-color:#D92F35;color:#D92F35;box-shadow:0 5px 0 #C0262C,0 7px 10px rgba(12,46,92,.14);}
+.pv-pad.pv-pad-3 .pv-key.pv-back svg{width:42px;height:28px;}
+.pv-pad.pv-pad-3 .pv-key.pv-ok{background:linear-gradient(#7CF59A,#20C454);border-color:#0E9A3A;color:#fff;box-shadow:0 5px 0 #0B8031,0 7px 10px rgba(12,46,92,.14);}
+.pv-pad.pv-pad-3 .pv-key.pv-ok svg{width:36px;height:36px;filter:drop-shadow(0 2px 0 rgba(0,80,20,.35));}
+.pv-pad.pv-pad-3 .pv-key.pv-ok.off{opacity:1;}
+.pv-pad.pv-pad-3 .pv-key.hint-on{box-shadow:0 5px 0 #3A9BF0,0 0 0 4px #fff,0 0 0 8px rgba(255,197,49,.9) !important;}
+/* the pad's digit keys as the user's blue tile (2026-10-15): solid bright blue, a white numeral, a thin light rim, a
+   deeper blue edge under it; the frame round the pad thinner */
+.pv-pad.pv-pad-3{border-width:4px;box-shadow:0 0 0 1px #1C8EE0,0 8px 18px rgba(12,46,92,.16);}
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok){background:linear-gradient(#3C9DFF,#1F86F5);border:2px solid #8CC6FF;color:#fff;
+  border-radius:12px;box-shadow:0 4px 0 #1565C8,0 6px 10px rgba(12,46,92,.16);text-shadow:none;}
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok)::before{display:none;}
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok):active{box-shadow:0 1px 0 #1565C8;}
+.pv-pad.pv-pad-3 .pv-key.pv-back,.pv-pad.pv-pad-3 .pv-key.pv-ok{border-radius:12px;}
+/* the keys in the style of the user's reference pad (2026-10-15), in the current colours: puffy rounded keys, a light rim
+   inside a darker outline, a glossy shine at the top left, a soft lighter band along the bottom, a deep 3D edge */
+.pv-pad.pv-pad-3{grid-template-columns:repeat(3,84px);gap:12px;padding:16px;}
+.pv-pad.pv-pad-3 .pv-key{width:84px;height:70px;border-radius:20px !important;overflow:hidden;}
+.pv-pad.pv-pad-3 .pv-key::before,.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok)::before{display:block;content:"";position:absolute;
+  left:10px;top:7px;width:20px;height:11px;border-radius:50%;background:rgba(255,255,255,.95);rotate:-30deg;pointer-events:none;}
+.pv-pad.pv-pad-3 .pv-key::after{content:"";position:absolute;left:6px;right:6px;bottom:4px;height:30%;border-radius:0 0 14px 14px;
+  background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.22));pointer-events:none;}
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok){background:linear-gradient(#56B0FF,#2389F7 60%,#1C7CEB);
+  border:3px solid #1466D0;box-shadow:inset 0 0 0 2px rgba(190,226,255,.75),0 5px 0 #0F55B5,0 8px 12px rgba(12,46,92,.18);font-size:38px;}
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok):active{box-shadow:inset 0 0 0 2px rgba(190,226,255,.75),0 1px 0 #0F55B5;}
+.pv-pad.pv-pad-3 .pv-key.pv-back{border:3px solid #C9252B;box-shadow:inset 0 0 0 2px rgba(255,210,210,.7),0 5px 0 #A51C22,0 8px 12px rgba(12,46,92,.18);}
+.pv-pad.pv-pad-3 .pv-key.pv-ok{border:3px solid #0C8A34;box-shadow:inset 0 0 0 2px rgba(200,255,215,.7),0 5px 0 #08702A,0 8px 12px rgba(12,46,92,.18);}
+.pv-pad.pv-pad-3 .pv-key.pv-back:active,.pv-pad.pv-pad-3 .pv-key.pv-ok:active{translate:0 4px;}
+/* user 2026-10-15: bigger numerals, a softer shine, the keys' blue 20% lighter (80% strength) */
+.pv-pad.pv-pad-3 .pv-key{font-size:48px !important;}
+.pv-pad.pv-pad-3 .pv-key svg{transform:scale(1.2);}
+.pv-pad.pv-pad-3 .pv-key::before,.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok)::before{background:rgba(255,255,255,.45);}
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok){background:linear-gradient(rgba(86,176,255,.8),rgba(35,137,247,.8) 60%,rgba(28,124,235,.8));}
+/* user 2026-10-15: the blue 10% stronger (90%), the numerals fully opaque white, the outline a touch lighter */
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok){background:linear-gradient(rgba(86,176,255,.9),rgba(35,137,247,.9) 60%,rgba(28,124,235,.9));
+  color:#fff;opacity:1;border-color:#3D8DE6;}
+/* user 2026-10-15: bigger numerals on the pad */
+.pv-pad.pv-pad-3 .pv-key{font-size:58px !important;}
+.pv-pad.pv-pad-3 .pv-key svg{transform:scale(1.35);}
+/* the equation is never cut at the slide's top edge (user 2026-10-22): the slide box clips sideways only (for the
+   slide-in / slide-out), so a number growing as it is said, or the "?" popping as it fills, may rise past its top */
+.slide-stage:has(.pv-eq),.slide-stage:has(.pv-ea){overflow-x:clip;overflow-y:visible;}
+/* the blocks: no highlight - only the pulse (user 2026-10-22). The pulse / a block named by the VO / the blocks the
+   ladder leaves tappable all move (scale) with no light, no glow */
+@keyframes pvBlkPulse{0%,100%{scale:1;}50%{scale:1.1;}}
+@keyframes pvRodPulse{0%,100%{scale:1;}50%{scale:1.04;}}
+@keyframes pvBlkHl{0%,100%{scale:1;}50%{scale:1.08;}}
+@keyframes pvRodHl{0%,100%{scale:1;}50%{scale:1.03;}}
+.pv-blk.pv-on{filter:drop-shadow(0 2px 2px rgba(12,46,92,.28));}
+.pv-blk.pv-allowed:not(.pv-taken){filter:drop-shadow(0 2px 2px rgba(12,46,92,.28));animation:pvBlkPulse 1.1s ease-in-out infinite;}
+.pv-rod.pv-allowed:not(.pv-taken){animation-name:pvRodPulse;}
+@media (prefers-reduced-motion:reduce){ .pv-blk.pv-allowed{animation:none;} }
+/* the keypad pages: the child types into the equation's "?" (the sibling's style for it) */
+.pv-q.pv-typein.open:not(.filled){border-style:solid;border-color:#1987FC;color:#012F76;background:#fff;}
+.pv-q.pv-typein .pv-ch{color:#012F76;}
+.pv-q.pv-typein.open.wrong{border-color:#1987FC;background:#fff;}   /* never red: a wrong answer only shakes */

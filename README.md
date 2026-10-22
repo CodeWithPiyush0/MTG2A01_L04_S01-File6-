@@ -28,10 +28,10 @@ by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 | G1 | p7 | PV_SUB fill | 34 − 21: build, take away, 13 fills the box, number sync |
 | G2 | p7b | PV_SUB mcq | 47 − 20 (72 / 27 / 67) |
 | G3 | p8 | PV_SUB mcq | 58 − 30 (88 / 28 / 82), comes built; column steps spoken one by one |
-| P1 | p9 | PV_SUB numpad | 79 − 34 → 45, comes built |
+| P1 | p9 | PV_SUB numpad | 79 − 34 → 45, comes built; the sibling's keypad layout - typed into the "?" |
 | P2 | p11 | PV_SUB mcq | 86 − 56 given as blocks, heads show words only (30 / 40 / 13) |
 | P3 | p13 | MENTAL_SUB mcq | 45 − 12 (57 / 23 / 33) |
-| P4 | p15 | MENTAL_SUB numpad | 90 − 40 → 50 |
+| P4 | p15 | MENTAL_SUB numpad | 90 − 40 → 50; the sibling's keypad layout - typed into the "?" |
 | CEL | p16 | CELEBRATION | "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।" |
 
 Deleted (deck): pages 6, 10, 12, 14. The boat game (deck slide 18, hidden; cover-slide notes) is not part of this lesson.
