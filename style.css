@@ -2323,3 +2323,4 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .nav-btn.active:not(:disabled),.stage .nav-btn.active:not(:disabled),.stage.tut .nav-btn.active:not(:disabled){animation:ltNavPulse 1.3s ease-in-out infinite;}
 .nav-btn.active:not(:disabled):active,.stage .nav-btn.active:not(:disabled):active,.stage.tut .nav-btn.active:not(:disabled):active{animation:none;}
 @media (prefers-reduced-motion:reduce){ .nav-btn.active:not(:disabled),.stage .nav-btn.active:not(:disabled),.stage.tut .nav-btn.active:not(:disabled){ animation:none; } }
+

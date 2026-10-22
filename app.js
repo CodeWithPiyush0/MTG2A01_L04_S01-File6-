@@ -1859,8 +1859,9 @@ const pvSplit = n =>({ t: Math.floor(n / 10), o: n % 10 });
    level with the 3 x 4 pad's middle; the pad on the right under the "?"; the equation spread over them - a over the दहाई
    column, b over the इकाई column, the − between, the "=" midway to the "?" - and the child types into the "?" */
 const PV_PADL = { eqY: 162, eqH: 100, tcx: 470, qx: 1100, padY: 296, padH: 356 };
-function pvPadPage(sc, L, d){
+function pvPadPage(sc, L, d, hidden){
   const K = PVK, P = PV_PADL, T = pvTable(sc, L, P.tcx, L.tableY);
+  if(hidden) T.el.classList.add("pv-hide");      // (before anything is measured: no fade-out flash - user 2026-10-23)
   T.move(0, Math.round(P.padY + P.padH / 2 - T.H / 2) - T.y, 0);
   const mid = h => T.x + h.offsetLeft + h.offsetWidth / 2, ca = mid(T.th), cb = mid(T.oh);   // (layout sizes: right during a slide-in too)
   const E = K.spreadEq(sc, d.a, d.b, "−", { a: ca, op: (ca + cb) / 2, b: cb, eq: 0, q: P.qx }, P.eqY, P.eqH);
@@ -1998,13 +1999,31 @@ const PVModules = {
         if(SD && C.has("story_a")){
           TA.fade(); E.el.classList.add("pv-gone"); PVSFX.move();
           await C.wait(550); C.guard();
-          const S = pvStoryScene(sc, SD), all = S.parts(); all.forEach(e => e.classList.add("pv-hide"));
-          S.gR.make(); const gRb = S.gR.all(); gRb.forEach(e => e.classList.add("pv-hide"));
+          /* user 2026-10-23: here Aman has no blocks of his own - on "तेरह घटाए" 13 of Meera's 25 (1 rod, 3 cubes) go over to
+             him and her 12 close up; on "बचे 12" a copy of her 12 goes into the "=" column, under the "?" */
+          const S = pvStoryScene(sc, SD), aman = S.gAm.all(); aman.forEach(x => x.style.visibility = "hidden");
+          const all = S.parts().filter(e => !aman.includes(e)); all.forEach(e => e.classList.add("pv-hide"));
           all.forEach((e, i)=> setTimeout(()=>{ if(C.alive()){ K.show(e); if(i % 4 === 0) PVSFX.appear(); } }, i * 30));
           await C.wait(all.length * 30 + 450); C.guard();
+          const RR = pvSplit(d.a - d.b), BB = pvSplit(d.b);
+          const rods = S.gA.all().filter(x => x._kind === "t"), cubes = S.gA.all().filter(x => x._kind === "o");
+          const goR = rods.slice(rods.length - BB.t), goC = cubes.slice(cubes.length - BB.o);
+          const kept = [...rods.slice(0, rods.length - BB.t), ...cubes.slice(0, cubes.length - BB.o)];
+          const toA = { t: aman.filter(x => x._kind === "t"), o: aman.filter(x => x._kind === "o") };
+          /* (user 2026-10-23: they do not leave her 25 - a copy of each goes to Aman, and hers turns grey where it stands, so
+             it reads as "taken out of the 25") */
+          const give = ()=>{ PVSFX.move();
+            [...goR.map((x, j)=> [x, toA.t[j]]), ...goC.map((x, j)=> [x, toA.o[j]])].forEach(([x, to], n)=>
+              K.wait(n * 90).then(()=>{ if(!to || !C.alive()) return; const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? S.BH : S.gR.cs);
+                x.classList.add("pv-taken"); K.glide(c, { x: to._x, y: to._y }, 650, true); })); };
+          const gRb = [];
+          const toEq = ()=>{ PVSFX.move(); const LR = S.gR.layout(RR.t, RR.o); let j = 0, i = 0;
+            kept.forEach((x, n)=>{ const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? S.BH : S.gR.cs); gRb.push(c);
+              const p = x._kind === "t" ? LR.rod(j++) : LR.cube(i++);
+              K.wait(n * 90).then(()=> K.glide(c, p, 700, true)); }); };
           const cy = CU.story || { a: .25, b: .45, n: .78, c: .55 };
-          await C.cue("story_a", [[cy.a, ()=>{ say(S.cA); K.beat(S.gA.all(), 25); }], [cy.b, ()=>{ say(S.cB); K.beat(S.gAm.all(), 40); }],
-                                  [cy.n, ()=> gRb.forEach((x, i)=> setTimeout(()=>{ if(C.alive()){ K.show(x); K.pop(x); PVSFX.appear(); } }, i * 120))]]);
+          await C.cue("story_a", [[cy.a, ()=>{ say(S.cA); K.beat(S.gA.all(), 25); }], [cy.b, ()=>{ say(S.cB); give(); }],
+                                  [cy.n, ()=>{ K.beat(kept, 60); toEq(); }]]);
           await C.cue("story_b", [[0.12, ()=> S.cQ.classList.add("pulse")],
                                   [d.fill_at || 0.5, ()=>{ S.cQ.classList.remove("pulse"); S.cQ.innerHTML = K.numHTML(d.a - d.b); S.cQ.classList.add("filled"); K.pop(S.cQ); sfxCorrect(); }]]);
           C.guard(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
@@ -2113,8 +2132,7 @@ const PVModules = {
       const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc), CU = d.cues || {};
       state.ownsAudio = true; state.locked = false; setNavActive(false); $("navBtn").style.display = "none"; setSwMood("point"); pvReplay(C);
       const diff = d.a - d.b, pad = d.answer === "numpad", A = pvSplit(d.a), B = pvSplit(d.b), R = pvSplit(diff);
-      const L = PV_LAY.main, PAD = pad ? pvPadPage(sc, L, d) : null;          // the keypad page: the sibling's layout
-      if(PAD) PAD.T.el.classList.add("pv-hide");
+      const L = PV_LAY.main, PAD = pad ? pvPadPage(sc, L, d, true) : null;    // the keypad page: the sibling's layout (its table hidden till the 2nd help)
       const GAP = 26, Y0 = 452;                                                // the cards' first place
       /* the table of the 2nd help: a number pad under its box needs a shorter table (90 = nine rods) */
       const TY = L.tableY;

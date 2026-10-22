@@ -240,3 +240,11 @@ Verified: cover frames compared with hers; T2 and G1 played; the landing + all 1
 | 4 | The three transition screens of HI02H11_L02_S02 | ✅ | its r142 screen taken as it is: `peeking_talk_up.webp` (talking Swifty, lifted in, sinking out on the first one), its whoosh (`sfx_gate_whoosh`), the magenta headline wiping in as Swifty says it (280 ms into our clips), its title fit, its timing (shown ≥ 1.2 s, the line whole ≥ .7 s, 12 s watchdog). Our three lines and clips unchanged. The old peeking clip and its player removed |
 | 5 | Pages 1, 2: the next button where HI02H11 has it | ✅ | centred, 30px (screen) above the tutorial card's bottom edge, as on HI02H11's pages 1, 2 (was 60px up) |
 Verified: G1 scripted (a ten tapped in the ones step: no animation, no sound, nothing taken); pause / resume mid-T2 (the voice held at the same second, no animation ran, no block came for 6 s, then all carried on); the tab-hidden event pauses / resumes; the three screens captured; T2 → G1 and G3 → P1 played through their screens; the landing + all 10 slides load with 0 console errors.
+
+## User changes — 2026-10-23 (2)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | Page 2's end: on "25 में से 13 घटाए…" the 13 go from Meera's 25 to Aman, then the 12 into the "=" column | ✅ | T1's screen comes back with Aman empty; on "तेरह घटाए" a copy of 1 rod + 3 cubes glides to Aman and Meera's own 13 turn grey where they stand (so it reads "out of the 25"); on "बचे 12" a copy of her 12 glides under the "?"; "12 आएगा" fills it |
+| 2 | Page 9: the table flashed for a moment as the page opened | ✅ | the 2nd help's table is created hidden (it was made visible, then hidden - it faded out over .35s); measured: opacity 0 on every frame of the slide-in |
+| 3 | Pages 8, 9 feel empty when no mistake is made - option 2 | ✖ removed (user 2026-10-23: did not look good) | the cover's courtyard (`bg_landing_v3`) behind the page, washed out with the sibling's practice-screen veil, edge to edge on any window; only on these two pages (it goes as the next page mounts). Option 1 (place-value tags under the numbers) was tried and taken out |
+Verified: T2, P3, P4 played (P3 / P4 with three wrong answers); the room is on for P3 / P4 only (off on P2 and the celebration); the landing + all 10 slides load with 0 console errors.
