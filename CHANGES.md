@@ -248,3 +248,9 @@ Verified: G1 scripted (a ten tapped in the ones step: no animation, no sound, no
 | 2 | Page 9: the table flashed for a moment as the page opened | ✅ | the 2nd help's table is created hidden (it was made visible, then hidden - it faded out over .35s); measured: opacity 0 on every frame of the slide-in |
 | 3 | Pages 8, 9 feel empty when no mistake is made - option 2 | ✖ removed (user 2026-10-23: did not look good) | the cover's courtyard (`bg_landing_v3`) behind the page, washed out with the sibling's practice-screen veil, edge to edge on any window; only on these two pages (it goes as the next page mounts). Option 1 (place-value tags under the numbers) was tried and taken out |
 Verified: T2, P3, P4 played (P3 / P4 with three wrong answers); the room is on for P3 / P4 only (off on P2 and the celebration); the landing + all 10 slides load with 0 console errors.
+
+## User changes — 2026-10-23 (3)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | Mistakes in the ones: the guide (only the blocks to take stay live) must stay in the ones, not carry on into the tens | ✅ | the guide is now per column: two mistakes in the ones guide the ones only; when they are done the tens are taken as usual (all live, none dimmed), and get their own guide only after two mistakes in the tens |
+Verified: P1 scripted (two ones mistakes - 4 ones marked, 5 dimmed; ones done - all 7 tens live, none dimmed or marked, a ten taken normally); G1, P1, P2 played on the wrong path; the landing + all 10 slides load with 0 console errors.

@@ -1748,7 +1748,7 @@ Object.assign(PVK, (function(){
   function removeChild(C, T, need, cfg){
     cfg = cfg || {};
     return new Promise(res =>{
-      let wrongs = 0, guided = false, busy = false, fin = false, idleT = 0, settleT = 0, onesSaid = false;
+      let wrongs = 0, guided = { o: false, t: false }, wrongsBy = { o: 0, t: 0 }, busy = false, fin = false, idleT = 0, settleT = 0, onesSaid = false;
       const gone = k => T.list(k).filter(b => b._removed).length;
       const all = ()=> [...T.rods, ...T.cubes];
       const ok = ()=> gone("t") === need.t && gone("o") === need.o;
@@ -1756,23 +1756,23 @@ Object.assign(PVK, (function(){
         if(fin || busy || b._removed) return false;
         if(cfg.only && b._kind !== cfg.only) return false;
         if(cfg.onesFirst && b._kind === "t" && gone("o") < need.o) return false;      // the ones first, always
-        if(guided) return !!b._allowed && (b._kind === "o" || gone("o") >= need.o);
+        if(guided[b._kind]) return !!b._allowed && (b._kind === "o" || gone("o") >= need.o);
         return true;
       };
       /* the guide (2nd mistake) shows ONE column at a time - the ones until they are done, then the tens (user 2026-10-22):
          only that column's blocks to take are marked, the rest of it dimmed; the other column is left as it is */
       const active = ()=> gone("o") < need.o ? "o" : "t";
       const sync = ()=>{ const k = active(); all().forEach(b =>{ const can = tappable(b); b.classList.toggle("pv-tap", can);
-          b.classList.toggle("pv-dim", guided && b._kind === k && !b._allowed && !b._removed);
-          b.classList.toggle("pv-allowed", guided && b._kind === k && !!b._allowed && !b._removed); });
+          b.classList.toggle("pv-dim", guided[k] && b._kind === k && !b._allowed && !b._removed);
+          b.classList.toggle("pv-allowed", guided[k] && b._kind === k && !!b._allowed && !b._removed); });
         if(T.counts) T.counts(); };
       const nextBlock = ()=>{ const k = gone("o") < need.o ? "o" : (gone("t") < need.t ? "t" : null); if(!k) return null;
         const l = left(T, k).filter(tappable); return l[l.length - 1] || null; };
       const pulseNext = ()=>{ const b = nextBlock(); if(!b) return;
-        (guided ? left(T, b._kind).filter(x => x._allowed) : left(T, b._kind)).forEach(x => x.classList.add("pulse")); return b; };
+        (guided[b._kind] ? left(T, b._kind).filter(x => x._allowed) : left(T, b._kind)).forEach(x => x.classList.add("pulse")); return b; };
       const unpulse = ()=> all().forEach(b => b.classList.remove("pulse"));
       const arm = ()=>{ clearTimeout(idleT); idleT = setTimeout(()=>{ if(!C.alive() || fin || busy) return;
-        const b = nextBlock(); if(b){ (guided ? left(T, b._kind).filter(x => x._allowed) : left(T, b._kind)).forEach(x => K.repulse(x)); if(cfg.hand) placeNudge(b); }
+        const b = nextBlock(); if(b){ (guided[b._kind] ? left(T, b._kind).filter(x => x._allowed) : left(T, b._kind)).forEach(x => K.repulse(x)); if(cfg.hand) placeNudge(b); }
         arm(); }, cfg.idle || IDLE_MS); };
       const done = ()=>{ fin = true; clearTimeout(idleT); clearTimeout(settleT); stopNudge(); unpulse(); sync();
         all().forEach(b =>{ b.onclick = null; b.classList.remove("pv-dim", "pv-allowed"); });
@@ -1783,7 +1783,7 @@ Object.assign(PVK, (function(){
       const onesStep = async ()=>{ if(onesSaid || !cfg.onOnes || gone("o") < need.o) return; onesSaid = true;
         busy = true; sync(); try{ await C.wait(350); await cfg.onOnes(); } finally { busy = false; } if(!C.alive()) return; sync(); arm(); };
       async function wrong(b, role){
-        busy = true; clearTimeout(idleT); clearTimeout(settleT); stopNudge(); unpulse(); wrongs++;
+        busy = true; clearTimeout(idleT); clearTimeout(settleT); stopNudge(); unpulse(); wrongs++; wrongsBy[b._kind]++;
         takeAway(C, b, cfg.to); sync();
         GameBus.emit("answer_wrong", { slide_id: C.slide.id, phase: C.slide.phase, attempts: wrongs, step: "remove", why: role });
         try{ sfxWrongSoft(); }catch(e){} setSwMood("tryagain");
@@ -1794,10 +1794,12 @@ Object.assign(PVK, (function(){
         await C.wait(back.length * 70 + 600);
         if(T.counts) T.counts();
         setSwMood("hint");
-        if(wrongs >= 2){
-          if(!guided){ guided = true;
-            const mark = (k, n)=>{ const l = left(T, k); l.slice(l.length - n).forEach(x =>{ x._allowed = true; }); };
-            mark("o", need.o); mark("t", need.t); }
+        /* the guide is the column's own (user 2026-10-23): two mistakes in the ones guide the ones only - the tens are
+           then taken as usual, unless they too get two mistakes */
+        const k = b._kind;
+        if(wrongsBy[k] >= 2){
+          if(!guided[k]){ guided[k] = true;
+            const l = left(T, k); l.slice(l.length - need[k]).forEach(x =>{ x._allowed = true; }); }
           sync();
           await C.say("rm_guide");
         } else await C.say(role);
