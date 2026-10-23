@@ -25,7 +25,7 @@
  "phase_distribution": {
   "tutorial": 2,
   "guided": 3,
-  "practice": 5
+  "practice": 6
  },
  "scaffold_rules": {
   "nudge_timeout_ms": {
@@ -95,10 +95,16 @@
    "vo_p3_h2": "assets/voiceover/vo_p3_h2.ogg",
    "vo_p3_prompt": "assets/voiceover/vo_p3_prompt.ogg",
    "vo_p3_reveal": "assets/voiceover/vo_p3_reveal.ogg",
-   "vo_p4_correct": "assets/voiceover/vo_p4_correct.ogg",
    "vo_p4_h2": "assets/voiceover/vo_p4_h2.ogg",
-   "vo_p4_prompt": "assets/voiceover/vo_p4_prompt.ogg",
    "vo_p4_reveal": "assets/voiceover/vo_p4_reveal.ogg",
+   "vo_p67_correct": "assets/voiceover/vo_p67_correct.ogg",
+   "vo_p67_h2": "assets/voiceover/vo_p67_h2.ogg",
+   "vo_p67_prompt": "assets/voiceover/vo_p67_prompt.ogg",
+   "vo_p67_reveal": "assets/voiceover/vo_p67_reveal.ogg",
+   "vo_p90_correct": "assets/voiceover/vo_p90_correct.ogg",
+   "vo_p90_prompt": "assets/voiceover/vo_p90_prompt.ogg",
+   "vo_p90_rm_tens": "assets/voiceover/vo_p90_rm_tens.ogg",
+   "vo_p90_sub": "assets/voiceover/vo_p90_sub.ogg",
    "vo_pt_guided": "assets/voiceover/vo_pt_guided.ogg",
    "vo_pt_practice": "assets/voiceover/vo_pt_practice.ogg",
    "vo_pt_tutorial": "assets/voiceover/vo_pt_tutorial.ogg",
@@ -171,13 +177,19 @@
    "vo_p3_h2": "45 में से 12 घटाने पर, 3 दहाई और 3 इकाई बचती हैं।",
    "vo_p3_prompt": "45 में से 12 घटाइए और सही संख्या चुनिए।",
    "vo_p3_reveal": "45 में से 12 घटाने पर 33 बचता है। तो सही संख्या यह है।",
-   "vo_p4_correct": "शाबाश! 90 घटा 40 बराबर 50।",
    "vo_p4_h2": "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।",
-   "vo_p4_prompt": "90 में से 40 घटाइए और डिब्बे पर टैप करके सही संख्या लिखिए।",
    "vo_p4_reveal": "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।",
-   "vo_pt_guided": "चलिए, साथ में करें!",
-   "vo_pt_practice": "अब आपकी बारी!",
-   "vo_pt_tutorial": "चलिए, शुरू करते हैं!",
+   "vo_p67_correct": "शाबाश! आपने सही संख्या चुन ली। 67 घटा 53 बराबर 14।",
+   "vo_p67_h2": "67 में से 53 घटाने पर, 1 दहाई और 4 इकाई बचती हैं।",
+   "vo_p67_prompt": "67 में से 53 घटाइए और सही संख्या चुनिए।",
+   "vo_p67_reveal": "67 में से 53 घटाने पर 14 बचता है। तो सही संख्या यह है।",
+   "vo_p90_correct": "शाबाश! 90 में से 40 घटाने पर हमें मिलीं 5 दहाई और 0 इकाई, यानी 50।",
+   "vo_p90_prompt": "90 में से 40 घटाइए।",
+   "vo_p90_rm_tens": "अब दहाइयाँ घटाइए। 9 दहाई में से 4 दहाई हटाइए।",
+   "vo_p90_sub": "और अब इसमें से 40 घटाते हैं, 40 में 4 दहाई और 0 इकाई हैं।",
+   "vo_pt_guided": "बहुत बढ़िया! अब हम साथ मिलकर शुरू करते हैं। चलिए, साथ में करें!",
+   "vo_pt_practice": "वाह! अब आपकी बारी।",
+   "vo_pt_tutorial": "ध्यान से देखिए और मेरे साथ जानिए। चलिए, शुरू करें!",
    "vo_rm_guide": "इनमें से इतने हटाइए।",
    "vo_rm_ones_less": "आपने इकाई में कम हटाए हैं। दोबारा कोशिश करिए।",
    "vo_rm_ones_more": "आपने इकाई में ज़्यादा हटाए हैं। दोबारा कोशिश करिए।",
@@ -227,7 +239,33 @@
      {
       "who": "aman"
      }
-    ]
+    ],
+    "cues": {
+     "names": {
+      "a": [
+       [
+        0.099,
+        "meera"
+       ]
+      ],
+      "b": [
+       [
+        0.471,
+        "meera"
+       ],
+       [
+        0.615,
+        "aman"
+       ]
+      ],
+      "ask": [
+       [
+        0.378,
+        "meera"
+       ]
+      ]
+     }
+    }
    }
   },
   {
@@ -288,6 +326,14 @@
       "b": 0.43,
       "n": 0.72,
       "c": 0.489
+     },
+     "names": {
+      "story_c": [
+       [
+        0.176,
+        "meera"
+       ]
+      ]
      }
     }
    }
@@ -516,6 +562,55 @@
     "rm_ones_less": "vo_rm_ones_less",
     "rm_tens_more": "vo_rm_tens_more",
     "rm_guide": "vo_rm_guide",
+    "prompt": "vo_p90_prompt",
+    "sub": "vo_p90_sub",
+    "rm_ones": "vo_g3_rm_ones",
+    "rm_tens": "vo_p90_rm_tens",
+    "ask": "vo_p1_ask",
+    "recount": "vo_h_recount",
+    "h2": "vo_p4_h2",
+    "reveal": "vo_p4_reveal",
+    "correct": "vo_p90_correct"
+   },
+   "data": {
+    "a": 90,
+    "b": 40,
+    "answer": "numpad",
+    "build": false,
+    "steps": true,
+    "right_table": false,
+    "ones_first": true,
+    "cues": {
+     "h2": {
+      "a": 0.052,
+      "b": 0.255,
+      "t": 0.513,
+      "o": 0.676
+     },
+     "recount": {
+      "t": 0.254,
+      "o": 0.424
+     },
+     "sub": {
+      "b": 0.229,
+      "t": 0.623,
+      "o": 0.77,
+      "this": 0.118
+     }
+    }
+   }
+  },
+  {
+   "id": "P3",
+   "phase": "practice",
+   "eis": "iconic",
+   "type": "PV_SUB",
+   "prompt_hi": "संख्याएँ घटाइए।",
+   "audio": {
+    "rm_ones_more": "vo_rm_ones_more",
+    "rm_ones_less": "vo_rm_ones_less",
+    "rm_tens_more": "vo_rm_tens_more",
+    "rm_guide": "vo_rm_guide",
     "prompt": "vo_p2_prompt",
     "remove": "vo_p2_remove",
     "ask": "vo_ask_pick",
@@ -552,7 +647,7 @@
    }
   },
   {
-   "id": "P3",
+   "id": "P4",
    "phase": "practice",
    "eis": "symbolic",
    "type": "MENTAL_SUB",
@@ -588,29 +683,33 @@
    }
   },
   {
-   "id": "P4",
+   "id": "P5",
    "phase": "practice",
    "eis": "symbolic",
    "type": "MENTAL_SUB",
    "prompt_hi": "संख्याएँ घटाइए।",
    "audio": {
-    "prompt": "vo_p4_prompt",
+    "prompt": "vo_p67_prompt",
     "order": "vo_h_order",
-    "h2": "vo_p4_h2",
-    "reveal": "vo_p4_reveal",
-    "correct": "vo_p4_correct"
+    "h2": "vo_p67_h2",
+    "reveal": "vo_p67_reveal",
+    "correct": "vo_p67_correct"
    },
    "data": {
-    "a": 90,
-    "b": 40,
-    "answer": "numpad",
-    "pad_below": true,
+    "a": 67,
+    "b": 53,
+    "answer": "mcq",
+    "options": [
+     14,
+     44,
+     13
+    ],
     "cues": {
      "h2": {
-      "a": 0.052,
-      "b": 0.255,
+      "a": 0.053,
+      "b": 0.256,
       "t": 0.513,
-      "o": 0.676
+      "o": 0.675
      },
      "order": {
       "o": 0.423,
@@ -630,5 +729,116 @@
    },
    "data": {}
   }
- ]
+ ],
+ "end_anim": {
+  "base": "assets/celebration/",
+  "vo": "vo_cel",
+  "meta": {
+   "cols": 6,
+   "frames": 36,
+   "fw": 329,
+   "fh": 440,
+   "shabaash": {
+    "src": "cel_shabaash.webp",
+    "pre": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "word": [
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29
+    ],
+    "post": [
+     30,
+     31,
+     32,
+     33,
+     34,
+     35
+    ]
+   },
+   "talk": {
+    "src": "cel_talk.webp",
+    "open": [
+     0,
+     1,
+     2,
+     4,
+     5,
+     6,
+     8,
+     9,
+     10,
+     11,
+     15,
+     16,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     28,
+     29,
+     30,
+     31,
+     32
+    ]
+   },
+   "idle": {
+    "src": "cel_idle.webp",
+    "loop": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35
+    ]
+   }
+  },
+  "track": {
+   "bits": "00000000000000000111100000011111111110000000000000000000000110001100000000011000000001111111000000000001111111110000001100000011000000111000000000000000",
+   "step_ms": 25,
+   "ms": 3816
+  }
+ }
 }

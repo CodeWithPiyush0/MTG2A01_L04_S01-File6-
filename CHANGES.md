@@ -254,3 +254,30 @@ Verified: T2, P3, P4 played (P3 / P4 with three wrong answers); the room is on f
 |---|---|---|---|
 | 1 | Mistakes in the ones: the guide (only the blocks to take stay live) must stay in the ones, not carry on into the tens | ✅ | the guide is now per column: two mistakes in the ones guide the ones only; when they are done the tens are taken as usual (all live, none dimmed), and get their own guide only after two mistakes in the tens |
 Verified: P1 scripted (two ones mistakes - 4 ones marked, 5 dimmed; ones done - all 7 tens live, none dimmed or marked, a ten taken normally); G1, P1, P2 played on the wrong path; the landing + all 10 slides load with 0 console errors.
+
+## User changes — 2026-10-23 (4)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | Page 1 as the reference picture: Meera, her 25 beside her (the ones apart), space, Aman with no blocks; the equation below | ✅ | `pvStoryScene` is one row now: portraits 124px, the blocks 224px tall, the cubes 7px apart (`group(..., gap)`), the equation under the row in the middle. Aman shows no blocks (replaces SME review 3's grey 13 on T1) |
+| 2 | Page 2's end: the same row; on "25 में से 13 घटाए…" the 13 go to Aman and Meera's turn grey | ✅ | copies of 1 rod + 3 cubes glide to Aman, hers turn grey where they stand; "बचे 12" - her 12 left beat; "12 आएगा" - the "?" becomes 12 |
+| 3 | P2 = a copy of P1 with 90 − 40; P5 = a copy of P3 (now P4) with 67 − 53 (14 / 44 / 13) | ✅ | practice is now P1 79 − 34, P2 90 − 40 (blocks, number pad), P3 86 − 56, P4 45 − 12, P5 67 − 53; the old blocks-free 90 − 40 page is gone (its `vo_p4_prompt` / `vo_p4_correct` deleted; its h2 / reveal lines are reused by P2). New lines: `vo_p90_prompt/_sub/_rm_tens/_correct`, `vo_p67_prompt/_h2/_reveal/_correct` |
+| 4 | Options reshuffled on every visit | ✅ | a page's three cards never come in the order they had on the last visit (6 visits measured: never the same twice in a row) |
+⚠ **The 8 new VO clips are NOT rendered**: the Gemini key in `.env` (`GKEY`) is rejected by Google ("API key not valid"). Until they exist P2 and P5 play silent beats where those lines go (404s in the console). With a working key: `export GEMINI_KEY=...; python tools/build_vo.py; python tools/lessons.py; node tools/gen_asset_sizes.js`.
+Verified: T1 and T2 played (frames checked against the reference); P2 and P5 played on both paths (only the 404s of the missing clips); the option order checked over 6 visits.
+
+## User changes — 2026-10-23 (5)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | Pages 1, 2: the equation higher (it sat on the next button); light Meera / Aman's picture when the VO says their name | ✅ | the row (portraits, blocks 190px) and the equation moved up - the equation's bottom now 76px (screen) above the next button; each "मीरा" / "अमन" in T1's lines and T2's story lines lights that portrait (a gold ring and a beat), timed from the clips (card `cues.names`) |
+| 2 | Back from the celebration (dev menu): Swifty stayed on screen | ✅ | whenever another page mounts, the end screen, its button, the kit's Swifty and the confetti are put away (`clearHost`) |
+| 3 | The three transition screens and the end celebration exactly as File3 (HI02H11_L02_S02) | ✅ | transitions: also its headlines ("चलिए, शुरू करें!" / "चलिए, साथ में करें!" / "अब आपकी बारी!"), its three clips ("ध्यान से देखिए और मेरे साथ जानिए। चलिए, शुरू करें!", "बहुत बढ़िया! अब हम साथ मिलकर शुरू करते हैं। चलिए, साथ में करें!", "वाह! अब आपकी बारी।") and its headline times (3075 / 3575 / 925 ms). Celebration: its CELEBRATION module and its Swiftie celebration kit (the jump on शाबाश, then the line lip-synced, then idle; `assets/celebration/cel_*.webp`), the arrow there from the start; the lip-sync track measured from OUR line (`tools/make_lipsync.py`, card `end_anim`) - our line itself kept |
+| 4 | Tests must not play sound | ✅ | every test browser now runs with `--mute-audio` |
+| 5 | P2 not laid out like P1; its new VO does not play | ✔ checked / ⚠ | measured at load and through the P1 → P2 slide-in: P2's cards, signs and table stand exactly where P1's do (only its ones column is empty - 90 has no ones). Its 4 new clips (and P5's 4) are still not rendered: the Gemini key in `.env` is rejected by Google |
+Verified: T1 measured (title / blocks / equation / next button), the name lights seen; T2 played; the celebration mounted (kit Swifty, arrow) and left with the dev menu (end screen gone); the three gates timed (headline at 3.2 / 3.7 / 1.0 s, as theirs); the landing + all 11 slides load - the only console errors are the 404s of the 8 clips not yet rendered.
+
+## User changes — 2026-10-24
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | P2's equation and table not where P1's are | ✅ | the cause: a page reached from the page before it in the same phase mounts while it slides in (q-in: shifted and a little smaller on its first frame), and the scene measured its place on screen - so P2, P3, P4, P5 stood ~8px left and ~20px high. The scene now takes its place from the layout (`K.scene`), which the animation does not touch. Measured: P2 from P1 = P2 opened directly = P1 (cards 201 / 582 / 1023 at 162, table 86, 347); P3 the same |
+| 2 | The new Gemini key | ✅ works | a test request returned audio (checked before rendering anything) |
+| 3 | Generate the missing VO | ✅ | the 8 clips rendered with the new key (Gemini TTS, voice Kore, the lesson's finish): `vo_p90_prompt/_sub/_rm_tens/_correct` (P2), `vo_p67_prompt/_h2/_reveal/_correct` (P5). Checked by transcription: all say their line; two were re-rendered once so each page says its numbers one way - "शून्य इकाई" (not "ज़ीरो") and "तिरपन" (not "तेपन"). Cue times re-measured from the clips |

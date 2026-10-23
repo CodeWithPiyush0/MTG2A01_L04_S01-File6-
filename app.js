@@ -983,8 +983,14 @@ const PVK = (function(){
   function scene(host){
     host.style.position = "relative";
     const sc = add(host, "div", "pv-stage");
-    const st = $("stage").getBoundingClientRect(), hr = host.getBoundingClientRect(), k = kNow();
-    sc.style.left = px(-(hr.left - st.left) / k); sc.style.top = px(-(hr.top - st.top) / k);
+    /* the host's place in the stage from the LAYOUT (offsetLeft / offsetTop up to the stage), not from the screen: a page
+       that mounts while it slides in (the q-in between two questions: shifted and a little smaller on its first frame) was
+       measured off by its animation, and everything on it stood ~8px left and ~20px high (user 2026-10-24: "P2 is not the
+       same as P1"). The screen measure stays as the fallback when the stage is not in the host's offsetParent chain. */
+    const stage = $("stage"); let x = 0, y = 0, e = host;
+    while(e && e !== stage){ x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
+    if(e !== stage){ const st = stage.getBoundingClientRect(), hr = host.getBoundingClientRect(), k = kNow(); x = (hr.left - st.left) / k; y = (hr.top - st.top) / k; }
+    sc.style.left = px(-x); sc.style.top = px(-y);
     const card = host.closest(".tut-card"); if(card) card.classList.add("tc-pv");
     return sc;
   }
@@ -1254,13 +1260,13 @@ Object.assign(PVK, (function(){
   }
   /* a person's blocks on a story page: the rods side by side, then the cubes in columns of five, bottom-aligned.
      g.add(blocks) re-lays a set of blocks (another group's, flying in) into this group's places */
-  function group(sc, n, cx, bottom, H){
+  function group(sc, n, cx, bottom, H, gap){
     const G = { sc, n, cx, bottom, H, rods: [], cubes: [] };
     const rW = H / ROD.ar, cs = rW, cH = cs * CUBE.ar, fH = cs * CUBE.pitch;   // a cube = one of the rod's ten
     /* the cubes stack like the rod's (each one's top face under the next one), so five of them are half a rod */
     G.layout = (t, u)=>{ const cols = Math.ceil(u / 5), rw = t ? t * rW + (t - 1) * 5 : 0, cw = cols ? cols * cs + (cols - 1) * 3 : 0;
       const W = rw + (t && cols ? 10 : 0) + cw, x0 = cx - W / 2, cx0 = x0 + rw + (t && cols ? 10 : 0);
-      return { rod: j =>({ x: x0 + j * (rW + 5), y: bottom - H }), cube: i =>({ x: cx0 + Math.floor(i / 5) * (cs + 3), y: bottom - cH - (i % 5) * fH }) }; };
+      return { rod: j =>({ x: x0 + j * (rW + 5), y: bottom - H }), cube: i =>({ x: cx0 + Math.floor(i / 5) * (cs + 3), y: bottom - cH - (i % 5) * (gap != null ? cH + gap : fH) }) }; };   // (gap: each cube apart, else stacked like the rod's)
     G.make = ()=>{ const t = Math.floor(n / 10), u = n % 10, L = G.layout(t, u);
       for(let j = 0; j < t; j++){ const p = L.rod(j); G.rods.push(K.block(sc, "t", p.x, p.y, H)); }
       for(let i = 0; i < u; i++){ const p = L.cube(i); G.cubes.push(K.block(sc, "o", p.x, p.y, cs)); } return G; };
@@ -1474,8 +1480,11 @@ Object.assign(PVK, (function(){
       const slide = C.slide, sc = C.sc;
       const box = add(sc, "div", "mq-opts"); box.style.top = px(cfg.y); box.style.width = "1333px";
       /* a new order every time the page opens (user 2026-10-16: the right card was always in the same place) */
-      const opts = cfg.options.slice();
-      for(let i = opts.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; }
+      /* user 2026-10-23: never the same order as the last visit to this page (a plain shuffle can repeat it) */
+      const mix = ()=>{ const o = cfg.options.slice(); for(let i = o.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; } return o; };
+      const seen = mcq.last || (mcq.last = {}), was = seen[slide.id];
+      let opts = mix(); for(let n = 0; n < 12 && was && opts.join() === was; n++) opts = mix();
+      seen[slide.id] = opts.join();
       const els = opts.map(v =>{ const o = add(box, "button", "mq-opt"); o.type = "button"; o.textContent = devNumeral(v); o._v = v; return o; });
       const right = els.find(o => o._v === cfg.answer);
       let wrong = 0, busy = true, idleT = 0, layer3 = false, over = false;
@@ -1881,19 +1890,26 @@ function pvPair(TA, TB, cx, gap, minHalf){
 function pvCelebrate(){ sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMood("happy"); }
 /* the story screen of T1 (deck page 2): the two people's portraits over their blocks - Meera's 25, Aman's own 13 in grey -
    and the cards under them, 25 − 13 = ?. gR: the blocks of the answer (a group under the "?", not made yet) */
+/* the story screen of T1 (and T2's end) - user 2026-10-23, after the reference picture: ONE ROW - Meera's portrait on the left,
+   her 25 blocks beside her (the cubes a little apart), some space, then Aman's portrait with no blocks; the equation
+   25 − 13 = ? under the row, in the middle. gB: the places beside Aman where blocks given to him stand (made, hidden). */
 function pvStoryScene(sc, d){
-  const K = PVK, COL = [406, 666, 926], AV = 90, AVY = 214, BOT = 488, BH = 176, EY = 502, EH = 56;   // the sibling's STORY page
+  const K = PVK, AV = 124, MIDY = 318, BH = 190, BOT = MIDY + BH / 2, GAP = 6, EY = 452, EH = 72;   // (user 2026-10-23: up - the equation was on the next button)
+  const XA = 400, XB = 830, BX = 150;                       // the two portraits' centres; their blocks BX to the right
   const [P0, P1] = d.people, diff = d.a - d.b;
-  const S = { COL, BOT, BH, diff };
-  S.pA = K.person(sc, P0.who, P0.name, COL[0], AVY, AV); S.pB = K.person(sc, P1.who, P1.name, COL[1], AVY, AV);
-  S.gA = K.group(sc, d.a, COL[0], BOT, BH).make();
-  S.gB = K.group(sc, d.b, COL[1], BOT, BH); S.gR = K.group(sc, diff, COL[2], BOT, BH);
-  const op = (t, x)=>{ const e = K.add(sc, "div", "pv-op pv-sym", "font-size:44px"); e.textContent = t; K.setXY(e, x, EY + 2); return e; };
-  S.cA = K.numCard(sc, d.a, COL[0], EY, EH); S.minus = op("−", 536); S.cB = K.numCard(sc, d.b, COL[1], EY, EH); S.eqs = op("=", 796);
-  S.cQ = K.numCard(sc, null, COL[2], EY, EH, "pv-q");
-  /* SME review 3: Meera keeps all 25 in view; Aman has his own 13, grey (they are not picked out of her 25) */
-  S.gAm = S.gB.make(); S.gAm.all().forEach(x => x.classList.add("pv-given"));
-  S.parts = ()=> [S.pA, S.pB, ...S.gA.all(), ...S.gAm.all(), S.cA, S.minus, S.cB, S.eqs, S.cQ];
+  const S = { BOT, BH, diff };
+  S.pA = K.person(sc, P0.who, P0.name, XA, MIDY - AV / 2, AV); S.pB = K.person(sc, P1.who, P1.name, XB, MIDY - AV / 2, AV);
+  S.gA = K.group(sc, d.a, XA + BX, BOT, BH, GAP).make();
+  S.gB = K.group(sc, d.b, XB + BX, BOT, BH, GAP);
+  S.gAm = S.gB.make(); S.gAm.all().forEach(x => x.style.visibility = "hidden");      // (Aman has no blocks of his own)
+  S.cs = S.gA.cs;
+  const E = K.equation(sc, d.a, d.b, 666, EY, EH, "−");
+  S.E = E; S.cA = E.a; S.minus = E.op; S.cB = E.b; S.eqs = E.eq; S.cQ = E.q;
+  S.parts = ()=> [S.pA, S.pB, ...S.gA.all(), S.cA, S.minus, S.cB, S.eqs, S.cQ];
+  /* user 2026-10-23: when the VO says "मीरा" / "अमन" that child's portrait lights (a ring of light, a beat) */
+  S.hl = who =>{ const e = who === P1.who ? S.pB : S.pA; if(!e) return; e.classList.remove("pv-person-hl"); void e.offsetWidth; e.classList.add("pv-person-hl"); };
+  /* the card's name cues for a role, added to that role's own cues */
+  S.names = (cues, role, list)=> (list || []).concat(((cues && cues.names) || {})[role] ? cues.names[role].map(([f, who])=> [f, ()=> S.hl(who)]) : []);
   return S;
 }
 const PVModules = {
@@ -1908,30 +1924,17 @@ const PVModules = {
     mount(host, slide){
       const d = slide.data, K = PVK, sc = K.scene(host), C = K.ctx(slide, sc);
       state.ownsAudio = true; setNavActive(false); pvReplay(C);
-      const diff = d.a - d.b, R = pvSplit(diff);
-      const S = pvStoryScene(sc, d), { pA, pB, gA, gR, gAm, cA, minus, cB, eqs, cQ, BH } = S;
+      const S = pvStoryScene(sc, d), { pA, pB, gA, cA, minus, cB, eqs, cQ } = S, CU = d.cues || {};
       const say = e =>{ e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
-      const kept = gA.all();
-      const asking = d.mode === "ask";
-      if(asking) S.parts().forEach(e => e.classList.add("pv-hide"));
+      S.parts().forEach(e => e.classList.add("pv-hide"));
       K.run(C, async ()=>{
         await C.wait(250);
-        if(asking){
-          await C.cue("a", [[0.05, ()=>{ K.show(pA); gA.all().forEach((x, i)=> setTimeout(()=> K.show(x), 120 + i * 55)); }], [0.6, ()=>{ K.show(cA); sfxPop(); }]]);
-          await C.cue("b", [[0.05, ()=> K.show(pB)], [0.3, ()=>{ gAm.all().forEach((x, i)=> setTimeout(()=>{ K.show(x); PVSFX.appear(); }, i * 60)); }],
-                            [0.72, ()=>{ K.show(minus); K.show(cB); sfxPop(); }]]);
-          C.guard();
-          await C.cue("ask", [[0.15, ()=> K.show(eqs)], [0.6, ()=>{ K.show(cQ); cQ.classList.add("pulse"); }]]);
-          await C.cue("learn", [[0.3, ()=> say(cA)], [0.5, ()=> say(cB)], [0.8, ()=>{ cQ.classList.remove("pulse"); void cQ.offsetWidth; cQ.classList.add("pulse"); }]]);
-        } else {
-          await C.cue("a", [[0.2, ()=> say(cA)], [0.42, ()=> say(cB)], [0.7, ()=> K.sweep(kept, 80)]]);
-          await C.cue("b", [[0.15, ()=>{ let j = 0, i = 0; const LR = gR.layout(R.t, R.o);
-                                kept.forEach((x, n)=>{ const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? BH : gR.cs);
-                                  const p = x._kind === "t" ? LR.rod(j++) : LR.cube(i++);
-                                  K.wait(n * 80).then(()=> K.glide(c, p, 700, true)); }); }],
-                             [d.fill_at || 0.5, ()=>{ cQ.classList.remove("pulse"); cQ.innerHTML = K.numHTML(diff); cQ.classList.add("filled"); K.pop(cQ); }]]);
-          await C.cue("c", [[0.15, ()=> K.sweep(kept, 80)], [0.6, ()=> say(cQ)]]);
-        }
+        await C.cue("a", S.names(CU, "a", [[0.05, ()=>{ K.show(pA); gA.all().forEach((x, i)=> setTimeout(()=>{ if(C.alive()){ K.show(x); if(i % 3 === 0) PVSFX.appear(); } }, 120 + i * 55)); }],
+                          [0.6, ()=>{ K.show(cA); sfxPop(); }]]));
+        await C.cue("b", S.names(CU, "b", [[0.05, ()=>{ K.show(pB); sfxPop(); }], [0.72, ()=>{ K.show(minus); K.show(cB); sfxPop(); }]]));
+        C.guard();
+        await C.cue("ask", S.names(CU, "ask", [[0.15, ()=> K.show(eqs)], [0.6, ()=>{ K.show(cQ); cQ.classList.add("pulse"); }]]));
+        await C.cue("learn", [[0.3, ()=> say(cA)], [0.5, ()=> say(cB)], [0.8, ()=>{ cQ.classList.remove("pulse"); void cQ.offsetWidth; cQ.classList.add("pulse"); }]]);
         setNavActive(true);
       });
     }
@@ -2001,10 +2004,10 @@ const PVModules = {
         if(SD && C.has("story_a")){
           TA.fade(); E.el.classList.add("pv-gone"); PVSFX.move();
           await C.wait(550); C.guard();
-          /* user 2026-10-23: here Aman has no blocks of his own - on "तेरह घटाए" 13 of Meera's 25 (1 rod, 3 cubes) go over to
-             him and her 12 close up; on "बचे 12" a copy of her 12 goes into the "=" column, under the "?" */
-          const S = pvStoryScene(sc, SD), aman = S.gAm.all(); aman.forEach(x => x.style.visibility = "hidden");
-          const all = S.parts().filter(e => !aman.includes(e)); all.forEach(e => e.classList.add("pv-hide"));
+          /* user 2026-10-23: the T1 row - Aman has no blocks; on "तेरह घटाए" 13 of Meera's 25 (1 rod, 3 cubes) go over to him
+             (copies) and hers turn grey where they stand; on "बचे 12" her 12 left beat; "12 आएगा" fills the "?" */
+          const S = pvStoryScene(sc, SD), aman = S.gAm.all();
+          const all = S.parts(); all.forEach(e => e.classList.add("pv-hide"));
           all.forEach((e, i)=> setTimeout(()=>{ if(C.alive()){ K.show(e); if(i % 4 === 0) PVSFX.appear(); } }, i * 30));
           await C.wait(all.length * 30 + 450); C.guard();
           const RR = pvSplit(d.a - d.b), BB = pvSplit(d.b);
@@ -2016,20 +2019,15 @@ const PVModules = {
              it reads as "taken out of the 25") */
           const give = ()=>{ PVSFX.move();
             [...goR.map((x, j)=> [x, toA.t[j]]), ...goC.map((x, j)=> [x, toA.o[j]])].forEach(([x, to], n)=>
-              K.wait(n * 90).then(()=>{ if(!to || !C.alive()) return; const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? S.BH : S.gR.cs);
+              K.wait(n * 90).then(()=>{ if(!to || !C.alive()) return; const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? S.BH : S.cs);
                 x.classList.add("pv-taken"); K.glide(c, { x: to._x, y: to._y }, 650, true); })); };
-          const gRb = [];
-          const toEq = ()=>{ PVSFX.move(); const LR = S.gR.layout(RR.t, RR.o); let j = 0, i = 0;
-            kept.forEach((x, n)=>{ const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? S.BH : S.gR.cs); gRb.push(c);
-              const p = x._kind === "t" ? LR.rod(j++) : LR.cube(i++);
-              K.wait(n * 90).then(()=> K.glide(c, p, 700, true)); }); };
           const cy = CU.story || { a: .25, b: .45, n: .78, c: .55 };
           await C.cue("story_a", [[cy.a, ()=>{ say(S.cA); K.beat(S.gA.all(), 25); }], [cy.b, ()=>{ say(S.cB); give(); }],
-                                  [cy.n, ()=>{ K.beat(kept, 60); toEq(); }]]);
+                                  [cy.n, ()=> K.beat(kept, 60)]]);
           await C.cue("story_b", [[0.12, ()=> S.cQ.classList.add("pulse")],
                                   [d.fill_at || 0.5, ()=>{ S.cQ.classList.remove("pulse"); S.cQ.innerHTML = K.numHTML(d.a - d.b); S.cQ.classList.add("filled"); K.pop(S.cQ); sfxCorrect(); }]]);
           C.guard(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
-          if(C.has("story_c")) await C.cue("story_c", [[cy.c, ()=>{ K.beat(gRb, 90); say(S.cQ); }]]);
+          if(C.has("story_c")) await C.cue("story_c", S.names(CU, "story_c", [[cy.c, ()=>{ K.beat(kept, 60); say(S.cQ); }]]));
         }
         await C.wait(600);
         setNavActive(true);
@@ -2195,26 +2193,16 @@ const PVModules = {
     }
   },
   CELEBRATION: {
-    /* the end screen exactly as MTG2A04 (its CELEBRATION, ported from hindi-game-gender-identify): no text - the jingle,
-       then on its end (or 1.8s) Swiftie jumps and says the line (the VO only - review 2026-10-08: "remove these titles
-       from the end screens ... only Voiceover will come here"); आगे बढ़ें when it ends. */
+    /* HI02H11_L02_S02's end screen (user 2026-10-23: "exact same"): no text, the sunburst and the star burst, the
+       celebration sound, the arrow there from the start; Swifty is the celebration kit's (below): she jumps and cheers
+       first, then says the line, lip-synced. Our line ("शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।") and the arrow's
+       hand-off to the host stay. */
     mount(host, slide){
-      state.ownsAudio = true;
+      playSfx(slide.audio && slide.audio.sfx ? slide.audio.sfx : "sfx_celebrate");
       const et = $("endTitle"); if(et) et.textContent = "";
       const st = $("endSubtitle"); if(st) st.textContent = "";
-      const es = $("endScreen"); es.classList.add("show");
+      const es = $("endScreen"); es.classList.add("show", "hint-glow");
       document.body.classList.add("is-end");
-      const em = es.querySelector(".end-mascot");
-      const setSw = u =>{ try{ if(!em) return; em.removeAttribute("data-src"); em.removeAttribute("src"); void em.offsetWidth; em.setAttribute("src", u); }catch(e){} };
-      setSw(Assets.url("assets/last_swifty_still.webp"));
-      let spoke = false;
-      const speak = ()=>{
-        if(spoke || !$("endScreen").classList.contains("show")) return; spoke = true;
-        setSw(Assets.fresh("assets/last_swifty_end.webp"));
-        play(audioFor(slide, "prompt") || null, ()=>{ if(state.endBtnPending){ $("endBtn").classList.add("show"); state.endBtnPending = false; } });
-      };
-      setTimeout(speak, 1800);
-      playSfx(slide.audio && slide.audio.sfx ? slide.audio.sfx : "sfx_celebrate", speak);
       const c = $("confetti"); c.innerHTML = "";
       starBurst();
       const masteryScore = state.masteryAttempts ? (state.masteryHits / state.masteryAttempts) : 0;
@@ -2222,8 +2210,8 @@ const PVModules = {
       GameBus.emit("lesson_completed", { skill_code: CARD.skill_code, total_signals: GameBus.signals.length });
       runValidator();
       setNavActive(false);
-      const eb = $("endBtn"); eb.classList.remove("show");
-      state.endBtnPending = true;
+      const eb = $("endBtn"); eb.classList.add("show", "hint-glow");
+      state.endBtnPending = false;
       if(new URLSearchParams(location.search).has("dev") && !$("dlResults")){
         const dl = document.createElement("button"); dl.id = "dlResults"; dl.textContent = "⬇ results JSON";
         dl.style.cssText = "position:absolute;bottom:20px;left:20px;z-index:5;font-family:var(--font-hi);font-weight:700;font-size:16px;padding:8px 16px;border-radius:12px;border:2px solid #B7DCFB;background:#fff;color:var(--navy);cursor:pointer;";
@@ -2534,6 +2522,12 @@ const PVLanding = {
 function starBurst(){ FLNMotion.starBurst.fire({ host: "#confetti" }); }
 function clearHost(){
   document.body.classList.remove("is-end");   // r4: clear immersive end state when leaving celebration
+  /* user 2026-10-23: going back from the celebration (dev menu) left its Swifty on screen - the end screen, its button and
+     the kit's Swifty are put away whenever another page mounts */
+  { const es = $("endScreen"); if(es) es.classList.remove("show", "hint-glow");
+    const eb = $("endBtn"); if(eb){ eb.classList.remove("show", "hint-glow"); eb.disabled = false; delete eb.dataset.done; }
+    const cb = document.getElementById("celBox"); if(cb) cb.innerHTML = "";
+    const cf = $("confetti"); if(cf) cf.innerHTML = ""; state.endBtnPending = false; }
   $("slideHost").innerHTML = "";
   $("hintBtn").classList.remove("show");
   $("hintBtn").disabled = false;
@@ -2658,7 +2652,7 @@ function afterConfetti(fn){
   /* ===== FLN ANIMATION KIT: confetti (advance gate) END ===== */
 }
 /* onscreen headline per gate (display only; distinct from any narration). Eligibility = phase IN this map. */
-const PHASE_GATE_TITLE = { tutorial:"चलिए, शुरू करते हैं!", guided:"चलिए, साथ में करें!", practice:"अब आपकी बारी!" };   // QA checklist 2026-10-05: the headlines are exactly the lines Swiftie speaks (each VO is now that line alone), so the text appears only as she says it
+const PHASE_GATE_TITLE = { tutorial:"चलिए, शुरू करें!", guided:"चलिए, साथ में करें!", practice:"अब आपकी बारी!" };   // HI02H11_L02_S02's headlines (user 2026-10-23: "exact same")   // QA checklist 2026-10-05: the headlines are exactly the lines Swiftie speaks (each VO is now that line alone), so the text appears only as she says it
 const PHASE_GATE_VO    = { tutorial:"vo_pt_tutorial", guided:"vo_pt_guided", practice:"vo_pt_practice" };
 const ANIM_ASSETS = ["loader.webp", "new_landing_swiftee_anim.webp", "peeking_talk_up.webp", "sw_head_celebrate_anim.webp", "sw_head_hint_anim.webp", "sw_head_tryagain_anim.webp"];
 /* [gate] THE THREE TRANSITION SCREENS OF HI02H11_L02_S02 (its r142 - Hindi-game-gender-identify's screen), user 2026-10-23:
@@ -2674,7 +2668,7 @@ const ANIM_ASSETS = ["loader.webp", "new_landing_swiftee_anim.webp", "peeking_ta
    Our lines (PHASE_GATE_TITLE) and clips (vo_pt_*) are unchanged. Every screen starts the bird from frame 0: a fresh
    blob: URL of the one download (Assets.fresh). */
 const PEEK_UP_SRC = "assets/gif/peeking_talk_up.webp";
-const PHASE_GATE_CUE_MS = { tutorial: 280, guided: 280, practice: 280 };
+const PHASE_GATE_CUE_MS = { tutorial: 3075, guided: 3575, practice: 925 };   // HI02H11's title_cue_ms - where the headline is said in its clips (copied as they are)
 function _fitGateTitle(){
   try{
     const t = $("phaseGateTitle"), im = $("phaseGateImg"), g = $("phaseGate");
@@ -2886,6 +2880,9 @@ const ASSET_SIZES = {
   "assets/castle_cube_l.webp": 4122,
   "assets/castle_cube_r.webp": 4236,
   "assets/castle_cubes.webp": 63644,
+  "assets/celebration/cel_idle.webp": 651146,
+  "assets/celebration/cel_shabaash.webp": 684852,
+  "assets/celebration/cel_talk.webp": 650742,
   "assets/char_aman.webp": 13392,
   "assets/char_aman_blink.webp": 13526,
   "assets/char_aman_cheer.webp": 41686,
@@ -2978,13 +2975,19 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_p3_h2.ogg": 20648,
   "assets/voiceover/vo_p3_prompt.ogg": 16425,
   "assets/voiceover/vo_p3_reveal.ogg": 21408,
-  "assets/voiceover/vo_p4_correct.ogg": 20015,
   "assets/voiceover/vo_p4_h2.ogg": 21228,
-  "assets/voiceover/vo_p4_prompt.ogg": 19528,
   "assets/voiceover/vo_p4_reveal.ogg": 19528,
-  "assets/voiceover/vo_pt_guided.ogg": 6941,
-  "assets/voiceover/vo_pt_practice.ogg": 4376,
-  "assets/voiceover/vo_pt_tutorial.ogg": 5830,
+  "assets/voiceover/vo_p67_correct.ogg": 23520,
+  "assets/voiceover/vo_p67_h2.ogg": 20913,
+  "assets/voiceover/vo_p67_prompt.ogg": 15413,
+  "assets/voiceover/vo_p67_reveal.ogg": 20496,
+  "assets/voiceover/vo_p90_correct.ogg": 30821,
+  "assets/voiceover/vo_p90_prompt.ogg": 8963,
+  "assets/voiceover/vo_p90_rm_tens.ogg": 21838,
+  "assets/voiceover/vo_p90_sub.ogg": 24681,
+  "assets/voiceover/vo_pt_guided.ogg": 240670,
+  "assets/voiceover/vo_pt_practice.ogg": 90014,
+  "assets/voiceover/vo_pt_tutorial.ogg": 207518,
   "assets/voiceover/vo_rm_guide.ogg": 7416,
   "assets/voiceover/vo_rm_ones_less.ogg": 14424,
   "assets/voiceover/vo_rm_ones_more.ogg": 14986,
@@ -4360,3 +4363,216 @@ boot();
 })();
 
 PVLanding.intro();   // [landing pv] the picture comes in with the greeting
+
+/* ==== HI02H11_L02_S02's celebration Swiftie (user 2026-10-23): its kit player + its wrapper, as they are ==== */
+/* ============================================================================================
+   SWIFTIE CELEBRATION KIT — player (framework-free, no dependencies)
+   ============================================================================================
+   Plays the three celebration sheets (cel_shabaash / cel_talk / cel_idle) lip-synced to a voice-over.
+
+     SwiftieCelebration.play({
+       host:     <element>,                 // where Swiftie goes (she fills its height)
+       meta:     <cel_meta.json object>,    // frame size, grid, open-mouth frames, roles
+       base:     "assets/UI/celebration/",  // folder the three .webp sheets are served from
+       bits:     "0001111...",              // lip-sync track from make_lipsync.py (25 ms per char)
+       step_ms:  25,
+       // THE CLOCK — give ONE of these:
+       audio:    <HTMLAudioElement>,        // best: time = audio.currentTime
+       isSounding: ()=> bool                // or: true while the VO is sounding (timer starts then)
+     })  -> { stop() }
+
+   Timeline (all from the VO clock):
+     before the first sound   shabaash 0-5    standing, mouth shut
+     first word («शाबाश!»)    shabaash 6-29   the jump, mouth open — stretched to that word
+     the pause after it       shabaash 30-35  lands, mouth shut
+     rest of the line         talk sheet: a cursor walks the sheet forward (so the body keeps moving)
+                              but only lands on frames whose mouth matches the track at that instant
+     after the VO             idle sheet, mouth-shut frames only, looping
+   Measured on MTG2A04_L01_S01: mouth = VO in 99.6-100 % of samples; every miss within one paint.
+   ============================================================================================ */
+(function(global){
+  "use strict";
+  function play(o){
+    const M = o.meta, base = (o.base || "").replace(/\/?$/, "/");
+    const bits = o.bits || "", step = o.step_ms || 25;
+    const S = M.shabaash, T = M.talk, I = M.idle, COLS = M.cols || 6, N = M.frames || 36;
+    const OPEN = new Set(T.open);
+    let stopped = false;
+
+    const sp = document.createElement("div");
+    sp.className = "swc-sprite";
+    sp.innerHTML = '<div class="swc-art"></div>';
+    o.host.appendChild(sp);
+    const art = sp.firstChild;
+    art.style.aspectRatio = M.fw + " / " + M.fh;
+    [S, T, I].forEach(s => { const i = new Image(); i.src = base + s.src; });   /* warm all three */
+
+    let cur = "";
+    const show = (sheet, i)=>{
+      const url = base + sheet.src;
+      if(url !== cur){ art.style.backgroundImage = 'url("' + url + '")'; cur = url; }
+      const c = i % COLS, r = Math.floor(i / COLS);
+      art.style.backgroundPosition = (c * 100 / (COLS - 1)) + "% " + (r * 100 / (COLS - 1)) + "%";
+      sp.dataset.sheet = sheet === S ? "shabaash" : (sheet === I ? "idle" : "talk"); sp.dataset.f = i;
+    };
+    show(S, S.pre[0]);
+
+    const loud = (t)=> bits.charAt(Math.floor(t / step)) === "1";
+    const GAP = Math.round(200 / step);                       /* a 200 ms silence ends the first word */
+    let s0 = bits.indexOf("1"), e0 = s0, gap = 0;
+    for(let k = s0; k >= 0 && k < bits.length; k++){ if(bits[k] === "1"){ e0 = k; gap = 0; } else if(++gap >= GAP) break; }
+    const speechStart = Math.max(0, s0) * step, wordEnd = (e0 + 1) * step;
+    const ns = bits.indexOf("1", e0 + GAP), nextStart = ns < 0 ? wordEnd : ns * step;
+    const lenMs = bits.length * step;
+    const seg = (list, t, a, b)=> list[Math.min(list.length - 1, Math.max(0, Math.floor((t - a) / Math.max(1, b - a) * list.length)))];
+
+    const idle = ()=>{ let j = 0; (function tick(){ if(stopped || !sp.isConnected) return;
+      show(I, I.loop[j % I.loop.length]); j++; setTimeout(tick, 110); })(); };
+
+    /* the clock */
+    let t0 = 0, started = false;
+    /* audio.currentTime advances in coarse steps in some browsers, so it only ANCHORS a smooth clock:
+       t0 is set once from it when the clip starts; after that time is performance.now() - t0 */
+    const t_now = ()=> performance.now() - t0;
+    const sounding = ()=> o.audio ? (!o.audio.paused && !o.audio.ended) : !!(o.isSounding && o.isSounding());
+    const waitStart = performance.now();
+    let cursor = 0, curOpen = null, lastStep = 0;
+    (function frame(){
+      if(stopped || !sp.isConnected) return;
+      const now = performance.now();
+      if(!started){
+        if(sounding() && (!o.audio || o.audio.currentTime > 0)){ started = true; t0 = now - (o.audio ? o.audio.currentTime * 1000 : 0); }
+        else if(now - waitStart > 1800){ idle(); return; }            /* the VO never started */
+        else { requestAnimationFrame(frame); return; }
+      }
+      const t = t_now(); sp.dataset.t = Math.round(t);
+      if(!sounding() || t > lenMs + 400){ idle(); return; }
+      if(t < speechStart) show(S, seg(S.pre, t, 0, speechStart));
+      else if(t < wordEnd) show(S, seg(S.word, t, speechStart, wordEnd));
+      else if(t < nextStart) show(S, seg(S.post, t, wordEnd, nextStart));
+      else {
+        const want = loud(t + 16);                        /* one paint ahead: the frame shows on the NEXT paint */
+        if(want !== curOpen || now - lastStep > 80){      /* at once on a mouth change, else every 80 ms */
+          let k = 1;
+          while(k < N && OPEN.has((cursor + k) % N) !== want) k++;
+          cursor = (cursor + k) % N; show(T, cursor); curOpen = want; lastStep = now;
+        }
+      }
+      requestAnimationFrame(frame);
+    })();
+    return { el: sp, stop(){ stopped = true; } };
+  }
+  global.SwiftieCelebration = { play };
+})(window);
+
+
+/* [r85] THE CELEBRATION SWIFTIE - the kit's README wrapper, verbatim in intent. The engine's
+   CELEBRATION module is wrapped, not edited: it still does everything it did (sfx, sunburst, stars,
+   the arrow), then the stock .end-mascot is hidden and a 300x358 host takes its place - the mascot's
+   own 358 px layout height, so the arrow below it keeps its exact size and position.
+   The clock is the clip's own - see THE CLOCK below. */
+(function(){
+  if(typeof SlideModules === "undefined" || !SlideModules.CELEBRATION || typeof CARD === "undefined"
+     || !CARD.end_anim || typeof SwiftieCelebration === "undefined") return;
+  const EA = CARD.end_anim;
+  /* the three sheets (~2 MB) are fetched quietly 12 s after the lesson loads, so on a first visit
+     they are in the cache long before the last page: the kit only starts loading them when the
+     celebration mounts, and on a slow connection the jump (350 ms in) would play before its sheet
+     had arrived. Kept referenced so the cached copies are not dropped. */
+  const _warm = [];
+  const warm = ()=> [EA.meta.shabaash, EA.meta.talk, EA.meta.idle].forEach(s => {
+    const i = new Image(); i.decoding = "async"; i.src = EA.base + s.src; _warm.push(i); });
+  const arm = ()=> setTimeout(warm, 12000);
+  if(document.readyState === "complete") arm(); else window.addEventListener("load", arm);
+  /* THE CLOCK. The kit takes `audio` - anything with paused / ended / currentTime - and anchors
+     itself as  t0 = now - currentTime  the first time it sees the clip sounding. Measured here: the
+     celebration mounts in a burst of work (sunburst, stars, sound), the page's main thread stalls
+     150-330 ms right as the clip starts, and a yes/no "sounding" signal is only noticed on the first
+     frame AFTER the stall - which put the whole lip-sync 170-1470 ms late when opened as a file.
+     So the clock below reports how long the clip has really been audible, from the moment it
+     became so, however late the next frame runs:
+       · Web Audio (served): when the engine started the source, + the context's output latency
+       · <audio> (opened as a file): the element's own "playing" event timestamp */
+  const _st = AudioBufferSourceNode.prototype.start;
+  AudioBufferSourceNode.prototype.start = function(when){
+    try{ const c = this.context;
+      this.__swcAt = performance.now() + ((when && when > c.currentTime) ? (when - c.currentTime) * 1000 : 0)
+                     + ((c.baseLatency || 0) + (c.outputLatency || 0)) * 1000; }catch(e){}
+    return _st.apply(this, arguments);
+  };
+  const heardAt = ()=>{
+    const a = currentAudio;
+    if(a){
+      if(!a.__swc){ a.__swc = true;
+        a.addEventListener("playing", (e)=>{ a.__swcAt = e.timeStamp - a.currentTime * 1000; }); }
+      return a.paused ? null : (a.__swcAt != null ? a.__swcAt
+                               : (a.currentTime > 0 ? performance.now() - a.currentTime * 1000 : null));
+    }
+    return (typeof currentVoiceSource !== "undefined" && currentVoiceSource) && currentVoiceSource.__swcAt != null ? currentVoiceSource.__swcAt : null;
+  };
+  const clock = {
+    get paused(){ return !isPlaying || heardAt() == null; },
+    get ended(){ return !isPlaying; },
+    get currentTime(){ const t = heardAt(); return t == null ? 0 : Math.max(0, performance.now() - t) / 1000; }
+  };
+  const _cel = SlideModules.CELEBRATION.mount;
+  SlideModules.CELEBRATION.mount = function(host, slide){
+    const r = _cel.apply(this, arguments);
+    const img = document.querySelector("#endScreen .end-mascot");
+    let box = document.getElementById("celBox");
+    if(!box && img){ box = document.createElement("div"); box.id = "celBox";
+      /* the stock mascot's OWN layout height, measured before it is hidden: 330 px wide at its
+         516x476 art is 357.72 px, not the kit's 358 - and 0.28 px is a whole screen pixel of arrow
+         movement at 1920x1080. Falls back to the kit's 358 if the stock art never loaded. */
+      const h = 357.72;   // (HI02H11's stock mascot box: 330px wide at its 516x476 art - ours has other art, so its number is taken)
+      box.style.cssText = "width:300px;height:" + h + "px;position:relative;z-index:2";
+      img.parentNode.insertBefore(box, img); }
+    if(!box) return r;
+    if(img) img.style.display = "none";
+    box.innerHTML = "";
+    /* [r106] SHE JUMPS AND CELEBRATES FIRST, THEN SPEAKS. Yasir: "in the last celebration screen Swifty
+       jumps and celebrates, then starts speaking - the VO should only play when she starts speaking".
+       So the line is NOT played by the page on arrival (ownsAudio): the jump - the kit's own शाबाश
+       sheet, its standing frames and its jump frames - plays first, silent but for the celebration
+       sound; then the line starts and the kit's player takes over, with a track arranged so that it
+       finishes the landing over the clip's lead-in and then lip-syncs the WHOLE line on the talk
+       sheet (a 25 ms stand-in "first word" stops the kit spending the real first words on a jump). */
+    state.ownsAudio = true;
+    const M = EA.meta, S = M.shabaash, COLS = M.cols || 6;
+    const sp = document.createElement("div"); sp.className = "swc-sprite";
+    sp.innerHTML = '<div class="swc-art"></div>'; box.appendChild(sp);
+    const art = sp.firstChild; art.style.aspectRatio = M.fw + " / " + M.fh;
+    art.style.backgroundImage = 'url("' + EA.base + S.src + '")';
+    const showF = (i)=>{ const c = i % COLS, rr = Math.floor(i / COLS);
+      art.style.backgroundPosition = (c * 100 / (COLS - 1)) + "% " + (rr * 100 / (COLS - 1)) + "%";
+      sp.dataset.sheet = "shabaash"; sp.dataset.f = i; };
+    const frames = S.pre.concat(S.word), FMS = 45;          /* ~22 fps: 30 frames, 1.35 s */
+    showF(frames[0]);
+    const bits = EA.track.bits, lead = Math.max(0, bits.indexOf("1"));
+    const step = EA.track.step_ms || 25;
+    const bits2 = "1" + "00000000" + bits.slice(lead);      /* stand-in word, 200 ms gap, the line */
+    const shift = (9 - lead) * step / 1000;                 /* keeps the line on the clip's clock */
+    const clock2 = {
+      get paused(){ return clock.paused; }, get ended(){ return clock.ended; },
+      get currentTime(){ const t = clock.currentTime; return t > 0 ? Math.max(0.001, t + shift) : 0; }
+    };
+    const t0 = performance.now();
+    (function jump(){
+      if(!sp.isConnected || CARD.slides[state.idx] !== slide) return;
+      const k = Math.floor((performance.now() - t0) / FMS);
+      if(k < frames.length){ showF(frames[k]); requestAnimationFrame(jump); return; }
+      /* the jump is over: the line starts, and the kit takes over the moment it is sounding */
+      const src = (typeof audioFor === "function") ? audioFor(slide, "prompt") : null;
+      if(src) play(src, ()=>{});
+      const h = SwiftieCelebration.play({ host: box, meta: M, base: EA.base, bits: bits2, step_ms: step, audio: clock2 });
+      h.el.style.animation = "none"; h.el.style.position = "absolute"; h.el.style.inset = "0";
+      h.el.style.visibility = "hidden";
+      (function swap(){
+        if(!h.el.isConnected) return;
+        if(h.el.dataset.t !== undefined || h.el.dataset.sheet === "idle"){ h.el.style.visibility = ""; sp.remove(); return; }
+        requestAnimationFrame(swap);
+      })();
+    })();
+    return r;
+  };
+})();

@@ -23,15 +23,16 @@ by a **take-away kit** (`app.js` `[pv sub]`, CSS `[pv sub]`):
 | slide | deck | type | what happens |
 |---|---|---|---|
 | landing | p1 | — | "संख्याओं का घटाव" (arched, painted on the wall), the sibling's cube castle: Aman and Meera glide in, each lifts a red top off and cheers holding it; greeting |
-| T1 | p2 | STORY_SUB ask | "कितने बचे?" — Meera keeps her 25 blocks; Aman's 13 appear under him in grey; 25, − 13, = ? appear with the VO |
+| T1 | p2 | STORY_SUB | "कितने बचे?" — one row: Meera with her 25 (the ones apart), Aman with none; 25 − 13 = ? below, appearing with the VO |
 | T2 | p3 + p5 | PV_SUB_DEMO | Swiftee builds 25 (+ ×2, + ×5); 25 − 13 in the same table: Swiftee takes 3 ones, the child takes 1 ten; the columns beat with the VO (no glow), "= 12" beside the table, "…यानी 12"; then the story's answer lines, 12 lands in the "?" on "12 आएगा" |
 | G1 | p7 | PV_SUB fill | 34 − 21: build, take away, 13 fills the box, number sync |
 | G2 | p7b | PV_SUB mcq | 47 − 20 (72 / 27 / 67) |
 | G3 | p8 | PV_SUB mcq | 58 − 30 (88 / 28 / 82), comes built; column steps spoken one by one |
 | P1 | p9 | PV_SUB numpad | 79 − 34 → 45, comes built; the sibling's keypad layout - typed into the "?" |
-| P2 | p11 | PV_SUB mcq | 86 − 56 given as blocks, heads show words only (30 / 40 / 13) |
-| P3 | p13 | MENTAL_SUB mcq | 45 − 12 (57 / 23 / 33) |
-| P4 | p15 | MENTAL_SUB numpad | 90 − 40 → 50; the sibling's keypad layout - typed into the "?" |
+| P2 | — | PV_SUB numpad | 90 − 40 → 50, a copy of P1 (user 2026-10-23) |
+| P3 | p11 | PV_SUB mcq | 86 − 56 given as blocks, heads show words only (30 / 40 / 13) |
+| P4 | p13 | MENTAL_SUB mcq | 45 − 12 (57 / 23 / 33) |
+| P5 | — | MENTAL_SUB mcq | 67 − 53 (14 / 44 / 13), a copy of P4 (user 2026-10-23) |
 | CEL | p16 | CELEBRATION | "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।" |
 
 Deleted (deck): pages 6, 10, 12, 14. The boat game (deck slide 18, hidden; cover-slide notes) is not part of this lesson.

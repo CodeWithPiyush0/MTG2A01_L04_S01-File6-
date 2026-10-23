@@ -27,9 +27,10 @@ def vo(cid, line):
 
 # ---- shared lines -------------------------------------------------------------------------------------
 vo("vo_landing", "नमस्ते दोस्त! मैं हूँ स्विफ्टी! आज हम संख्याओं को घटाना सीखेंगे।")
-vo("vo_pt_tutorial", "चलिए, शुरू करते हैं!")
-vo("vo_pt_guided", "चलिए, साथ में करें!")
-vo("vo_pt_practice", "अब आपकी बारी!")
+# the three transition lines: HI02H11_L02_S02's own clips, copied as they are (user 2026-10-23, "exact same")
+vo("vo_pt_tutorial", "ध्यान से देखिए और मेरे साथ जानिए। चलिए, शुरू करें!")
+vo("vo_pt_guided", "बहुत बढ़िया! अब हम साथ मिलकर शुरू करते हैं। चलिए, साथ में करें!")
+vo("vo_pt_practice", "वाह! अब आपकी बारी।")
 # the removal ladder (deck pages 7-8): 1st wrong - the line for the column that went wrong; 2nd - the guide
 RM = {
     "rm_ones_more": vo("vo_rm_ones_more", "आपने इकाई में ज़्यादा हटाए हैं। दोबारा कोशिश करिए।"),
@@ -143,10 +144,22 @@ slides.append(pv_sub("P1", "practice", 79, 34, {
     "correct": vo("vo_p1_correct", "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।")},
     answer="numpad", steps=True, build=False, extra_data={"ones_first": True}))
 
+# user 2026-10-23: P2 is a copy of P1 with 90 - 40 (the old blocks-free P4's question, brought next to P1)
+slides.append(pv_sub("P2", "practice", 90, 40, {
+    "prompt": vo("vo_p90_prompt", "90 में से 40 घटाइए।"),
+    "sub": vo("vo_p90_sub", "और अब इसमें से 40 घटाते हैं, 40 में 4 दहाई और 0 इकाई हैं।"),
+    "rm_ones": vo("vo_g3_rm_ones", "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।"),
+    "rm_tens": vo("vo_p90_rm_tens", "अब दहाइयाँ घटाइए। 9 दहाई में से 4 दहाई हटाइए।"),
+    "ask": vo("vo_p1_ask", "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।"),
+    "recount": RECOUNT, "h2": vo("vo_p4_h2", "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।"),
+    "reveal": vo("vo_p4_reveal", "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।"),
+    "correct": vo("vo_p90_correct", "शाबाश! 90 में से 40 घटाने पर हमें मिलीं 5 दहाई और 0 इकाई, यानी 50।")},
+    answer="numpad", steps=True, build=False, extra_data={"ones_first": True}))
+
 # deck page 10 (MAKE_SET): deleted
 
 # deck page 11 - 86 - 56: the blocks are given; no step VO; the headers follow the blocks left
-slides.append(pv_sub("P2", "practice", 86, 56, {
+slides.append(pv_sub("P3", "practice", 86, 56, {
     "prompt": vo("vo_p2_prompt", "86 में से 56 घटाइए और सही संख्या चुनिए।"),
     "remove": vo("vo_p2_remove", "दिए हुए ब्लॉक्स पर टैप करके 56 ब्लॉक्स हटाइए। पहले इकाई में से हटाइए, फिर दहाई में से।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_p2_h2", "86 में से 56 घटाने पर, 3 दहाई और 0 इकाई बचती हैं।"), 
@@ -158,7 +171,7 @@ slides.append(pv_sub("P2", "practice", 86, 56, {
 
 # deck page 13 - 45 - 12: only the equation and three answers
 slides.append({
-    "id": "P3", "phase": "practice", "eis": "symbolic", "type": "MENTAL_SUB", "prompt_hi": "संख्याएँ घटाइए।",
+    "id": "P4", "phase": "practice", "eis": "symbolic", "type": "MENTAL_SUB", "prompt_hi": "संख्याएँ घटाइए।",
     "audio": {"prompt": vo("vo_p3_prompt", "45 में से 12 घटाइए और सही संख्या चुनिए।"),
               "order": ORDER, "h2": vo("vo_p3_h2", "45 में से 12 घटाने पर, 3 दहाई और 3 इकाई बचती हैं।"),
               "reveal": vo("vo_p3_reveal", "45 में से 12 घटाने पर 33 बचता है। तो सही संख्या यह है।"),
@@ -167,14 +180,15 @@ slides.append({
 
 # deck page 14 (PICK_SET): deleted
 
-# deck page 15 - 90 - 40: no blocks, the number pad
+# user 2026-10-23: the last practice page (P5) is a copy of P4 (equation + three answers) with 67 - 53; the old blocks-free
+# 90 - 40 number-pad page is gone (its question is P2 now)
 slides.append({
-    "id": "P4", "phase": "practice", "eis": "symbolic", "type": "MENTAL_SUB", "prompt_hi": "संख्याएँ घटाइए।",
-    "audio": {"prompt": vo("vo_p4_prompt", "90 में से 40 घटाइए और डिब्बे पर टैप करके सही संख्या लिखिए।"),
-              "order": ORDER, "h2": vo("vo_p4_h2", "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।"),
-              "reveal": vo("vo_p4_reveal", "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।"),
-              "correct": vo("vo_p4_correct", "शाबाश! 90 घटा 40 बराबर 50।")},
-    "data": {"a": 90, "b": 40, "answer": "numpad", "pad_below": True}})
+    "id": "P5", "phase": "practice", "eis": "symbolic", "type": "MENTAL_SUB", "prompt_hi": "संख्याएँ घटाइए।",
+    "audio": {"prompt": vo("vo_p67_prompt", "67 में से 53 घटाइए और सही संख्या चुनिए।"),
+              "order": ORDER, "h2": vo("vo_p67_h2", "67 में से 53 घटाने पर, 1 दहाई और 4 इकाई बचती हैं।"),
+              "reveal": vo("vo_p67_reveal", "67 में से 53 घटाने पर 14 बचता है। तो सही संख्या यह है।"),
+              "correct": vo("vo_p67_correct", "शाबाश! आपने सही संख्या चुन ली। 67 घटा 53 बराबर 14।")},
+    "data": {"a": 67, "b": 53, "answer": "mcq", "options": [14, 44, 13]}})
 
 # deck slides 1 (cover notes) and 18 (hidden): the boat game - not built (review 2026-10-09: "we don't need it")
 
@@ -261,6 +275,19 @@ for sl in slides:
                        "q": frac(au["sub"], "घटाते"), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
         cues["story"] = {"a": frac(au["story_a"], "पच्चीस"), "b": frac(au["story_a"], "तेरह"), "n": frac(au["story_a"], "बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
+    # user 2026-10-23: the portrait lights as its name is said (T1's lines, T2's story lines): role -> [[fraction, who], ...]
+    if sl["type"] in ("STORY_SUB", "PV_SUB_DEMO"):
+        names = {}
+        for role, cid in au.items():
+            txt = VO[cid]; hits = []
+            for word, who in (("मीरा", "meera"), ("अमन", "aman")):
+                i = txt.find(word)
+                while i >= 0:
+                    hits.append([frac(cid, word, after=txt[:i] if i else None), who]); i = txt.find(word, i + 1)
+            if hits:
+                names[role] = sorted(hits)
+        if names:
+            cues["names"] = names
     if cues:
         d["cues"] = cues
 
@@ -287,6 +314,18 @@ card = {
                "audio_text": {k: VO[k] for k in sorted(VO)}},
     "slides": slides,
 }
+
+# the celebration Swiftie (HI02H11_L02_S02's kit, user 2026-10-23): its sheets and their roles as they are; the lip-sync
+# track measured from OUR celebration line (tools/make_lipsync.py - re-measured on every build)
+import importlib.util as _ilu
+_spec = _ilu.spec_from_file_location("make_lipsync", os.path.join(HERE, "make_lipsync.py")); _ml = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_ml)
+_bits, _ms = _ml.lipsync(os.path.join(ROOT, "assets", "voiceover", "vo_cel.ogg"))
+card["end_anim"] = {"base": "assets/celebration/", "vo": "vo_cel",
+    "meta": {"cols": 6, "frames": 36, "fw": 329, "fh": 440,
+             "shabaash": {"src": "cel_shabaash.webp", "pre": [0, 1, 2, 3, 4, 5], "word": list(range(6, 30)), "post": list(range(30, 36))},
+             "talk": {"src": "cel_talk.webp", "open": [0, 1, 2, 4, 5, 6, 8, 9, 10, 11, 15, 16, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32]},
+             "idle": {"src": "cel_idle.webp", "loop": [0, 1, 2, 3, 4, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]}},
+    "track": {"bits": _bits, "step_ms": 25, "ms": _ms}}
 
 with open(os.path.join(ROOT, "card.json"), "w", encoding="utf-8") as f:
     json.dump(card, f, ensure_ascii=False, indent=1)

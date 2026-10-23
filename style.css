@@ -2324,3 +2324,19 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .nav-btn.active:not(:disabled):active,.stage .nav-btn.active:not(:disabled):active,.stage.tut .nav-btn.active:not(:disabled):active{animation:none;}
 @media (prefers-reduced-motion:reduce){ .nav-btn.active:not(:disabled),.stage .nav-btn.active:not(:disabled),.stage.tut .nav-btn.active:not(:disabled){ animation:none; } }
 
+/* ==================== 2026-10-23 (5) ==================== */
+/* HI02H11_L02_S02's celebration Swiftie (its kit CSS, as it is) */
+/* Swiftie celebration kit — the sprite fills its host's HEIGHT; the art is 420/358 of the host so the
+   jump's head-room rises above the host box (the layout box, and anything placed under it, keeps the
+   standard 358 px mascot geometry). Give the host a height (e.g. 358px) and a width (~300px). */
+.swc-sprite{position:relative;width:100%;height:100%;animation:swcPop .55s cubic-bezier(.34,1.5,.6,1);}
+.swc-sprite .swc-art{position:absolute;left:50%;bottom:0;height:117.3%;transform:translateX(-50%);
+  background-repeat:no-repeat;background-size:600% 600%;filter:drop-shadow(0 12px 22px rgba(0,47,118,.22));}
+@keyframes swcPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+/* pages 1, 2: a child's portrait lights as their name is said - a ring of light and a beat (user 2026-10-23) */
+.pv-person.pv-person-hl .pv-av{animation:pvPersonHl 1.3s ease-in-out 1;border-radius:50%;}
+@keyframes pvPersonHl{0%,100%{scale:1;box-shadow:0 0 0 0 rgba(255,190,40,0);}
+  30%{scale:1.14;box-shadow:0 0 0 6px rgba(255,190,40,.85),0 0 22px 8px rgba(255,190,40,.55);}
+  65%{scale:1.06;box-shadow:0 0 0 5px rgba(255,190,40,.7),0 0 18px 6px rgba(255,190,40,.4);}}
+@media (prefers-reduced-motion:reduce){ .pv-person.pv-person-hl .pv-av{animation:none;box-shadow:0 0 0 5px rgba(255,190,40,.85);} }
+
