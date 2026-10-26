@@ -281,3 +281,29 @@ Verified: T1 measured (title / blocks / equation / next button), the name lights
 | 1 | P2's equation and table not where P1's are | ✅ | the cause: a page reached from the page before it in the same phase mounts while it slides in (q-in: shifted and a little smaller on its first frame), and the scene measured its place on screen - so P2, P3, P4, P5 stood ~8px left and ~20px high. The scene now takes its place from the layout (`K.scene`), which the animation does not touch. Measured: P2 from P1 = P2 opened directly = P1 (cards 201 / 582 / 1023 at 162, table 86, 347); P3 the same |
 | 2 | The new Gemini key | ✅ works | a test request returned audio (checked before rendering anything) |
 | 3 | Generate the missing VO | ✅ | the 8 clips rendered with the new key (Gemini TTS, voice Kore, the lesson's finish): `vo_p90_prompt/_sub/_rm_tens/_correct` (P2), `vo_p67_prompt/_h2/_reveal/_correct` (P5). Checked by transcription: all say their line; two were re-rendered once so each page says its numbers one way - "शून्य इकाई" (not "ज़ीरो") and "तिरपन" (not "तेपन"). Cue times re-measured from the clips |
+
+## User changes — 2026-10-26
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | The + buttons exactly as MTG2A01_L03_S01's | ✅ | her current source box (her commit 4c368fb, 2026-10-23): one white box under the table, two halves [rod +] (दहाई) | [cube +] (इकाई) with a thin line between, each half the button, the block drawn upright in the table's ratio (her sizes: the rod .45 of a block wide, the cube .72), the + on the right; her CSS as it is. Page 2's demo as hers: the half whose turn it is lit, the other grey. The rest of our build logic unchanged (each half greys out when its column is full; the + of the column being named pulses) |
+| 2 | The + icon a little bigger | ✅ | 56px (was 44) |
+
+## SME review 5 — 2026-10-26
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1a | T2: everything slightly higher | ✅ | the 25 card / equation 142 (was 166), the table 250 (was 276); the story ending 34px higher |
+| 1b | T2: "पहले इकाइयाँ घटाते हैं, 5 इकाई में से 3 इकाई हटाते हैं" - a count on each of Swiftee's taps | ✅ | her line first, then "एक", "दो", "तीन" one per tap (`vo_num_1/2/3`) |
+| 1c | T2's ending: the 13 go into Aman's picture and are gone | ✅ | copies of Meera's 13 glide into Aman's portrait and vanish (it beats as they arrive); hers stay grey |
+| 1d | The inactivity reminder (VO) everywhere | ✅ | after 7s with no action the step's own line, again every 7s while idle (any action restarts it; never over another voice): building - "अब दहाई बनाइए।" / "अब इकाई बनाइए।" (`vo_idle_build_t/_o`), taking away - "अब दहाई हटाइए।" / "अब इकाई हटाइए।" (`vo_idle_rm_t/_o`), on every page with those steps (T2 included); the answer steps (cards, keypad) already ask their question again every 7s |
+| 2 | G1: the reminders; once the ones needed are taken, the other ones are not tappable | ✅ | as 1d; a one is tappable only while ones are still to go (so the ones can no longer be over-taken) |
+| 3 | G2 / G3: after "… शून्य इकाई घटाते हैं।" - "शून्य यानी कुछ नहीं।"; the ones not clickable | ✅ | G2's take-away line split into its ones / tens steps like G3's: "पहले इकाइयाँ घटाइए। 7 इकाई में से शून्य इकाई घटाते हैं।" (G3: "… 8 इकाई में से …") → "शून्य यानी कुछ नहीं।" (`vo_zero`) → the tens step; with 0 ones to take no one is ever tappable |
+| 4 | Keypad: no border on the keys that are off | ✅ | in the 3rd help the locked keys have no border and no ledge; only the key to press keeps its outline (and its gold ring) |
+New VO: 12 clips (Gemini, voice Kore), each checked by transcription; four were re-rendered until they said their line ("अब इकाई हटाइए।", "अब दहाई हटाइए।", "एक", "तीन").
+
+## User changes — 2026-10-26 (2)
+| # | Asked | Status | How it is built |
+|---|---|---|---|
+| 1 | G1: the step line right after "… 4 इकाई में से 1 इकाई हटाइए, फिर 3 दहाई में से 2 दहाई हटाइए।", again every 7s idle; when the ones are done the tens' line at once, with the pulse | ✅ | on a page with one take-away line (G1, P3): "अब इकाई हटाइए।" straight after it, every 7s of inactivity after that; the moment the ones are done "अब दहाई हटाइए।" (0.4s later) with the tens pulsing. The remove lines are used here (the user wrote "बनाइए"; this step takes blocks away). Pages with separate ones / tens lines (G2, G3, P1, P2) keep them |
+| 2 | Keypad 3rd help: no yellow border round the key to press (a number or the tick) | ✅ | the key to press keeps its own look and pulses; the others are off (no border) |
+Verified: G1 timed (remove line 18.9s → "अब इकाई हटाइए।" 27.2s → again 36.5s; ones done 45.5s → "अब दहाई हटाइए।" 45.9s, 3 tens pulsing and tappable); the keypad's hint captured; G1 and P3 played on the wrong path; the landing + all 11 slides load with 0 console errors.
+| 3 | Page 1: the "?" box and the next button pulsed at the same time | ✅ | as HI02H11_L02_S02's r138: while the visible next button pulses, every other animation on the page stops (`body.nav-live`). Measured on pages 1 and 2: when the next button is live it is the only thing animating (0 other animations) |

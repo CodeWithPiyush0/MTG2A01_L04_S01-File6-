@@ -504,6 +504,9 @@ function setNavActive(on){
   const btn = $("navBtn");
   btn.disabled = !on;
   btn.classList.toggle("active", on);
+  /* user 2026-10-26 (page 1: the "?" and the next button pulsed together) - as HI02H11_L02_S02's r138: while the VISIBLE next
+     button pulses, every other animation on the page is stopped (.nav-live in the styles) */
+  document.body.classList.toggle("nav-live", !!on && btn.style.display !== "none");
   clearTimeout(state.navNudgeTimer);
   if(on) state.navNudgeTimer = setTimeout(nudgeNavBtn, 4500);
 }
@@ -1581,8 +1584,8 @@ Object.assign(PVK, (function(){
       /* the third layer: the right digit keys light one after the other, then the tick */
       /* every key locked but the one to tap now (user 2026-10-22: 45 - first only 4, then only 5, then the tick) */
       const lightKey = ()=>{ Object.values(keys).forEach(b =>{ b.classList.remove("hint-on"); if(guide != null) b.classList.add("locked"); });
-        if(guide == null || guide > N) return; const b = guide < N ? keys[digits[guide]] : ok; b.classList.remove("locked"); b.classList.add("hint-on");
-        K.softGlow(b); };   // the key lights (the decks' WA3 "highlight the correct digit buttons in sequence") - no hand
+        if(guide == null || guide > N) return; const b = guide < N ? keys[digits[guide]] : ok; b.classList.remove("locked"); b.classList.add("hint-on"); };
+        /* (user 2026-10-26: no yellow ring round the key to press - the others are off, it pulses) */   // the key lights (the decks' WA3 "highlight the correct digit buttons in sequence") - no hand
       /* the tick: dim until a digit is in, pulsing once the box holds the whole answer */
       const okState = ()=>{ ok.classList.toggle("off", !typed.length); ok.classList.toggle("pulse", typed.length >= N && !over && !busy); };
       const render = ()=>{ const full = typed.length >= N || over;
@@ -1673,20 +1676,41 @@ Object.assign(PVK, (function(){
   function popTable(T){ if(K.reduce()) return; const all = [T.el, ...T.rods, ...T.cubes].filter(e => !e.classList.contains("pv-gone"));
     all.forEach(e => e.animate([{ scale: "1" }, { scale: "1.06", offset: .35 }, { scale: ".985", offset: .7 }, { scale: "1" }], { duration: 520, easing: "ease-out" })); }
 
-  /* the + button under a table being built (SME review 3: "retain only the Add button"): [rod +] (दहाई), [cube +] (इकाई) */
+  /* the + buttons under a table being built: MTG2A01_L03_S01's source box, exactly (her 4c368fb, user 2026-10-26) - ONE white
+     box, two halves [rod +] (दहाई) | [cube +] (इकाई), each half its own button (pulse / off / demo), the same width, a thin
+     line between them; its block on the left upright in the table's own ratio (the rod drawn smaller, the cube a little
+     bigger), the + on the right. y: the box's top, under the table. g.plus = the half itself (the whole half is the button) */
   function sources(sc, T, y){
-    const mk = (kind, cx)=>{ const g = add(sc, "div", "pv-src2 pv-hide"); setXY(g, cx, y); g._kind = kind;
-      g.innerHTML = '<img alt="" src="' + (kind === "t" ? K.ROD.src : K.CUBE.src) + '">' +
-        '<button type="button" class="pv-pm pv-plus2" aria-label="' + W_[kind] + ' और">+</button>';
-      g.plus = g.querySelector(".pv-plus2"); g.minus = null; return g; };
-    const cx = T.x + T.W / 2, S = { t: mk("t", cx - 100), o: mk("o", cx + 100) };
-    S.show = on =>{ K.show(S.t, on); K.show(S.o, on); };
-    S.fade = ()=>{ [S.t, S.o].forEach(g =>{ g.classList.add("pv-gone"); setTimeout(()=> g.remove(), 500); }); };
+    const G = Math.round(T.G * .45), rodL = G * K.ROD.ar, GC = Math.round(T.G * .72), H = Math.round(rodL + 24);   // G: the rod's width, GC: the cube's
+    const bar = add(sc, "div", "pv-src-bar pv-hide", "height:" + px(H));
+    const mk = kind =>{ const b = add(bar, "button", "pv-src"); b.type = "button";
+      b.innerHTML = '<span class="pv-src-blk"><img alt="" src="' + (kind === "t" ? K.ROD.src : K.CUBE.src) + '" style="width:' + px(kind === "t" ? G : GC) + ';height:' +
+        px(kind === "t" ? rodL : GC * K.CUBE.ar) + '"></span><span class="pv-plus">+</span>';
+      b.setAttribute("aria-label", W_[kind]); b._kind = kind; b.plus = b; b.dot = b.querySelector(".pv-plus"); return b; };
+    const S = { t: mk("t") }; add(bar, "i", "pv-src-div"); S.o = mk("o");
+    const w = Math.max(S.t.offsetWidth, S.o.offsetWidth); [S.t, S.o].forEach(b => b.style.width = px(w));
+    setXY(bar, T.x + T.W / 2 - bar.offsetWidth / 2, y);
+    S.bar = bar;
+    S.show = on =>{ bar.classList.toggle("pv-hide", on === false); if(on !== false) pop(bar); };
+    S.fade = ()=>{ bar.classList.add("pv-gone"); setTimeout(()=> bar.remove(), 500); };
     return S;
   }
-  /* Swiftee's hand taps a + button n times */
+  /* Swiftee's hand taps a + button n times - her demo: that half lit for its turn, the other grey */
   async function demoAdd(C, H, g, T, n, kind){
-    for(let j = 0; j < n; j++){ await H.tap(K.centre(g.plus, C.sc)); C.guard(); PVSFX.tap(); T.addBlock(kind); await C.wait(260); }
+    g.classList.remove("off");
+    for(let j = 0; j < n; j++){ await H.tap(K.centre(g.dot || g.plus, C.sc)); C.guard(); PVSFX.tap(); T.addBlock(kind); await C.wait(260); }
+    g.classList.add("off");
+  }
+  /* SME review 5 (2026-10-26): the 7s inactivity reminder - after 7s with no action the step's own line ("अब दहाई बनाइए।",
+     "अब इकाई हटाइए।" ...), said again every 7s while the child stays idle; any action restarts the 7s; never over another
+     voice (it waits for a quiet moment). pick() -> the clip id for now, or null (nothing to remind of right now) */
+  function idleVo(C, pick){
+    let t = 0, on = true;
+    const arm = ()=>{ clearTimeout(t); if(!on) return;
+      t = setTimeout(()=>{ if(!on || !C.alive()) return; const id = pick();
+        if(!id || isPlaying){ arm(); return; }
+        play("assets/voiceover/" + id + "." + AUDIO_EXT, ()=>{ if(on && C.alive()) arm(); }); }, IDLE_MS); };
+    return { arm, stop(){ on = false; clearTimeout(t); } };
   }
   /* the child builds n with the + buttons: the column still to do pulses (tens first); each + stops (greys) when its
      column holds its number (SME review 3: "when the child adds the required number of blocks the buttons become
@@ -1697,18 +1721,19 @@ Object.assign(PVK, (function(){
       let idleT = 0, fin = false;
       const cnt = k => T.list(k).length;
       const next = ()=> cnt("t") < want.t ? "t" : (cnt("o") < want.o ? "o" : null);
+      const vo = idleVo(C, ()=>{ const k = fin ? null : next(); return k ? "vo_idle_build_" + k : null; });
       const sync = ()=>{ const nx = next();
         ["t", "o"].forEach(k =>{ const g = S[k], full = cnt(k) >= want[k]; g.plus.classList.toggle("off", full); g.classList.toggle("pv-done", full);
           g.classList.toggle("pulse", k === nx); }); };
       const arm = ()=>{ clearTimeout(idleT); idleT = setTimeout(()=>{ if(!C.alive() || fin) return; const k = next(); if(k) K.repulse(S[k]); arm(); }, IDLE_MS); };
-      const check = ()=>{ if(next() || fin) return; fin = true; clearTimeout(idleT); stopNudge();
+      const check = ()=>{ if(next() || fin) return; fin = true; clearTimeout(idleT); stopNudge(); vo.stop();
         ["t", "o"].forEach(k =>{ S[k].plus.onclick = null; S[k].classList.remove("pulse"); });
         setTimeout(res, 450); };
       ["t", "o"].forEach(k =>{ const g = S[k];
         g.plus.onclick = ()=>{ if(!C.alive() || fin || cnt(k) >= want[k]) return; stopNudge(); PVSFX.tap(); T.addBlock(k);
-          GameBus.emit("pv_block_added", { slide_id: C.slide.id, kind: k, count: cnt(k) }); sync(); check(); arm(); };
+          GameBus.emit("pv_block_added", { slide_id: C.slide.id, kind: k, count: cnt(k) }); sync(); check(); arm(); vo.arm(); };
       });
-      sync(); arm(); check();
+      sync(); arm(); vo.arm(); check();
     });
   }
 
@@ -1761,9 +1786,11 @@ Object.assign(PVK, (function(){
       const gone = k => T.list(k).filter(b => b._removed).length;
       const all = ()=> [...T.rods, ...T.cubes];
       const ok = ()=> gone("t") === need.t && gone("o") === need.o;
+      const vo = idleVo(C, ()=> (fin || busy) ? null : "vo_idle_rm_" + (cfg.only || (gone("o") < need.o ? "o" : "t")));
       const tappable = b =>{
         if(fin || busy || b._removed) return false;
         if(cfg.only && b._kind !== cfg.only) return false;
+        if(b._kind === "o" && gone("o") >= need.o) return false;                       // the ones taken: the others stay put (SME review 5)
         if(cfg.onesFirst && b._kind === "t" && gone("o") < need.o) return false;      // the ones first, always
         if(guided[b._kind]) return !!b._allowed && (b._kind === "o" || gone("o") >= need.o);
         return true;
@@ -1783,14 +1810,19 @@ Object.assign(PVK, (function(){
       const arm = ()=>{ clearTimeout(idleT); idleT = setTimeout(()=>{ if(!C.alive() || fin || busy) return;
         const b = nextBlock(); if(b){ (guided[b._kind] ? left(T, b._kind).filter(x => x._allowed) : left(T, b._kind)).forEach(x => K.repulse(x)); if(cfg.hand) placeNudge(b); }
         arm(); }, cfg.idle || IDLE_MS); };
-      const done = ()=>{ fin = true; clearTimeout(idleT); clearTimeout(settleT); stopNudge(); unpulse(); sync();
+      const done = ()=>{ fin = true; clearTimeout(idleT); clearTimeout(settleT); stopNudge(); unpulse(); sync(); vo.stop();
         all().forEach(b =>{ b.onclick = null; b.classList.remove("pv-dim", "pv-allowed"); });
         GameBus.emit("pv_remove_done", { slide_id: C.slide.id, wrongs }); res(wrongs); };
       const settle = ()=>{ clearTimeout(settleT); if(!ok()) return;
         if(!cfg.settle) return done();
         settleT = setTimeout(()=>{ if(C.alive() && !fin && !busy && ok()) done(); }, cfg.settle); };
-      const onesStep = async ()=>{ if(onesSaid || !cfg.onOnes || gone("o") < need.o) return; onesSaid = true;
-        busy = true; sync(); try{ await C.wait(350); await cfg.onOnes(); } finally { busy = false; } if(!C.alive()) return; sync(); arm(); };
+      /* user 2026-10-26 (G1): on a page with one take-away line (cfg.sayStep) the step is said at once - "अब इकाई हटाइए।" right
+         after that line, "अब दहाई हटाइए।" (the tens pulsing) the moment the ones are done; the 7s reminder repeats it */
+      const sayId = id => new Promise(r => play("assets/voiceover/" + id + "." + AUDIO_EXT, r));
+      const onesStep = async ()=>{ if(onesSaid || gone("o") < need.o || !(cfg.onOnes || (cfg.sayStep && need.t > 0))) return; onesSaid = true;
+        busy = true; sync(); try{ await C.wait(350); if(cfg.onOnes) await cfg.onOnes(); else { pulseNextT(); await sayId("vo_idle_rm_t"); } } finally { busy = false; }
+        if(!C.alive()) return; sync(); unpulse(); pulseNext(); arm(); vo.arm(); };
+      const pulseNextT = ()=> left(T, "t").filter(x => !guided.t || x._allowed).forEach(x => x.classList.add("pulse"));
       async function wrong(b, role){
         busy = true; clearTimeout(idleT); clearTimeout(settleT); stopNudge(); unpulse(); wrongs++; wrongsBy[b._kind]++;
         takeAway(C, b, cfg.to); sync();
@@ -1820,7 +1852,7 @@ Object.assign(PVK, (function(){
         b.onclick = ()=>{
           if(cfg.onesFirst && b._kind === "t" && gone("o") < need.o) return;   // the ones first: a ten is not tappable yet - nothing happens (user 2026-10-23)
           if(!C.alive() || fin || busy || b._removed || !b.classList.contains("pv-tap")) return;
-          stopNudge(); unpulse(); clearTimeout(settleT);
+          stopNudge(); unpulse(); clearTimeout(settleT); vo.arm();
           const k = b._kind;
           if(k === "o" && gone("o") >= need.o) return void wrong(b, "rm_ones_more").catch(()=>{});
           if(k === "t" && gone("o") < need.o) return void wrong(b, "rm_ones_less").catch(()=>{});
@@ -1830,7 +1862,9 @@ Object.assign(PVK, (function(){
           if(ok()) settle(); else { onesStep(); arm(); }
         };
       });
-      sync(); pulseNext(); arm();
+      sync(); pulseNext(); arm(); vo.arm();
+      if(cfg.sayStep && need.o > 0){ busy = true; sync();
+        sayId("vo_idle_rm_o").then(()=>{ busy = false; if(!C.alive() || fin) return; sync(); pulseNext(); arm(); vo.arm(); }); }
       if(need.o === 0) onesStep();
       if(ok()) settle();
     });
@@ -1862,7 +1896,7 @@ const PV_LAY = {
   /* blk / pad: the blocks' width and the tables' inner margin - as big as each screen's two rows of tables allow
      (the sibling's review 2026-10-14 "make the cubes look bigger"; a rod is 6.7 blocks tall). eqY / eqH: this lesson's
      take-away row on the tutorial card stands where its number cards do */
-  tut:  { numY: 166, numH: 84, eqY: 166, eqH: 84, tableY: 276, sumY: 476, cube: 29, blk: 28, pad: 10, cxL: 451, cxR: 881, cx: 666 },   // inside the tutorial card
+  tut:  { numY: 142, numH: 84, eqY: 142, eqH: 84, tableY: 250, sumY: 476, cube: 29, blk: 28, pad: 10, cxL: 451, cxR: 881, cx: 666 },   // inside the tutorial card
   main: { eqY: 166, eqH: 62, tableY: 254, sumY: 466, cube: 29, blk: 28, pad: 10, cxL: 410, cxR: 922, cx: 666 }    // under the header band
 };
 const pvSplit = n =>({ t: Math.floor(n / 10), o: n % 10 });
@@ -1893,11 +1927,12 @@ function pvCelebrate(){ sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMo
 /* the story screen of T1 (and T2's end) - user 2026-10-23, after the reference picture: ONE ROW - Meera's portrait on the left,
    her 25 blocks beside her (the cubes a little apart), some space, then Aman's portrait with no blocks; the equation
    25 − 13 = ? under the row, in the middle. gB: the places beside Aman where blocks given to him stand (made, hidden). */
-function pvStoryScene(sc, d){
-  const K = PVK, AV = 124, MIDY = 318, BH = 190, BOT = MIDY + BH / 2, GAP = 6, EY = 452, EH = 72;   // (user 2026-10-23: up - the equation was on the next button)
+function pvStoryScene(sc, d, dy){
+  dy = dy || 0;                                                 // (T2's ending stands dy higher - SME review 5)
+  const K = PVK, AV = 124, MIDY = 318 + dy, BH = 190, BOT = MIDY + BH / 2, GAP = 6, EY = 452 + dy, EH = 72;   // (user 2026-10-23: up - the equation was on the next button)
   const XA = 400, XB = 830, BX = 150;                       // the two portraits' centres; their blocks BX to the right
   const [P0, P1] = d.people, diff = d.a - d.b;
-  const S = { BOT, BH, diff };
+  const S = { BOT, BH, diff, amanAt: { x: XB, y: MIDY } };
   S.pA = K.person(sc, P0.who, P0.name, XA, MIDY - AV / 2, AV); S.pB = K.person(sc, P1.who, P1.name, XB, MIDY - AV / 2, AV);
   S.gA = K.group(sc, d.a, XA + BX, BOT, BH, GAP).make();
   S.gB = K.group(sc, d.b, XB + BX, BOT, BH, GAP);
@@ -1959,7 +1994,7 @@ const PVModules = {
         await C.cue("head", [[0.2, ()=> K.pop(card)]]);
         const src = K.sources(sc, TA, TA.y + TA.H + 14);
         await C.cue("intro", [[0.45, ()=>{ K.showTable(TA); src.show(); }]]);
-        [src.t, src.o].forEach(g => g.classList.add("demo"));
+        [src.t, src.o].forEach(g => g.classList.add("demo", "off"));
         const cd = CU.digits || { t: .3, o: .6 };
         await C.cue("digits", [[cd.t, ()=>{ K.lightDigit(card, "t"); K.beat([src.t], 0); }],
                                [cd.o, ()=>{ K.lightDigit(card, "t", false); K.lightDigit(card, "o"); K.beat([src.o], 0); }]]);
@@ -1983,7 +2018,8 @@ const PVModules = {
         eqP.forEach(e => K.show(e));
         K.lightDigit(E.b, "o", false);
         TA.rods.forEach(x => x.classList.add("pv-dim"));                       // "Tens are disabled"
-        await Promise.all([C.say("rm_ones"), C.wait(1400).then(()=> K.demoRemove(C, H, TA, "o", B.o))]);
+        await C.say("rm_ones");                                               // SME review 5: then a count on each of her taps
+        await K.demoRemove(C, H, TA, "o", B.o, null, j => C.sayNum(j + 1));
         H.off(); TA.rods.forEach(x => x.classList.remove("pv-dim"));
         await C.cue("ones_left", [[(CU.ones_left || { o: .8 }).o, ()=> K.beatCol(TA, "o")]]);
         await C.say("rm_tens");
@@ -2006,7 +2042,7 @@ const PVModules = {
           await C.wait(550); C.guard();
           /* user 2026-10-23: the T1 row - Aman has no blocks; on "तेरह घटाए" 13 of Meera's 25 (1 rod, 3 cubes) go over to him
              (copies) and hers turn grey where they stand; on "बचे 12" her 12 left beat; "12 आएगा" fills the "?" */
-          const S = pvStoryScene(sc, SD), aman = S.gAm.all();
+          const S = pvStoryScene(sc, SD, -34), aman = S.gAm.all();
           const all = S.parts(); all.forEach(e => e.classList.add("pv-hide"));
           all.forEach((e, i)=> setTimeout(()=>{ if(C.alive()){ K.show(e); if(i % 4 === 0) PVSFX.appear(); } }, i * 30));
           await C.wait(all.length * 30 + 450); C.guard();
@@ -2020,7 +2056,12 @@ const PVModules = {
           const give = ()=>{ PVSFX.move();
             [...goR.map((x, j)=> [x, toA.t[j]]), ...goC.map((x, j)=> [x, toA.o[j]])].forEach(([x, to], n)=>
               K.wait(n * 90).then(()=>{ if(!to || !C.alive()) return; const c = K.block(sc, x._kind, x._x, x._y, x._kind === "t" ? S.BH : S.cs);
-                x.classList.add("pv-taken"); K.glide(c, { x: to._x, y: to._y }, 650, true); })); };
+                x.classList.add("pv-taken");
+                /* SME review 5: each goes into Aman's picture and is gone (he holds no blocks on the screen) */
+                const at = S.amanAt;
+                K.glide(c, { x: at.x - c._w / 2, y: at.y - c._h / 2 }, 650, true).then(()=>{
+                  c.animate([{ scale: "1", opacity: 1 }, { scale: ".2", opacity: 0 }], { duration: 260, easing: "ease-in" }).onfinish = ()=> c.remove();
+                  if(n === 0 || n === goR.length + goC.length - 1) K.beat([S.pB], 0); }); })); };
           const cy = CU.story || { a: .25, b: .45, n: .78, c: .55 };
           await C.cue("story_a", [[cy.a, ()=>{ say(S.cA); K.beat(S.gA.all(), 25); }], [cy.b, ()=>{ say(S.cB); give(); }],
                                   [cy.n, ()=> K.beat(kept, 60)]]);
@@ -2085,13 +2126,14 @@ const PVModules = {
           src.fade(); await C.wait(300); K.popTable(TA);
         }
         const to = K.centre(E.b, sc);
-        let cfg = { to, settle: 1100, onesFirst: true };   // (every page: only the ones can be tapped until they are done - SME review 4)
+        let cfg = { to, settle: 1100, onesFirst: true, sayStep: !d.steps };   // (every page: only the ones can be tapped until they are done - SME review 4)
         if(C.has("sub")){ const c = CU.sub || { b: .05, t: .6, o: .82 };
           await C.cue("sub", [...(c.this != null ? [[c.this, ()=> K.hlTable(TA)]] : []), [c.b, ()=> K.pop(E.b)],
                               [c.t, ()=> K.lightDigit(E.b, "t")], [c.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]); }
         K.lightDigit(E.b, "o", false);
         const sweepO = ()=> K.beatCol(TA, "o"), sweepT = ()=> K.beatCol(TA, "t");
         if(d.steps){ await C.cue("rm_ones", CU.rm_ones ? [[CU.rm_ones.o, sweepO]] : []);
+          if(B.o === 0 && C.has("zero")) await C.say("zero");                // SME review 5: "शून्य यानी कुछ नहीं।"
           cfg.onOnes = ()=> C.cue("rm_tens", CU.rm_tens ? [[CU.rm_tens.t, sweepT]] : []); }
         else if(C.has("remove")) await C.cue("remove", CU.remove ? [[CU.remove.o, sweepO], [CU.remove.t, sweepT]] : []);
         const wrongMoves = await K.removeChild(C, TA, { t: B.t, o: B.o }, cfg); C.guard();
@@ -2946,6 +2988,8 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_g2_prompt.ogg": 11576,
   "assets/voiceover/vo_g2_remove.ogg": 39576,
   "assets/voiceover/vo_g2_reveal.ogg": 20053,
+  "assets/voiceover/vo_g2_rm_ones.ogg": 18930,
+  "assets/voiceover/vo_g2_rm_tens.ogg": 19104,
   "assets/voiceover/vo_g2_sub.ogg": 21387,
   "assets/voiceover/vo_g3_correct.ogg": 29569,
   "assets/voiceover/vo_g3_eq.ogg": 18011,
@@ -2953,11 +2997,19 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_g3_prompt.ogg": 9295,
   "assets/voiceover/vo_g3_reveal.ogg": 23183,
   "assets/voiceover/vo_g3_rm_ones.ogg": 22118,
+  "assets/voiceover/vo_g3_rm_ones0.ogg": 19486,
   "assets/voiceover/vo_g3_rm_tens.ogg": 19888,
   "assets/voiceover/vo_g3_sub.ogg": 21842,
   "assets/voiceover/vo_h_order.ogg": 17045,
   "assets/voiceover/vo_h_recount.ogg": 12823,
+  "assets/voiceover/vo_idle_build_o.ogg": 6470,
+  "assets/voiceover/vo_idle_build_t.ogg": 6721,
+  "assets/voiceover/vo_idle_rm_o.ogg": 7751,
+  "assets/voiceover/vo_idle_rm_t.ogg": 8263,
   "assets/voiceover/vo_landing.ogg": 22225,
+  "assets/voiceover/vo_num_1.ogg": 4077,
+  "assets/voiceover/vo_num_2.ogg": 2755,
+  "assets/voiceover/vo_num_3.ogg": 3295,
   "assets/voiceover/vo_p1_ask.ogg": 16750,
   "assets/voiceover/vo_p1_correct.ogg": 32744,
   "assets/voiceover/vo_p1_h2.ogg": 19718,
@@ -3010,7 +3062,8 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_t2_total.ogg": 25285,
   "assets/voiceover/vo_t3_a.ogg": 17160,
   "assets/voiceover/vo_t3_b.ogg": 10980,
-  "assets/voiceover/vo_t3_c.ogg": 13724
+  "assets/voiceover/vo_t3_c.ogg": 13724,
+  "assets/voiceover/vo_zero.ogg": 9326
 };
 /* @asset-sizes:end */
 const Assets = (function(){

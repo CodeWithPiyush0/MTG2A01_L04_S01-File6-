@@ -2340,3 +2340,32 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
   65%{scale:1.06;box-shadow:0 0 0 5px rgba(255,190,40,.7),0 0 18px 6px rgba(255,190,40,.4);}}
 @media (prefers-reduced-motion:reduce){ .pv-person.pv-person-hl .pv-av{animation:none;box-shadow:0 0 0 5px rgba(255,190,40,.85);} }
 
+/* ==================== 2026-10-26 ==================== */
+/* the + buttons: MTG2A01_L03_S01's source box (her 4c368fb), its CSS as it is */
+/* the source box (SME review + user 2026-10-22 "both in 1 box, separated by a line"): one white box at the bottom centre,
+   two halves - [rod +] | [cube +] - each its own button, the same width, a thin line between them */
+.pv-src-bar{position:absolute;display:flex;align-items:stretch;padding:0 6px;box-sizing:border-box;z-index:8;transform-origin:50% 100%;
+  background:#fff;border:3px solid #B7DCFB;border-radius:26px;box-shadow:0 4px 0 #CFE3F7,0 8px 14px rgba(12,46,92,.10);transition:opacity .25s;}
+.pv-src-bar .pv-src{position:relative;left:auto;top:auto;transform:none;transform-origin:50% 50%;height:100%;
+  display:flex;align-items:center;justify-content:center;gap:14px;padding:0 18px;margin:0;box-sizing:border-box;
+  background:transparent;border:0;border-radius:20px;box-shadow:none;}
+.pv-src-bar .pv-src:active{translate:0 2px;box-shadow:none;}
+.pv-src-bar .pv-src-blk{display:flex;align-items:center;justify-content:center;width:24px;}
+.pv-src-bar .pv-src img{display:block;filter:drop-shadow(0 2px 1px rgba(12,46,92,.18));}
+.pv-src-bar .pv-plus{width:44px;height:44px;font-size:36px;line-height:44px;}
+.pv-src-div{flex:none;width:2px;margin:16px 0;border-radius:2px;background:#D3E6FA;}
+/* SME review 5 (2026-10-26) */
+/* the + a little bigger (user) */
+.pv-src-bar .pv-plus{width:56px;height:56px;font-size:46px;line-height:56px;}
+/* the keypad's 3rd help: a key that is off has no border (and no ledge) - only the key to press keeps its outline */
+.pv-pad.pv-pad-3 .pv-key.locked:not(.hint-on){border-color:transparent !important;box-shadow:none !important;}
+/* the keypad's 3rd help (user 2026-10-26): the key to press (a number or the tick) has no yellow ring - its own look, a pulse */
+.pv-pad.pv-pad-3 .pv-key:not(.pv-back):not(.pv-ok).hint-on{box-shadow:inset 0 0 0 2px rgba(190,226,255,.75),0 5px 0 #0F55B5,0 8px 12px rgba(12,46,92,.18) !important;}
+.pv-pad.pv-pad-3 .pv-key.pv-ok.hint-on{box-shadow:inset 0 0 0 2px rgba(200,255,215,.7),0 5px 0 #08702A,0 8px 12px rgba(12,46,92,.18) !important;}
+.pv-pad.pv-pad-3 .pv-key.hint-on{filter:none !important;animation:pvKeyPulse 1.1s ease-in-out infinite !important;}
+@keyframes pvKeyPulse{0%,100%{scale:1;}50%{scale:1.08;}}
+@media (prefers-reduced-motion:reduce){ .pv-pad.pv-pad-3 .pv-key.hint-on{animation:none !important;} }
+/* only the next button pulses while it pulses (HI02H11_L02_S02's r138, as it is) */
+body.nav-live .slide-host *, body.nav-live .slide-host *::before, body.nav-live .slide-host *::after{
+  animation:none !important; }
+

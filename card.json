@@ -64,8 +64,9 @@
    "vo_g2_eq": "assets/voiceover/vo_g2_eq.ogg",
    "vo_g2_h2": "assets/voiceover/vo_g2_h2.ogg",
    "vo_g2_prompt": "assets/voiceover/vo_g2_prompt.ogg",
-   "vo_g2_remove": "assets/voiceover/vo_g2_remove.ogg",
    "vo_g2_reveal": "assets/voiceover/vo_g2_reveal.ogg",
+   "vo_g2_rm_ones": "assets/voiceover/vo_g2_rm_ones.ogg",
+   "vo_g2_rm_tens": "assets/voiceover/vo_g2_rm_tens.ogg",
    "vo_g2_sub": "assets/voiceover/vo_g2_sub.ogg",
    "vo_g3_correct": "assets/voiceover/vo_g3_correct.ogg",
    "vo_g3_eq": "assets/voiceover/vo_g3_eq.ogg",
@@ -73,11 +74,19 @@
    "vo_g3_prompt": "assets/voiceover/vo_g3_prompt.ogg",
    "vo_g3_reveal": "assets/voiceover/vo_g3_reveal.ogg",
    "vo_g3_rm_ones": "assets/voiceover/vo_g3_rm_ones.ogg",
+   "vo_g3_rm_ones0": "assets/voiceover/vo_g3_rm_ones0.ogg",
    "vo_g3_rm_tens": "assets/voiceover/vo_g3_rm_tens.ogg",
    "vo_g3_sub": "assets/voiceover/vo_g3_sub.ogg",
    "vo_h_order": "assets/voiceover/vo_h_order.ogg",
    "vo_h_recount": "assets/voiceover/vo_h_recount.ogg",
+   "vo_idle_build_o": "assets/voiceover/vo_idle_build_o.ogg",
+   "vo_idle_build_t": "assets/voiceover/vo_idle_build_t.ogg",
+   "vo_idle_rm_o": "assets/voiceover/vo_idle_rm_o.ogg",
+   "vo_idle_rm_t": "assets/voiceover/vo_idle_rm_t.ogg",
    "vo_landing": "assets/voiceover/vo_landing.ogg",
+   "vo_num_1": "assets/voiceover/vo_num_1.ogg",
+   "vo_num_2": "assets/voiceover/vo_num_2.ogg",
+   "vo_num_3": "assets/voiceover/vo_num_3.ogg",
    "vo_p1_ask": "assets/voiceover/vo_p1_ask.ogg",
    "vo_p1_correct": "assets/voiceover/vo_p1_correct.ogg",
    "vo_p1_h2": "assets/voiceover/vo_p1_h2.ogg",
@@ -130,7 +139,8 @@
    "vo_t2_total": "assets/voiceover/vo_t2_total.ogg",
    "vo_t3_a": "assets/voiceover/vo_t3_a.ogg",
    "vo_t3_b": "assets/voiceover/vo_t3_b.ogg",
-   "vo_t3_c": "assets/voiceover/vo_t3_c.ogg"
+   "vo_t3_c": "assets/voiceover/vo_t3_c.ogg",
+   "vo_zero": "assets/voiceover/vo_zero.ogg"
   },
   "audio_text": {
    "vo_ask_pick": "अब कितने बचे? सही संख्या चुनिए।",
@@ -146,8 +156,9 @@
    "vo_g2_eq": "इसलिए 47 घटा 20 बराबर 27।",
    "vo_g2_h2": "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।",
    "vo_g2_prompt": "47 में से 20 घटाइए।",
-   "vo_g2_remove": "पहले इकाइयाँ घटाइए, 7 इकाई में से 0 इकाई हटाइए, और फिर दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
    "vo_g2_reveal": "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।",
+   "vo_g2_rm_ones": "पहले इकाइयाँ घटाइए। 7 इकाई में से शून्य इकाई घटाते हैं।",
+   "vo_g2_rm_tens": "फिर दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
    "vo_g2_sub": "और अब 20 घटाते हैं, 20 में 2 दहाई और 0 इकाई हैं।",
    "vo_g3_correct": "शाबाश! 58 में से 30 घटाने पर हमें मिलीं 2 दहाई और 8 इकाई, यानी 28।",
    "vo_g3_eq": "इसलिए 58 घटा 30 बराबर 28।",
@@ -155,11 +166,19 @@
    "vo_g3_prompt": "58 में से 30 घटाइए।",
    "vo_g3_reveal": "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।",
    "vo_g3_rm_ones": "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।",
+   "vo_g3_rm_ones0": "पहले इकाइयाँ घटाइए। 8 इकाई में से शून्य इकाई घटाते हैं।",
    "vo_g3_rm_tens": "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।",
    "vo_g3_sub": "और अब इसमें से 30 घटाते हैं, 30 में 3 दहाई और 0 इकाई हैं।",
    "vo_h_order": "संख्याओं में से पहले इकाई घटाइए, फिर दहाई घटाइए।",
    "vo_h_recount": "बची हुई दहाई और इकाई को दोबारा गिनिए।",
+   "vo_idle_build_o": "अब इकाई बनाइए।",
+   "vo_idle_build_t": "अब दहाई बनाइए।",
+   "vo_idle_rm_o": "अब इकाई हटाइए।",
+   "vo_idle_rm_t": "अब दहाई हटाइए।",
    "vo_landing": "नमस्ते दोस्त! मैं हूँ स्विफ्टी! आज हम संख्याओं को घटाना सीखेंगे।",
+   "vo_num_1": "एक।",
+   "vo_num_2": "दो।",
+   "vo_num_3": "तीन।",
    "vo_p1_ask": "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।",
    "vo_p1_correct": "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।",
    "vo_p1_h2": "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।",
@@ -212,7 +231,8 @@
    "vo_t2_total": "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12",
    "vo_t3_a": "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।",
    "vo_t3_b": "अब इस डिब्बे में 12 आएगा।",
-   "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।"
+   "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।",
+   "vo_zero": "शून्य यानी कुछ नहीं।"
   }
  },
  "slides": [
@@ -394,7 +414,9 @@
     "prompt": "vo_g2_prompt",
     "build": "vo_g2_build",
     "sub": "vo_g2_sub",
-    "remove": "vo_g2_remove",
+    "rm_ones": "vo_g2_rm_ones",
+    "zero": "vo_zero",
+    "rm_tens": "vo_g2_rm_tens",
     "ask": "vo_ask_pick",
     "recount": "vo_h_recount",
     "h2": "vo_g2_h2",
@@ -407,7 +429,7 @@
     "b": 20,
     "answer": "mcq",
     "build": true,
-    "steps": false,
+    "steps": true,
     "right_table": false,
     "options": [
      72,
@@ -426,9 +448,11 @@
       "t": 0.254,
       "o": 0.424
      },
-     "remove": {
-      "o": 0.209,
-      "t": 0.689
+     "rm_ones": {
+      "o": 0.367
+     },
+     "rm_tens": {
+      "t": 0.392
      },
      "sub": {
       "b": 0.134,
@@ -455,7 +479,8 @@
     "rm_guide": "vo_rm_guide",
     "prompt": "vo_g3_prompt",
     "sub": "vo_g3_sub",
-    "rm_ones": "vo_g3_rm_ones",
+    "rm_ones": "vo_g3_rm_ones0",
+    "zero": "vo_zero",
     "rm_tens": "vo_g3_rm_tens",
     "ask": "vo_ask_pick",
     "recount": "vo_h_recount",
@@ -488,7 +513,7 @@
       "o": 0.424
      },
      "rm_ones": {
-      "o": 0.336
+      "o": 0.366
      },
      "rm_tens": {
       "t": 0.382
