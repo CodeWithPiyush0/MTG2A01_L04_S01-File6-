@@ -259,12 +259,14 @@ function setPlaying(on){
   // .playing toggle across the header chip AND the tut-card replay chip (the header is hidden in the
   // tut frame, so the in-card .tut-audio is the only visible affordance and must react to VO too).
   isPlaying=on;
+  document.body.classList.toggle("vo-busy", !!on);   // user 2026-10-26: while a voice line plays nothing on the page takes a tap (style.css)
   bgmDuck();
   /* [QA 05] only the chip the audio is actually coming FROM animates, and only one at a time.
      It used to pulse every chip for every sound - option words, feedback, the count-aloud. */
   const src = on && currentAudio ? srcOf(currentAudio) : null;
   const from = on ? chipFor(src) : null;
   document.querySelectorAll(".audio-chip, .tut-audio, .sg-vo").forEach(c => c.classList.toggle("playing", c === from));
+  if(typeof pvChipPaint === "function" && state && state.seqTalk) pvChipPaint();   // (the page still talking: the chip's pulse stays on)
   swApplyPose();   // freeze/unfreeze Swiftie's mouth: animate only while a clip is sounding
 }
 /* [QA 15] ONE reusable VO element, not a new Audio() per clip. Every clip used to get its own
@@ -297,7 +299,7 @@ function chipFor(src){
    The tap still reports audio_replayed (flagged ignored), so every tap is logged. */
 function replayTap(slide, src){
   state.audioReplays++;
-  const busy = isPlaying;
+  const busy = isPlaying || state.speakerLive === false;
   GameBus.emit("audio_replay", { slide_id: slide ? slide.id : "landing", phase: slide ? slide.phase : "landing",
     count: state.audioReplays, src: src, ignored_while_playing: busy });
   return !busy;
@@ -1031,7 +1033,10 @@ const PVK = (function(){
     };
     return C;
   }
-  const run = (C, fn)=> fn().catch(e =>{ if(e !== C.STOP) console.error("[pv]", e); });
+  /* [QA BUG_09 / 04 / 07] the page's own flow is "talking" while it runs (C.seq); the child-input steps (build, take away,
+     cards, keypad) put themselves in C.waits while they wait for the child - see pvSpeaker */
+  const run = (C, fn)=>{ C.seq = true;
+    return fn().catch(e =>{ if(e !== C.STOP) console.error("[pv]", e); }).finally(()=>{ C.seq = false; }); };
 
   /* ---- blocks: a rod (kind "t", size = its height) or a cube (kind "o", size = its side) ---- */
   function block(sc, kind, x, y, size){
@@ -1491,6 +1496,7 @@ Object.assign(PVK, (function(){
       const els = opts.map(v =>{ const o = add(box, "button", "mq-opt"); o.type = "button"; o.textContent = devNumeral(v); o._v = v; return o; });
       const right = els.find(o => o._v === cfg.answer);
       let wrong = 0, busy = true, idleT = 0, layer3 = false, over = false;
+      (C.waits = C.waits || []).push({ live: ()=> !over, busy: ()=> busy });
       const M = { box, els, right,
         open(){ box.classList.add("in"); },
         hide(on){ box.classList.toggle("pv-hide", on !== false); },
@@ -1508,7 +1514,7 @@ Object.assign(PVK, (function(){
         sfxWrongSoft(); setSwMood("tryagain");
         o.classList.add("wrong"); shake(o, 9); setTimeout(()=> o.classList.remove("wrong"), 900);
         await C.wait(450);
-        setSwMood("hint");
+        /* (QA BUG_06: Swiftee stays sad through the whole wrong-answer sequence - the hint too; back to normal after it) */
         await cfg.ladder(wrong, M);
         if(C.alive() && !over){ busy = false; setSwMood("point"); arm(); }
       }
@@ -1577,7 +1583,8 @@ Object.assign(PVK, (function(){
       const ok = keys["✓"];
       if(cfg.padAt) setXY(pad, cfg.padAt.cx != null ? cfg.padAt.cx - pad.offsetWidth / 2 : cfg.padAt.x, cfg.padAt.y);
       else setXY(pad, x0 + ansW + 40, cfg.y + 40 + ans.offsetHeight / 2 - pad.offsetHeight / 2);
-      let typed = [], wrong = 0, busy = false, open = false, over = false, idleT = 0, guide = null;
+      let typed = [], wrong = 0, busy = false, open = false, over = false, idleT = 0, guide = null, ready = false;
+      (C.waits = C.waits || []).push({ live: ()=> ready && !over, busy: ()=> busy });
       const P = { ans, pad,
         hide(on){ if(!T) ans.classList.toggle("pv-hide", on !== false); pad.classList.toggle("pv-hide", on !== false || !open); },
         guideKeys(){ guide = 0; Object.values(keys).forEach(b => b.classList.add("locked")); lightKey(); } };
@@ -1618,7 +1625,7 @@ Object.assign(PVK, (function(){
         GameBus.emit("answer_wrong", { slide_id: slide.id, phase: slide.phase, attempts: wrong });
         sfxWrongSoft(); setSwMood("tryagain"); ans.classList.add("wrong"); shake(ans, 9);
         await C.wait(800); ans.classList.remove("wrong"); typed = []; render();
-        setSwMood("hint");
+        /* (QA BUG_06: Swiftee stays sad through the whole wrong-answer sequence - the hint too; back to normal after it) */
         await cfg.ladder(wrong, P);
         if(C.alive() && !over){ busy = false; setSwMood("point"); render(); arm(); }
       }
@@ -1631,7 +1638,7 @@ Object.assign(PVK, (function(){
         typed.push(b._k); K.knock(); render(); pop(slot.querySelectorAll(".pv-ch")[typed.length - 1]);
         if(guide != null){ guide++; lightKey(); }
       }));
-      P.ready = ()=>{ arm(); };   // the box pulses its cursor; the hand only after 7s idle (user 2026-10-15: "comes too early")
+      P.ready = ()=>{ ready = true; arm(); };   // the box pulses its cursor; the hand only after 7s idle (user 2026-10-15: "comes too early")
       cfg.onReady && cfg.onReady(P);
     });
   }
@@ -1719,6 +1726,7 @@ Object.assign(PVK, (function(){
     const want = { t: Math.floor(n / 10), o: n % 10 };
     return new Promise(res =>{
       let idleT = 0, fin = false;
+      (C.waits = C.waits || []).push({ live: ()=> !fin, busy: ()=> false });
       const cnt = k => T.list(k).length;
       const next = ()=> cnt("t") < want.t ? "t" : (cnt("o") < want.o ? "o" : null);
       const vo = idleVo(C, ()=>{ const k = fin ? null : next(); return k ? "vo_idle_build_" + k : null; });
@@ -1782,6 +1790,7 @@ Object.assign(PVK, (function(){
   function removeChild(C, T, need, cfg){
     cfg = cfg || {};
     return new Promise(res =>{
+      (C.waits = C.waits || []).push({ live: ()=> !fin, busy: ()=> busy });
       let wrongs = 0, guided = { o: false, t: false }, wrongsBy = { o: 0, t: 0 }, busy = false, fin = false, idleT = 0, settleT = 0, onesSaid = false;
       const gone = k => T.list(k).filter(b => b._removed).length;
       const all = ()=> [...T.rods, ...T.cubes];
@@ -1834,7 +1843,7 @@ Object.assign(PVK, (function(){
         back.forEach((x, i)=> setTimeout(()=>{ if(C.alive()) putBack(C, x, cfg.to); }, i * 70));
         await C.wait(back.length * 70 + 600);
         if(T.counts) T.counts();
-        setSwMood("hint");
+        /* (QA BUG_06: Swiftee stays sad through the whole wrong-answer sequence - the hint too; back to normal after it) */
         /* the guide is the column's own (user 2026-10-23): two mistakes in the ones guide the ones only - the tens are
            then taken as usual, unless they too get two mistakes */
         const k = b._kind;
@@ -1915,7 +1924,24 @@ function pvPadPage(sc, L, d, hidden){
 }
 /* every table of the lesson is the same size (SME review 3): its tens column is wide enough for nine rods */
 const pvTable = (sc, L, cx, y)=> PVK.table(sc, { cx, y, cube: L.cube, blk: L.blk, pad: L.pad, tensMax: 9, tensFinal: 0, onesMax: 9 });
-function pvReplay(C){ state.replayAudio = ()=>{ if(!isPlaying && C.cur && C.alive()) C.say(C.cur).catch(()=>{}); }; }
+function pvReplay(C){ state.replayAudio = ()=>{ if(!isPlaying && C.cur && C.alive()) C.say(C.cur).catch(()=>{}); };
+  /* [QA BUG_09 / 04 / 07, as HI02H11_L02_S02] the speaker of the page: it takes a tap only when the page is WAITING FOR THE CHILD
+     (a build / take-away / cards / keypad step that is not itself talking) or its flow has ended - never while the page
+     talks (its opening lines and the pauses between them, a hint sequence, the lines after a right answer), and never
+     once the page is answered. While the page talks its chip pulses steadily (no on-off between two lines). */
+  const sync = ()=>{ if(!C.alive()) return false;
+    const waiting = (C.waits || []).some(w => w.live() && !w.busy());
+    state.speakerLive = !state.slideDone && !state.locked && (!C.seq || waiting);
+    state.seqTalk = !!C.seq && !waiting && !state.slideDone;
+    pvChipPaint(); return true; };
+  sync(); const iv = setInterval(()=>{ if(!sync()) clearInterval(iv); }, 120);
+}
+function pvChipPaint(){
+  const chip = document.querySelector("#slideHost .tut-audio") || document.getElementById("audioChip"); if(!chip) return;
+  chip.classList.toggle("chip-wait", state.speakerLive === false);
+  if(state.seqTalk) chip.classList.add("playing");
+  else if(!isPlaying) chip.classList.remove("playing");
+}
 /* two tables side by side, as far apart as they need to be (an 8-rod table is wider than a 3-rod one) */
 function pvPair(TA, TB, cx, gap, minHalf){
   const half = Math.max(Math.max(TA.W, TB.W) / 2 + (gap || 34), minHalf || 0);
@@ -2597,6 +2623,7 @@ function mountSlideNow(idx){
   state.attempts = 0; state.selectedKey = null; state.locked = false;
   state.hintUsed = false; state.nudgeUsed = false; state.scaffoldLevel = 0; state.hintActive = false;
   state.audioReplays = 0; state.gateNavUntilAudio = false; state.endBtnPending = false;
+  state.speakerLive = undefined; state.seqTalk = false; state.slideDone = false;   // [QA BUG_09/07] the speaker, per page
   state.replayAudio = null;   // a module may set a slide-specific replay (e.g. teach slides whose
                               // audio roles aren't in the autoPlayChain order); else the chip replays the chain
   state.ownsAudio = false;    // a module that drives its OWN audio sequence sets this → skip autoPlayChain
@@ -2811,6 +2838,7 @@ function phaseBlurTransition(cb, toPhase){
 }
 
 function completeSlide(success){
+  state.slideDone = true; state.speakerLive = false; state.seqTalk = false;   // [QA BUG_07] answered: the speaker takes no tap
   const slide = CARD.slides[state.idx];
   GameBus.emit("slide_completed", {
     slide_id: slide.id, phase: slide.phase, success: !!success,

@@ -2368,4 +2368,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 /* only the next button pulses while it pulses (HI02H11_L02_S02's r138, as it is) */
 body.nav-live .slide-host *, body.nav-live .slide-host *::before, body.nav-live .slide-host *::after{
   animation:none !important; }
+/* [QA BUG_09] the speaker while it takes no tap (the page talking / answered): no pointer */
+.audio-chip.chip-wait,.tut-audio.chip-wait{cursor:default;}
+/* user 2026-10-26: while a voice line plays nothing on the page takes a tap - the blocks, the + box, the answer cards, the keypad
+   and its box, the next button (the speaker already ignores it) */
+body.vo-busy #slideHost .pv-blk, body.vo-busy #slideHost .pv-src, body.vo-busy #slideHost .pv-src-bar,
+body.vo-busy #slideHost .mq-opt, body.vo-busy #slideHost .pv-key, body.vo-busy #slideHost .pv-q,
+body.vo-busy #slideHost .pv-ans, body.vo-busy #navBtn{pointer-events:none !important;}
 

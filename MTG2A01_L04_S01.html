@@ -1,7 +1,10 @@
 <!doctype html>
-<html lang="hi">
+<html lang="hi" translate="no" class="notranslate">
 <head>
 <meta charset="utf-8">
+<!-- [QA BUG_01] Chrome offered to translate the Hindi, and a translated page breaks the game (Translate rewrites the text the
+     engine drives - in HI02H11 the Play button went). The lesson is never to be translated. -->
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">   <!-- [responsive] the page fills the whole screen (notch, home bar); app.js fits the stage inside the safe area -->
 <title>SwiftPAL · MTG2A01_L04_S01 · संख्याओं का घटाव</title>
 <link rel="icon" href="data:,">   <!-- [QA 15] no favicon request: the browser's automatic /favicon.ico 404 was the last console error -->
@@ -9,7 +12,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261026e">
+<link rel="stylesheet" href="style.css?v=20261026g">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -1019,6 +1022,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261026e"></script>
+<script src="app.js?v=20261026g"></script>
 </body>
 </html>

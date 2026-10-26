@@ -311,3 +311,16 @@ Verified: G1 timed (remove line 18.9s → "अब इकाई हटाइए�
 
 ## The VO manifest — 2026-10-26
 `lesson_vo_manifest.xlsx` (made by `tools/gen_vo_manifest.py`, the format of HI02H11_L02_S02's): **VO Manifest** - every clip where it is heard, in game order (start screen, the 3 transitions, pages 1-10, celebration), with the Hindi script, what it is, when it plays, the other pages that play the same recording, its duration and status; **Recording list** - the 88 recordings once each with their file names; **Sound effects**; **Recording spec** - folder, format, numbers as words, and what to run after new takes (`python tools/lessons.py` re-times the word-synced moments and the celebration lip-sync, `node tools/gen_asset_sizes.js`, bump `?v=`). Regenerate with `python tools/gen_vo_manifest.py`.
+
+## QA bug sheet (HI02H11_L02_S02's QA round) - the bugs common to this file — 2026-10-26
+| Bug | Status | How it is built |
+|---|---|---|
+| BUG_01 Google Translate offered on the Hindi page | ✅ | `<html lang="hi" translate="no" class="notranslate">` and `<meta name="google" content="notranslate">` (HI02H11's r139) |
+| BUG_09 the speaker live while the page talks (a tap in a pause between two lines started the last line again, the next line cut it) | ✅ | `pvReplay` / `pvSpeaker`: the speaker takes a tap only while the page waits for the child (a build / take-away / cards / keypad step that is not itself talking) or after its flow has ended; never during its opening lines and their pauses, a hint sequence, or the lines after a right answer |
+| BUG_04 the speaker's state flickering between lines | ✅ | while the page talks, the chip pulses steadily through the pauses (it went off / on between two lines); it takes no pointer while it takes no tap |
+| BUG_07 the speaker after the right answer replayed the line and the next page cut in | ✅ | once a page is answered the speaker takes no tap (`state.slideDone`, or the page locked) |
+| BUG_02, 03, 06 | already fine | pause on a hidden tab; music 30 %; Swiftee back to normal as the hint line ends |
+| BUG_05, 08, 10 | not in this file | mic pages / drag and drop / one answer per page |
+Verified: T2 - 3 taps in its pauses ignored, the chip steady; P4 - 9 taps after the right answer ignored; a tap while the page waits for the child replays its line (G1 build step, P1 take-away, P4 / P5 cards, T1 after its end).
+| no taps while a voice line plays (user) | ✅ | `body.vo-busy` while any VO sounds: the blocks, the + box, the answer cards, the keypad and its box, the next button take no tap (the speaker already ignored it). Measured on G1: during its lines a tap on a cube lands on the page behind it; the moment the voice ends it reaches the cube |
+| BUG_06 Swiftee must stay unhappy through a wrong attempt | ✅ | the wrong answer / wrong take-away keeps the sad face through the hint line (the "hint" face in between is gone) and turns back to normal as it ends - measured P4: sad 0 → 5.0s (hint line end), normal at 5.04s; G2: sad 0 → 3.86s, normal at 3.88s |
