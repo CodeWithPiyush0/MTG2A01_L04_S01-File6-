@@ -2105,7 +2105,8 @@ const PVModules = {
         await C.cue("h2", [[c.a, ()=> say(E.a)], [c.b, ()=> say(E.b)], [c.t, ()=> lightT(T)], [c.o, ()=> lightO(T)]]); };
       /* 4, 7) the digits stand under the table, clear of its edge */
       /* the digits under the table; the answer below moves down to make room for them (shift) */
-      const digitsUnder = async shift =>{ if(shift) shift(36); const g = AT().digits(R.t, R.o);   /* 36: clear of the digits by 10px */ [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
+      const digitsUnder = async shift =>{ if(slide.phase === "practice") return;   // P1-P5: no digits under the table (user 2026-10-26)
+        if(shift) shift(36); const g = AT().digits(R.t, R.o);   /* 36: clear of the digits by 10px */ [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
       const down = els => dy => els.forEach(e => K.glide(e, { x: e._x, y: e._y + dy }, 420, false));
       async function finale(fillNow){
         if(fillNow) await C.cue("correct", [[0.88, ()=> E.fill(diff)]]); else await C.say("correct");
@@ -2206,7 +2207,8 @@ const PVModules = {
         moveTo(TY + T.H + GAP); hide(false);                        // the box / the cards GAP under the table
       }
       /* the digits under the table, clear of its edge */
-      const digitsUnder = async shift =>{ if(shift) shift(26); const g = T.digits(R.t, R.o); [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
+      const digitsUnder = async shift =>{ if(slide.phase === "practice") return;   // P1-P5: no digits under the table (user 2026-10-26)
+        if(shift) shift(26); const g = T.digits(R.t, R.o); [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
       let optY = Y0;
       K.run(C, async ()=>{
         await C.wait(300);
