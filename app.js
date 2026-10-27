@@ -1013,7 +1013,7 @@ const PVK = (function(){
       wait: ms => wait(ms).then(()=> C.guard()),
       say(role){ return C.cue(role, []); },
       cue(role, cues){
-        cues = (cues || []).slice().sort((p, q)=> p[0] - q[0]);
+        cues = (cues || []).filter(c => c && c[0] != null && isFinite(c[0])).sort((p, q)=> p[0] - q[0]);
         let i = 0; const fireTo = f =>{ while(i < cues.length && cues[i][0] <= f){ try{ cues[i][1](); }catch(e){ console.error(e); } i++; } };
         return new Promise(res =>{
           if(!C.alive()) return res();
@@ -1528,7 +1528,7 @@ Object.assign(PVK, (function(){
         sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
         if(cfg.onRight) await cfg.onRight(o);
         els.forEach(x => x.classList.add("pv-gone"));   // the answer now stands in the equation: the cards below go
-        await C.say("correct");
+        await (cfg.sayCorrect ? cfg.sayCorrect() : C.say("correct"));
         if(cfg.after) await cfg.after();
         await C.wait(500);
         completeSlide(wrong === 0);
@@ -1617,7 +1617,7 @@ Object.assign(PVK, (function(){
           sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
           pad.classList.add("pv-gone");   // the keypad goes as the answer goes up (review 2026-10-14)
           if(cfg.onRight) await cfg.onRight(ans);
-          await C.say("correct"); if(cfg.after) await cfg.after(); await C.wait(500);
+          await (cfg.sayCorrect ? cfg.sayCorrect() : C.say("correct")); if(cfg.after) await cfg.after(); await C.wait(500);
           completeSlide(wrong === 0); res(); return;
         }
         wrong++;
@@ -1924,6 +1924,13 @@ function pvPadPage(sc, L, d, hidden){
 }
 /* every table of the lesson is the same size (SME review 3): its tens column is wide enough for nine rods */
 const pvTable = (sc, L, cx, y)=> PVK.table(sc, { cx, y, cube: L.cube, blk: L.blk, pad: L.pad, tensMax: 9, tensFinal: 0, onesMax: 9 });
+/* the correct line - when it says the equation ("शाबाश! 47 घटा 20 बराबर 27।", the 2026-10-27 recordings) each part of the
+   equation lights as it is said (card cues.correct_eq, measured from the clip); extra: the page's own cues on the line */
+function pvSayCorrect(C, E, CU, extra){
+  const c = CU && CU.correct_eq, say = e =>{ if(!e) return; e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
+  if(!c || !E) return C.cue("correct", extra || []);
+  return C.cue("correct", [[c.a, ()=> say(E.a)], [c.op, ()=> say(E.op)], [c.b, ()=> say(E.b)], [c.eq, ()=> say(E.eq)], [c.q, ()=> say(E.q)], ...(extra || [])]);
+}
 function pvReplay(C){ state.replayAudio = ()=>{ if(!isPlaying && C.cur && C.alive()) C.say(C.cur).catch(()=>{}); };
   /* [QA BUG_09 / 04 / 07, as HI02H11_L02_S02] the speaker of the page: it takes a tap only when the page is WAITING FOR THE CHILD
      (a build / take-away / cards / keypad step that is not itself talking) or its flow has ended - never while the page
@@ -2135,7 +2142,7 @@ const PVModules = {
         if(shift) shift(36); const g = AT().digits(R.t, R.o);   /* 36: clear of the digits by 10px */ [g.t, g.o].forEach(e => K.setXY(e, e._x, e._y + 28)); await C.wait(800); };
       const down = els => dy => els.forEach(e => K.glide(e, { x: e._x, y: e._y + dy }, 420, false));
       async function finale(fillNow){
-        if(fillNow) await C.cue("correct", [[0.88, ()=> E.fill(diff)]]); else await C.say("correct");
+        if(fillNow) await pvSayCorrect(C, E, CU, [[0.88, ()=> E.fill(diff)]]); else await pvSayCorrect(C, E, CU);
         if(C.has("eq")) await K.eqSync(C, E, "eq");
       }
       K.run(C, async ()=>{
@@ -2175,7 +2182,7 @@ const PVModules = {
         if(d.answer === "mcq"){
           await K.mcq(C, { options: d.options, answer: diff, y: ansY, reask: "ask",
             onReady: M =>{ M.open(); C.say("ask").then(()=> M.ready(), ()=>{}); },
-            onRight: o => K.flyToQ(C, o, E),
+            onRight: o => K.flyToQ(C, o, E), sayCorrect: ()=> pvSayCorrect(C, E, CU),
             after: ()=> C.has("eq") ? K.eqSync(C, E, "eq") : null,
             ladder: async (n, M)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
               else { await digitsUnder(dy => M.moveTo(ansY + dy)); M.lock(); if(d.reveal_hand) setTimeout(()=>{ if(C.alive()) placeNudge(M.right); }, 300); await C.say("reveal"); } } });
@@ -2183,7 +2190,7 @@ const PVModules = {
         }
         await K.numpad(C, { answer: diff, x: L.cx, y: ansY, reask: "ask", target: E.q, padAt: PAD.padAt,
           onReady: P =>{ P.hide(true); C.cue("ask", [[0.55, ()=>{ P.hide(false); P.open(); }]]).then(()=> P.ready(), ()=>{}); },
-          onRight: ()=> E.fill(diff),
+          onRight: ()=> E.fill(diff), sayCorrect: ()=> pvSayCorrect(C, E, CU),
           ladder: async (n, P)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
             else { await digitsUnder(); P.guideKeys(); await C.say("reveal"); } } });
       });
@@ -2241,7 +2248,7 @@ const PVModules = {
         if(!pad){
           await K.mcq(C, { options: d.options, answer: diff, y: Y0, reask: "prompt",
             onReady: M =>{ M.open(); C.say("prompt").then(()=> M.ready(), ()=>{}); },
-            onRight: o => K.flyToQ(C, o, E),
+            onRight: o => K.flyToQ(C, o, E), sayCorrect: ()=> pvSayCorrect(C, E, CU),
             ladder: async (n, M)=>{
               if(n === 1) await order();
               else if(n === 2) await blocks(on => M.hide(on), y =>{ optY = y; M.moveTo(y); });
@@ -2252,7 +2259,7 @@ const PVModules = {
         await K.numpad(C, { answer: diff, x: L.cx, y: Y0, reask: "prompt", target: E.q, padAt: PAD.padAt,
           onReady: P =>{
             P.hide(true); C.cue("prompt", [[0.6, ()=>{ P.hide(false); P.open(); }]]).then(()=> P.ready(), ()=>{}); },
-          onRight: ()=> E.fill(diff),
+          onRight: ()=> E.fill(diff), sayCorrect: ()=> pvSayCorrect(C, E, CU),
           ladder: async (n, P)=>{
             const moveTo = ()=>{};                                        // (the "?" and the pad stay where they are)
             if(n === 1) await order();
@@ -2739,7 +2746,7 @@ const ANIM_ASSETS = ["loader.webp", "new_landing_swiftee_anim.webp", "peeking_ta
    Our lines (PHASE_GATE_TITLE) and clips (vo_pt_*) are unchanged. Every screen starts the bird from frame 0: a fresh
    blob: URL of the one download (Assets.fresh). */
 const PEEK_UP_SRC = "assets/gif/peeking_talk_up.webp";
-const PHASE_GATE_CUE_MS = { tutorial: 3075, guided: 3575, practice: 925 };   // HI02H11's title_cue_ms - where the headline is said in its clips (copied as they are)
+const PHASE_GATE_CUE_MS = { tutorial: 3300, guided: 3990, practice: 1460 };   // where the headline is said in OUR recorded clips (2026-10-27; measured from their pauses)
 function _fitGateTitle(){
   try{
     const t = $("phaseGateTitle"), im = $("phaseGateImg"), g = $("phaseGate");
@@ -3003,97 +3010,90 @@ const ASSET_SIZES = {
   "assets/sw_head_talking.webp": 37384,
   "assets/sw_head_tryagain.webp": 48836,
   "assets/voiceover/sfx_celebrate.ogg": 8344,
-  "assets/voiceover/vo_ask_pick.ogg": 11839,
-  "assets/voiceover/vo_cel.ogg": 14748,
-  "assets/voiceover/vo_g1_build.ogg": 24724,
-  "assets/voiceover/vo_g1_correct.ogg": 33645,
-  "assets/voiceover/vo_g1_eq.ogg": 15196,
-  "assets/voiceover/vo_g1_prompt.ogg": 9841,
-  "assets/voiceover/vo_g1_remove.ogg": 33183,
-  "assets/voiceover/vo_g1_sub.ogg": 21315,
-  "assets/voiceover/vo_g2_build.ogg": 32766,
-  "assets/voiceover/vo_g2_correct.ogg": 31210,
-  "assets/voiceover/vo_g2_eq.ogg": 17071,
-  "assets/voiceover/vo_g2_h2.ogg": 20644,
-  "assets/voiceover/vo_g2_prompt.ogg": 11576,
+  "assets/voiceover/vo_ask_pick.ogg": 13708,
+  "assets/voiceover/vo_cel.ogg": 14918,
+  "assets/voiceover/vo_g1_build.ogg": 29179,
+  "assets/voiceover/vo_g1_correct.ogg": 31396,
+  "assets/voiceover/vo_g1_prompt.ogg": 12007,
+  "assets/voiceover/vo_g1_remove.ogg": 14821,
+  "assets/voiceover/vo_g1_sub.ogg": 21939,
+  "assets/voiceover/vo_g2_build.ogg": 30023,
+  "assets/voiceover/vo_g2_correct.ogg": 19827,
+  "assets/voiceover/vo_g2_h2.ogg": 20417,
+  "assets/voiceover/vo_g2_prompt.ogg": 10963,
   "assets/voiceover/vo_g2_remove.ogg": 39576,
-  "assets/voiceover/vo_g2_reveal.ogg": 20053,
-  "assets/voiceover/vo_g2_rm_ones.ogg": 18930,
-  "assets/voiceover/vo_g2_rm_tens.ogg": 19104,
-  "assets/voiceover/vo_g2_sub.ogg": 21387,
-  "assets/voiceover/vo_g3_correct.ogg": 29569,
-  "assets/voiceover/vo_g3_eq.ogg": 18011,
-  "assets/voiceover/vo_g3_h2.ogg": 20699,
-  "assets/voiceover/vo_g3_prompt.ogg": 9295,
-  "assets/voiceover/vo_g3_reveal.ogg": 23183,
-  "assets/voiceover/vo_g3_rm_ones.ogg": 22118,
-  "assets/voiceover/vo_g3_rm_ones0.ogg": 19486,
-  "assets/voiceover/vo_g3_rm_tens.ogg": 19888,
-  "assets/voiceover/vo_g3_sub.ogg": 21842,
-  "assets/voiceover/vo_h_order.ogg": 17045,
-  "assets/voiceover/vo_h_recount.ogg": 12823,
-  "assets/voiceover/vo_idle_build_o.ogg": 6470,
-  "assets/voiceover/vo_idle_build_t.ogg": 6721,
-  "assets/voiceover/vo_idle_rm_o.ogg": 7751,
-  "assets/voiceover/vo_idle_rm_t.ogg": 8263,
-  "assets/voiceover/vo_landing.ogg": 22225,
-  "assets/voiceover/vo_num_1.ogg": 4077,
-  "assets/voiceover/vo_num_2.ogg": 2755,
-  "assets/voiceover/vo_num_3.ogg": 3295,
-  "assets/voiceover/vo_p1_ask.ogg": 16750,
-  "assets/voiceover/vo_p1_correct.ogg": 32744,
-  "assets/voiceover/vo_p1_h2.ogg": 19718,
-  "assets/voiceover/vo_p1_prompt.ogg": 10030,
-  "assets/voiceover/vo_p1_reveal.ogg": 22068,
-  "assets/voiceover/vo_p1_rm_ones.ogg": 19104,
-  "assets/voiceover/vo_p1_rm_tens.ogg": 17573,
-  "assets/voiceover/vo_p1_sub.ogg": 24818,
-  "assets/voiceover/vo_p2_correct.ogg": 24862,
-  "assets/voiceover/vo_p2_h2.ogg": 22129,
-  "assets/voiceover/vo_p2_prompt.ogg": 18546,
-  "assets/voiceover/vo_p2_remove.ogg": 27323,
-  "assets/voiceover/vo_p2_reveal.ogg": 22208,
-  "assets/voiceover/vo_p3_correct.ogg": 25695,
-  "assets/voiceover/vo_p3_h2.ogg": 20648,
-  "assets/voiceover/vo_p3_prompt.ogg": 16425,
-  "assets/voiceover/vo_p3_reveal.ogg": 21408,
-  "assets/voiceover/vo_p4_h2.ogg": 21228,
-  "assets/voiceover/vo_p4_reveal.ogg": 19528,
-  "assets/voiceover/vo_p67_correct.ogg": 23520,
-  "assets/voiceover/vo_p67_h2.ogg": 20913,
-  "assets/voiceover/vo_p67_prompt.ogg": 15413,
-  "assets/voiceover/vo_p67_reveal.ogg": 20496,
-  "assets/voiceover/vo_p90_correct.ogg": 30821,
-  "assets/voiceover/vo_p90_prompt.ogg": 8963,
-  "assets/voiceover/vo_p90_rm_tens.ogg": 21838,
-  "assets/voiceover/vo_p90_sub.ogg": 24681,
-  "assets/voiceover/vo_pt_guided.ogg": 240670,
-  "assets/voiceover/vo_pt_practice.ogg": 90014,
-  "assets/voiceover/vo_pt_tutorial.ogg": 207518,
-  "assets/voiceover/vo_rm_guide.ogg": 7416,
+  "assets/voiceover/vo_g2_reveal.ogg": 21644,
+  "assets/voiceover/vo_g2_rm_ones.ogg": 9092,
+  "assets/voiceover/vo_g2_rm_tens.ogg": 22240,
+  "assets/voiceover/vo_g2_sub.ogg": 29927,
+  "assets/voiceover/vo_g3_correct.ogg": 18127,
+  "assets/voiceover/vo_g3_h2.ogg": 23287,
+  "assets/voiceover/vo_g3_prompt.ogg": 9511,
+  "assets/voiceover/vo_g3_reveal.ogg": 22623,
+  "assets/voiceover/vo_g3_rm_ones.ogg": 15515,
+  "assets/voiceover/vo_g3_rm_ones0.ogg": 23505,
+  "assets/voiceover/vo_g3_rm_tens.ogg": 20671,
+  "assets/voiceover/vo_g3_sub.ogg": 16697,
+  "assets/voiceover/vo_h_order.ogg": 20883,
+  "assets/voiceover/vo_h_recount.ogg": 13396,
+  "assets/voiceover/vo_idle_build_o.ogg": 7753,
+  "assets/voiceover/vo_idle_build_t.ogg": 9481,
+  "assets/voiceover/vo_idle_rm_o.ogg": 7477,
+  "assets/voiceover/vo_idle_rm_t.ogg": 7874,
+  "assets/voiceover/vo_landing.ogg": 22478,
+  "assets/voiceover/vo_num_1.ogg": 2571,
+  "assets/voiceover/vo_num_2.ogg": 2449,
+  "assets/voiceover/vo_num_3.ogg": 2862,
+  "assets/voiceover/vo_p1_ask.ogg": 16128,
+  "assets/voiceover/vo_p1_correct.ogg": 22990,
+  "assets/voiceover/vo_p1_h2.ogg": 23079,
+  "assets/voiceover/vo_p1_prompt.ogg": 11186,
+  "assets/voiceover/vo_p1_reveal.ogg": 27018,
+  "assets/voiceover/vo_p1_rm_ones.ogg": 15799,
+  "assets/voiceover/vo_p2_correct.ogg": 27502,
+  "assets/voiceover/vo_p2_h2.ogg": 23116,
+  "assets/voiceover/vo_p2_prompt.ogg": 17455,
+  "assets/voiceover/vo_p2_remove.ogg": 31797,
+  "assets/voiceover/vo_p2_reveal.ogg": 20578,
+  "assets/voiceover/vo_p3_correct.ogg": 29632,
+  "assets/voiceover/vo_p3_h2.ogg": 21718,
+  "assets/voiceover/vo_p3_prompt.ogg": 17120,
+  "assets/voiceover/vo_p3_reveal.ogg": 22345,
+  "assets/voiceover/vo_p4_h2.ogg": 23016,
+  "assets/voiceover/vo_p4_reveal.ogg": 21875,
+  "assets/voiceover/vo_p67_correct.ogg": 27415,
+  "assets/voiceover/vo_p67_h2.ogg": 21955,
+  "assets/voiceover/vo_p67_prompt.ogg": 17128,
+  "assets/voiceover/vo_p67_reveal.ogg": 22017,
+  "assets/voiceover/vo_p90_correct.ogg": 19006,
+  "assets/voiceover/vo_p90_prompt.ogg": 10150,
+  "assets/voiceover/vo_pt_guided.ogg": 21069,
+  "assets/voiceover/vo_pt_practice.ogg": 9453,
+  "assets/voiceover/vo_pt_tutorial.ogg": 18324,
+  "assets/voiceover/vo_rm_guide.ogg": 7264,
   "assets/voiceover/vo_rm_ones_less.ogg": 14424,
   "assets/voiceover/vo_rm_ones_more.ogg": 14986,
-  "assets/voiceover/vo_rm_tens_more.ogg": 15734,
-  "assets/voiceover/vo_t1_a.ogg": 10531,
-  "assets/voiceover/vo_t1_ask.ogg": 15153,
-  "assets/voiceover/vo_t1_b.ogg": 14218,
-  "assets/voiceover/vo_t1_learn.ogg": 22767,
-  "assets/voiceover/vo_t2_built.ogg": 11402,
-  "assets/voiceover/vo_t2_digits.ogg": 11907,
-  "assets/voiceover/vo_t2_head.ogg": 8876,
-  "assets/voiceover/vo_t2_intro.ogg": 14865,
-  "assets/voiceover/vo_t2_ones.ogg": 14843,
-  "assets/voiceover/vo_t2_ones_left.ogg": 18748,
-  "assets/voiceover/vo_t2_rm_ones.ogg": 19602,
-  "assets/voiceover/vo_t2_rm_tens.ogg": 19342,
-  "assets/voiceover/vo_t2_sub.ogg": 24230,
-  "assets/voiceover/vo_t2_tens.ogg": 12878,
-  "assets/voiceover/vo_t2_tens_left.ogg": 22119,
-  "assets/voiceover/vo_t2_total.ogg": 25285,
-  "assets/voiceover/vo_t3_a.ogg": 17160,
-  "assets/voiceover/vo_t3_b.ogg": 10980,
-  "assets/voiceover/vo_t3_c.ogg": 13724,
-  "assets/voiceover/vo_zero.ogg": 9326
+  "assets/voiceover/vo_rm_tens_more.ogg": 17045,
+  "assets/voiceover/vo_t1_a.ogg": 12100,
+  "assets/voiceover/vo_t1_ask.ogg": 17760,
+  "assets/voiceover/vo_t1_b.ogg": 14244,
+  "assets/voiceover/vo_t1_learn.ogg": 23109,
+  "assets/voiceover/vo_t2_built.ogg": 13041,
+  "assets/voiceover/vo_t2_digits.ogg": 16537,
+  "assets/voiceover/vo_t2_head.ogg": 3635,
+  "assets/voiceover/vo_t2_intro.ogg": 14146,
+  "assets/voiceover/vo_t2_ones.ogg": 14298,
+  "assets/voiceover/vo_t2_ones_left.ogg": 18229,
+  "assets/voiceover/vo_t2_rm_ones.ogg": 23970,
+  "assets/voiceover/vo_t2_rm_tens.ogg": 24142,
+  "assets/voiceover/vo_t2_sub.ogg": 25185,
+  "assets/voiceover/vo_t2_tens.ogg": 24920,
+  "assets/voiceover/vo_t2_tens_left.ogg": 26394,
+  "assets/voiceover/vo_t2_total.ogg": 30767,
+  "assets/voiceover/vo_t3_a.ogg": 17876,
+  "assets/voiceover/vo_t3_b.ogg": 9275,
+  "assets/voiceover/vo_t3_c.ogg": 16230,
+  "assets/voiceover/vo_zero.ogg": 9779
 };
 /* @asset-sizes:end */
 const Assets = (function(){

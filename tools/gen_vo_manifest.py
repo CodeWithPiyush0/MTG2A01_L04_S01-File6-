@@ -24,7 +24,7 @@ SFX_DIR = os.path.join(ROOT, "assets", "sfx")
 OUT = os.path.join(ROOT, "lesson_vo_manifest.xlsx")
 TITLE = CARD["title"]["hi"] + " (" + CARD["skill_code"] + ")"
 
-COPIED = {"vo_pt_tutorial", "vo_pt_guided", "vo_pt_practice"}          # HI02H11_L02_S02's own clips (user 2026-10-23)
+COPIED = set()          # (the transition lines were HI02H11's clips until the 2026-10-27 recordings)
 
 
 def duration(path):
@@ -155,7 +155,10 @@ DUR = {cid: duration(os.path.join(VO_DIR, cid + ".ogg")) for cid in heard}
 def status(cid):
     if not os.path.exists(os.path.join(VO_DIR, cid + ".ogg")):
         return "MISSING"
-    return "Copied (HI02H11, recorded voice)" if cid in COPIED else "TTS (Gemini, Kore)"
+    if cid in COPIED: return "Copied (HI02H11, recorded voice)"
+    rec = os.path.join(ROOT, "vo_source", "recorded")
+    if os.path.isdir(rec) and any(os.path.splitext(f)[0] == cid for f in os.listdir(rec)): return "Recorded (2026-10-27)"
+    return "TTS (Gemini, Kore)"
 
 manifest = []
 n = 0
@@ -253,8 +256,9 @@ SPEC = [
     ("Clips", "%d rows, %d distinct recordings (see 'Recording list')." % (len(manifest), len(recordings)) +
               (" In the card but not heard in this build (not listed): " + ", ".join(unheard) + "." if unheard else "")),
     ("Folder", "assets/voiceover/<Audio ID>.ogg - the file name is the Audio ID."),
-    ("Voice", "Now: Gemini TTS (gemini-2.5-flash-preview-tts, voice Kore, tools/build_vo.py); the three transition lines are "
-              "HI02H11_L02_S02's own recorded clips. Each clip was checked by transcription."),
+    ("Voice", "Recorded voice (2026-10-27; sources in vo_source/recorded/, put in by tools/import_vo.py: ends trimmed, the lesson's "
+              "lead / tail and loudness). Each clip was checked "
+              "by transcription."),
     ("Format", "Ogg/Opus, 48 kHz mono, 32 kbps; 0.28 s before the voice, 0.36 s after; -18.5 LUFS (two-pass loudnorm)."),
     ("Register", "आप form throughout (the transition and celebration lines included)."),
     ("Script", "Record exactly the text in the Hindi script column - it is the build's own text. Numbers are spoken as Hindi words "
@@ -264,8 +268,9 @@ SPEC = [
                "recordings run  python tools/lessons.py  so they are measured again from the new takes."),
     ("Celebration", "Swiftee's lip-sync on the celebration line is measured from vo_cel.ogg by tools/lessons.py (tools/make_lipsync.py) - "
                     "re-run it after a new take of vo_cel."),
-    ("New takes", "Keep the same file name, put it in assets/voiceover/, then:  python tools/lessons.py  and  node tools/gen_asset_sizes.js  "
-                  "(bump the ?v= stamp in index.html so browsers fetch the new audio)."),
+    ("New takes", "Put the take in vo_source/recorded/ under its Audio ID (any audio format), then:  python tools/import_vo.py  "
+                  "python tools/lessons.py  and  node tools/gen_asset_sizes.js  (bump the ?v= stamp in index.html so browsers fetch "
+                  "the new audio)."),
     ("Regenerate", "python tools/gen_vo_manifest.py"),
 ]
 for r, (a, b_) in enumerate(SPEC, 1):

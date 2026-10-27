@@ -36,13 +36,13 @@ RM = {
     "rm_ones_more": vo("vo_rm_ones_more", "आपने इकाई में ज़्यादा हटाए हैं। दोबारा कोशिश करिए।"),
     "rm_ones_less": vo("vo_rm_ones_less", "आपने इकाई में कम हटाए हैं। दोबारा कोशिश करिए।"),
     "rm_tens_more": vo("vo_rm_tens_more", "आपने दहाई में ज़्यादा हटाए हैं। दोबारा कोशिश करिए।"),
-    "rm_guide": vo("vo_rm_guide", "इनमें से इतने हटाइए।"),
+    "rm_guide": vo("vo_rm_guide", "सिर्फ़ इतने हटाइए।"),
 }
 ASK_PICK = vo("vo_ask_pick", "अब कितने बचे? सही संख्या चुनिए।")
 # the answer's help ladder (user, 2026-10-16) - blocks on the page: 1 recount, 2 "a में से b घटाने पर ... बचती हैं",
 # 3 the column digits under the blocks + the reveal; no blocks: 1 the order, 2 the blocks taken away, 3 as before
 RECOUNT = vo("vo_h_recount", "बची हुई दहाई और इकाई को दोबारा गिनिए।")
-ORDER = vo("vo_h_order", "संख्याओं में से पहले इकाई घटाइए, फिर दहाई घटाइए।")
+ORDER = vo("vo_h_order", "संख्याओं में से पहले इकाई में से घटाइए, फिर दहाई में से घटाइए।")
 # SME review 5 (2026-10-26): the 7s inactivity reminders (said again every 7s while the child stays idle) - the step on hand;
 # Swiftee's count as she takes the ones away on T2; "शून्य यानी कुछ नहीं।" after a "... शून्य इकाई घटाते हैं।"
 IDLE = {"build_t": vo("vo_idle_build_t", "अब दहाई बनाइए।"), "build_o": vo("vo_idle_build_o", "अब इकाई बनाइए।"),
@@ -71,11 +71,11 @@ slides.append({
 # deck page 3 - Swiftee builds 25, takes away 13 (the ones by Swiftee, the ten by the child)
 slides.append({
     "id": "T2", "phase": "tutorial", "eis": "iconic", "type": "PV_SUB_DEMO", "prompt_hi": "",
-    "audio": {"head": vo("vo_t2_head", "आइए, पहले 25 बनाते हैं।"),
-              "intro": vo("vo_t2_intro", "सबसे पहले ब्लॉक्स की सहायता से 25 बनाते हैं।"),
+    "audio": {"head": vo("vo_t2_head", "आइए।"),
+              "intro": vo("vo_t2_intro", "पहले ब्लॉक्स की सहायता से 25 बनाते हैं।"),
               "digits": vo("vo_t2_digits", "25 में 2 दहाई और 5 इकाई हैं।"),
-              "tens": vo("vo_t2_tens", "2 दहाई के लिए 2 बंडल रखते हैं।"),
-              "ones": vo("vo_t2_ones", "अब 5 इकाई के लिए 5 ब्लॉक रखते हैं।"),
+              "tens": vo("vo_t2_tens", "2 दहाई के लिए 2 बंडल रखते हैं। ध्यान रखिए, एक बंडल में 10 ब्लॉक्स हैं।"),
+              "ones": vo("vo_t2_ones", "और 5 इकाई के लिए 5 ब्लॉक्स रखते हैं।"),
               "built": vo("vo_t2_built", "यह हमने ब्लॉक्स से संख्या पच्चीस बना ली।"),
               "sub": vo("vo_t2_sub", "अब 25 में से 13 घटाते हैं। 13 में 1 दहाई और 3 इकाई होते हैं।"),
               "rm_ones": vo("vo_t2_rm_ones", "पहले इकाइयाँ घटाते हैं। 5 इकाई में से 3 इकाई हटाते हैं।"),
@@ -110,65 +110,58 @@ def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=Fals
 
 # deck page 7 - 34 - 21: build, take away, the answer fills the box (no options)
 slides.append(pv_sub("G1", "guided", 34, 21, {
-    "prompt": vo("vo_g1_prompt", "34 में से 21 घटाइए।"),
+    "prompt": vo("vo_g1_prompt", "अब 34 में से 21 घटाइए।"),
     "build": vo("vo_g1_build", "सबसे पहले ब्लॉक्स की सहायता से 34 बनाते हैं, जिसमें 3 दहाई और 4 इकाई होते हैं।"),
     "sub": vo("vo_g1_sub", "और अब 21 घटाते हैं, 21 में 2 दहाई और 1 इकाई हैं।"),
-    "remove": vo("vo_g1_remove", "तो पहले 4 इकाई में से 1 इकाई हटाइए, फिर 3 दहाई में से 2 दहाई हटाइए।"),
-    "correct": vo("vo_g1_correct", "शाबाश! 34 में से 21 घटाने पर हमें मिलीं 1 दहाई और 3 इकाई, यानी 13।"),
-    "eq": vo("vo_g1_eq", "इसलिए 34 घटा 21 बराबर 13।")}, answer="fill"))
+    "remove": vo("vo_g1_remove", "तो पहले 4 इकाई में से 1 इकाई हटाइए।"),
+    "correct": vo("vo_g1_correct", "शाबाश! 34 में से 21 घटाने पर हमें मिलीं 1 दहाई और 3 इकाई, यानी 13।")}, answer="fill"))
 
 # deck page 7b - 47 - 20
 slides.append(pv_sub("G2", "guided", 47, 20, {
     "prompt": vo("vo_g2_prompt", "47 में से 20 घटाइए।"),
     "build": vo("vo_g2_build", "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।"),
-    "sub": vo("vo_g2_sub", "और अब 20 घटाते हैं, 20 में 2 दहाई और 0 इकाई हैं।"),
-    "rm_ones": vo("vo_g2_rm_ones", "पहले इकाइयाँ घटाइए। 7 इकाई में से शून्य इकाई घटाते हैं।"), "zero": ZERO,
-    "rm_tens": vo("vo_g2_rm_tens", "फिर दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।"),
+    "sub": vo("vo_g2_sub", "और अब 20 घटाते हैं। 20 में 2 दहाई और 0 इकाई होती हैं।"),
+    "rm_ones": vo("vo_g2_rm_ones", "पहले इकाई घटाइए।"), "zero": ZERO,
+    "rm_tens": vo("vo_g2_rm_tens", "अब दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g2_h2", "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।"), 
     "reveal": vo("vo_g2_reveal", "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।"),
-    "correct": vo("vo_g2_correct", "शाबाश! 47 में से 20 घटाने पर हमें मिलीं 2 दहाई और 7 इकाई, यानी 27।"),
-    "eq": vo("vo_g2_eq", "इसलिए 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67], steps=True, extra_data={"reveal_hand": True}))
+    "correct": vo("vo_g2_correct", "शाबाश! 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67], steps=True, extra_data={"reveal_hand": True}))
 
 # deck page 8 - 58 - 30 (the column steps spoken one by one)
 slides.append(pv_sub("G3", "guided", 58, 30, {
     "prompt": vo("vo_g3_prompt", "58 में से 30 घटाइए।"),
-    "sub": vo("vo_g3_sub", "और अब इसमें से 30 घटाते हैं, 30 में 3 दहाई और 0 इकाई हैं।"),
+    "sub": vo("vo_g3_sub", "30 में 3 दहाई और 0 इकाई होती हैं।"),
     "rm_ones": vo("vo_g3_rm_ones0", "पहले इकाइयाँ घटाइए। 8 इकाई में से शून्य इकाई घटाते हैं।"), "zero": ZERO,
     "rm_tens": vo("vo_g3_rm_tens", "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g3_h2", "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।"), 
     "reveal": vo("vo_g3_reveal", "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।"),
-    "correct": vo("vo_g3_correct", "शाबाश! 58 में से 30 घटाने पर हमें मिलीं 2 दहाई और 8 इकाई, यानी 28।"),
-    "eq": vo("vo_g3_eq", "इसलिए 58 घटा 30 बराबर 28।")}, answer="mcq", options=[88, 28, 82], steps=True, build=False))
+    "correct": vo("vo_g3_correct", "शाबाश! 58 घटा 30 बराबर 28।")}, answer="mcq", options=[88, 28, 82], steps=True, build=False))
 
 # deck page 9 - 79 - 34, the answer typed on the number pad
 slides.append(pv_sub("P1", "practice", 79, 34, {
     "prompt": vo("vo_p1_prompt", "79 में से 34 घटाइए।"),
-    "sub": vo("vo_p1_sub", "और अब इसमें से 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।"),
-    "rm_ones": vo("vo_p1_rm_ones", "पहले इकाइयाँ घटाइए। 9 इकाई में से 4 इकाई हटाइए।"),
-    "rm_tens": vo("vo_p1_rm_tens", "अब दहाइयाँ घटाइए। 7 दहाई में से 3 दहाई हटाइए।"),
-    "ask": vo("vo_p1_ask", "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।"),
+    "remove": vo("vo_p1_rm_ones", "पहले इकाई घटाइए, फिर दहाई घटाइए।"),
+    "ask": vo("vo_p1_ask", "अब कितने बचे? इस डिब्बे पर सही संख्या टाइप करिए।"),
     "recount": RECOUNT, "h2": vo("vo_p1_h2", "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।"), 
     "reveal": vo("vo_p1_reveal", "79 में से 34 घटाने पर 45 बचता है। तो सही संख्या यह है।"),
-    "correct": vo("vo_p1_correct", "शाबाश! 79 में से 34 घटाने पर हमें मिलीं 4 दहाई और 5 इकाई, यानी 45।")},
-    answer="numpad", steps=True, build=False, extra_data={"ones_first": True}))
+    "correct": vo("vo_p1_correct", "शाबाश! 79 घटा 34 बराबर 45।")},
+    answer="numpad", build=False, extra_data={"ones_first": True}))
 
 # user 2026-10-23: P2 is a copy of P1 with 90 - 40 (the old blocks-free P4's question, brought next to P1)
 slides.append(pv_sub("P2", "practice", 90, 40, {
     "prompt": vo("vo_p90_prompt", "90 में से 40 घटाइए।"),
-    "sub": vo("vo_p90_sub", "और अब इसमें से 40 घटाते हैं, 40 में 4 दहाई और 0 इकाई हैं।"),
-    "rm_ones": vo("vo_g3_rm_ones", "पहले इकाइयाँ घटाइए। 0 इकाई मतलब कुछ नहीं घटाएँगे इकाई में से।"),
-    "rm_tens": vo("vo_p90_rm_tens", "अब दहाइयाँ घटाइए। 9 दहाई में से 4 दहाई हटाइए।"),
-    "ask": vo("vo_p1_ask", "अब कितने बचे? नीचे डिब्बे पर टैप करके सही संख्या लिखिए।"),
+    "remove": vo("vo_g3_rm_ones", "पहले इकाई घटाइए, फिर दहाई घटाइए।"),
+    "ask": vo("vo_p1_ask", "अब कितने बचे? इस डिब्बे पर सही संख्या टाइप करिए।"),
     "recount": RECOUNT, "h2": vo("vo_p4_h2", "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।"),
     "reveal": vo("vo_p4_reveal", "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।"),
-    "correct": vo("vo_p90_correct", "शाबाश! 90 में से 40 घटाने पर हमें मिलीं 5 दहाई और 0 इकाई, यानी 50।")},
-    answer="numpad", steps=True, build=False, extra_data={"ones_first": True}))
+    "correct": vo("vo_p90_correct", "शाबाश! 90 घटा 40 बराबर 50।")},
+    answer="numpad", build=False, extra_data={"ones_first": True}))
 
 # deck page 10 (MAKE_SET): deleted
 
 # deck page 11 - 86 - 56: the blocks are given; no step VO; the headers follow the blocks left
 slides.append(pv_sub("P3", "practice", 86, 56, {
-    "prompt": vo("vo_p2_prompt", "86 में से 56 घटाइए और सही संख्या चुनिए।"),
+    "prompt": vo("vo_p2_prompt", "86 में से 56 घटाइए और फिर सही संख्या चुनिए।"),
     "remove": vo("vo_p2_remove", "दिए हुए ब्लॉक्स पर टैप करके 56 ब्लॉक्स हटाइए। पहले इकाई में से हटाइए, फिर दहाई में से।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_p2_h2", "86 में से 56 घटाने पर, 3 दहाई और 0 इकाई बचती हैं।"), 
     "reveal": vo("vo_p2_reveal", "86 में से 56 घटाने पर 30 बचता है। तो सही संख्या यह है।"),
@@ -259,10 +252,10 @@ for sl in slides:
     # 3) pages 3-5: the ones light as their step is said, then the tens
     if sl["id"] in ("G1", "G2") and "remove" in au:
         (at, ao), (bt, bo) = split(d["a"]), split(d["b"])
-        cues["remove"] = {"o": frac(au["remove"], f"{ao} इकाई"), "t": frac(au["remove"], f"{at} दहाई")}
+        cues["remove"] = {k: frac(au["remove"], ph) for k, ph in (("o", f"{ao} इकाई"), ("t", f"{at} दहाई")) if ph in VO[au["remove"]]}
     if sl["id"] in ("G2", "G3"):
         (at, ao) = split(d["a"]); (bt, bo) = split(d["b"])
-        cues["rm_ones"] = {"o": frac(au["rm_ones"], f"{ao} इकाई")}
+        cues["rm_ones"] = {"o": frac(au["rm_ones"], f"{ao} इकाई" if f"{ao} इकाई" in VO[au["rm_ones"]] else "इकाई")}
         cues["rm_tens"] = {"t": frac(au["rm_tens"], f"{at} दहाई")}
     if "sub" in au and sl["type"] == "PV_SUB":   # "और अब (इसमें से) 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।"
         (bt, bo) = split(d["b"]); txt = VO[au["sub"]]
@@ -283,6 +276,13 @@ for sl in slides:
                        "q": frac(au["sub"], "घटाते"), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
         cues["story"] = {"a": frac(au["story_a"], "पच्चीस"), "b": frac(au["story_a"], "तेरह"), "n": frac(au["story_a"], "बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
+    # 2026-10-27: a correct line that says the equation ("शाबाश! 47 घटा 20 बराबर 27।") - each part lights on its word
+    if "correct" in au and "a" in d and "b" in d:
+        txt = VO[au["correct"]]
+        if "घटा" in txt and "बराबर" in txt:
+            cues["correct_eq"] = {"a": frac(au["correct"], str(d["a"])), "op": frac(au["correct"], "घटा"),
+                                  "b": frac(au["correct"], str(d["b"]), after="घटा"), "eq": frac(au["correct"], "बराबर"),
+                                  "q": frac(au["correct"], str(d["a"] - d["b"]), after="बराबर")}
     # user 2026-10-23: the portrait lights as its name is said (T1's lines, T2's story lines): role -> [[fraction, who], ...]
     if sl["type"] in ("STORY_SUB", "PV_SUB_DEMO"):
         names = {}
