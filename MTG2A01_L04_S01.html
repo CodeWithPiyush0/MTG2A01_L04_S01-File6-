@@ -12,7 +12,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261027b">
+<link rel="stylesheet" href="style.css?v=20261027c">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -300,7 +300,7 @@
    "vo_g2_prompt": "47 में से 20 घटाइए।",
    "vo_g2_reveal": "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।",
    "vo_g2_rm_ones": "पहले इकाई घटाइए।",
-   "vo_g2_rm_tens": "अब दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
+   "vo_g2_rm_tens": "अब दहाई घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
    "vo_g2_sub": "और अब 20 घटाते हैं। 20 में 2 दहाई और 0 इकाई होती हैं।",
    "vo_g3_correct": "शाबाश! 58 घटा 30 बराबर 28।",
    "vo_g3_h2": "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।",
@@ -308,7 +308,7 @@
    "vo_g3_reveal": "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।",
    "vo_g3_rm_ones": "पहले इकाई घटाइए, फिर दहाई घटाइए।",
    "vo_g3_rm_ones0": "पहले इकाइयाँ घटाइए। 8 इकाई में से शून्य इकाई घटाते हैं।",
-   "vo_g3_rm_tens": "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।",
+   "vo_g3_rm_tens": "अब दहाई घटाइए। 5 दहाई में से 3 दहाई हटाइए।",
    "vo_g3_sub": "30 में 3 दहाई और 0 इकाई होती हैं।",
    "vo_h_order": "संख्याओं में से पहले इकाई में से घटाइए, फिर दहाई में से घटाइए।",
    "vo_h_recount": "बची हुई दहाई और इकाई को दोबारा गिनिए।",
@@ -586,7 +586,7 @@
       "o": 0.334
      },
      "rm_tens": {
-      "t": 0.38
+      "t": 0.346
      },
      "sub": {
       "b": 0.116,
@@ -656,7 +656,7 @@
       "o": 0.365
      },
      "rm_tens": {
-      "t": 0.38
+      "t": 0.346
      },
      "sub": {
       "b": 0.063,
@@ -1036,6 +1036,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261027b"></script>
+<script src="app.js?v=20261027c"></script>
 </body>
 </html>

@@ -122,7 +122,7 @@ slides.append(pv_sub("G2", "guided", 47, 20, {
     "build": vo("vo_g2_build", "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।"),
     "sub": vo("vo_g2_sub", "और अब 20 घटाते हैं। 20 में 2 दहाई और 0 इकाई होती हैं।"),
     "rm_ones": vo("vo_g2_rm_ones", "पहले इकाई घटाइए।"), "zero": ZERO,
-    "rm_tens": vo("vo_g2_rm_tens", "अब दहाइयाँ घटाइए। 4 दहाई में से 2 दहाई हटाइए।"),
+    "rm_tens": vo("vo_g2_rm_tens", "अब दहाई घटाइए। 4 दहाई में से 2 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g2_h2", "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।"), 
     "reveal": vo("vo_g2_reveal", "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_g2_correct", "शाबाश! 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67], steps=True, extra_data={"reveal_hand": True}))
@@ -132,7 +132,7 @@ slides.append(pv_sub("G3", "guided", 58, 30, {
     "prompt": vo("vo_g3_prompt", "58 में से 30 घटाइए।"),
     "sub": vo("vo_g3_sub", "30 में 3 दहाई और 0 इकाई होती हैं।"),
     "rm_ones": vo("vo_g3_rm_ones0", "पहले इकाइयाँ घटाइए। 8 इकाई में से शून्य इकाई घटाते हैं।"), "zero": ZERO,
-    "rm_tens": vo("vo_g3_rm_tens", "अब दहाइयाँ घटाइए। 5 दहाई में से 3 दहाई हटाइए।"),
+    "rm_tens": vo("vo_g3_rm_tens", "अब दहाई घटाइए। 5 दहाई में से 3 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g3_h2", "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।"), 
     "reveal": vo("vo_g3_reveal", "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।"),
     "correct": vo("vo_g3_correct", "शाबाश! 58 घटा 30 बराबर 28।")}, answer="mcq", options=[88, 28, 82], steps=True, build=False))

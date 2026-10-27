@@ -335,3 +335,4 @@ The user's 81 recordings (supplied in `assets/voiceover/voiceovers/` as .mp3-nam
 - A word-synced moment whose word a line no longer says is skipped (never stalls the line).
 - The three transitions are now the user's recordings (same words as HI02H11's); their headlines are re-timed to these clips (3.30 / 3.99 / 1.46 s).
 - Every cue time re-measured from the new clips (`python tools/lessons.py`), the celebration lip-sync re-measured from the new `vo_cel`; the manifest regenerated (81 recordings, all "Recorded").
+- **2026-10-27 (later): two new takes** - `vo_g2_rm_tens`, `vo_g3_rm_tens` (the user's: the first takes were not right). Put in with `tools/import_vo.py` (sources replaced in `vo_source/recorded/`), checked by transcription ("अब दहाई घटाइए। 4 दहाई में से 2 दहाई हटाइए।" / "… 5 दहाई में से 3 …" - the script now says "दहाई" as recorded), cue times re-measured; G2 and G3 played on both paths.
