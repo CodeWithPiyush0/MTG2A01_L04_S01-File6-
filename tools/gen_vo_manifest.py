@@ -73,7 +73,8 @@ ROLE = {
     "h2": ("Hint 2 (2nd wrong answer)", "the numbers light; the tens and ones left beat on their words"),
     "h2_mental": ("Hint 2 (2nd wrong answer)", "the table comes in with the first number's blocks; the second number is taken away as it is said"),
     "reveal": ("Hint 3 (3rd wrong answer)", "the right card / the right keys lit (one key at a time), the others off"),
-    "correct": ("correct answer", "the answer goes into the ?; confetti"),
+    "correct": ("correct answer - first try", "a right answer at the first try: the answer goes into the ?; confetti; the equation's parts light on their words"),
+    "correct_plain": ("correct answer - after a wrong try", "the same line without «शाबाश!» (cut from it - not recorded separately), after 1-3 wrong tries"),
     "eq": ("the equation read out", "after the correct line: each part lights as it is said"),
     "rm_tens_more": ("take-away mistake - 1st time", "a ten too many taken: the tens go back, this line"),
     "rm_guide": ("take-away mistake - 2nd time", "the tens go back; only the tens to take stay live, the others dimmed"),
@@ -120,9 +121,9 @@ def page_rows(i, s):
             add(au.get("remove"), "remove"); add("vo_idle_rm_o", "idle_rm_now"); add("vo_idle_rm_t", "idle_rm_now")
         add(au.get("rm_tens_more"), "rm_tens_more"); add(au.get("rm_guide"), "rm_guide")
         add(au.get("ask"), "ask"); add(au.get("recount"), "recount"); add(au.get("h2"), "h2"); add(au.get("reveal"), "reveal")
-        add(au.get("correct"), "correct"); add(au.get("eq"), "eq")
+        add(au.get("correct"), "correct"); add(au.get("correct_plain"), "correct_plain"); add(au.get("eq"), "eq")
     elif ty == "MENTAL_SUB":
-        for r, k in (("prompt", "prompt"), ("order", "order"), ("h2", "h2_mental"), ("reveal", "reveal"), ("correct", "correct")):
+        for r, k in (("prompt", "prompt"), ("order", "order"), ("h2", "h2_mental"), ("reveal", "reveal"), ("correct", "correct"), ("correct_plain", "correct_plain")):
             add(au.get(r), k)
     elif ty == "CELEBRATION":
         add(au.get("prompt"), "cel")
@@ -155,6 +156,7 @@ DUR = {cid: duration(os.path.join(VO_DIR, cid + ".ogg")) for cid in heard}
 def status(cid):
     if not os.path.exists(os.path.join(VO_DIR, cid + ".ogg")):
         return "MISSING"
+    if cid.endswith("_plain"): return "Cut from " + cid[:-6] + " (tools/make_plain_correct.py)"
     if cid in COPIED: return "Copied (HI02H11, recorded voice)"
     rec = os.path.join(ROOT, "vo_source", "recorded")
     if os.path.isdir(rec) and any(os.path.splitext(f)[0] == cid for f in os.listdir(rec)): return "Recorded (2026-10-27)"
@@ -171,7 +173,7 @@ for page, screen, rows in order:
 recordings = []
 for page, screen, rows in order:
     for cid, _ in rows:
-        if cid not in [r[0][1] for r in recordings]:
+        if cid not in [r[0][1] for r in recordings] and not cid.endswith("_plain"):   # (a cut line is not recorded)
             recordings.append(([len(recordings) + 1, cid, cid + ".ogg", TEXT.get(cid, ""), ", ".join(heard[cid]), DUR[cid], status(cid)], status(cid)))
 # in the card but never heard (kept for safety)
 unheard = sorted(k for k in CARD["assets"]["audio"] if k.startswith("vo_") and k not in heard)
@@ -266,6 +268,9 @@ SPEC = [
     ("Timing", "Several pages light / move things on given words of a clip (e.g. «इसमें» lights the table, «मीरा» / «अमन» light a "
                "picture, «तेरह घटाए» sends the blocks to Aman). The times are measured from each clip's length: after new "
                "recordings run  python tools/lessons.py  so they are measured again from the new takes."),
+    ("Shabash", "A right answer at the FIRST try says the full correct line (with «शाबाश!»); after a wrong try the same line without it - "
+                "<id>_plain, cut from the recording by tools/make_plain_correct.py (not recorded separately). After a new take of a "
+                "correct line run it again, then python tools/lessons.py."),
     ("Celebration", "Swiftee's lip-sync on the celebration line is measured from vo_cel.ogg by tools/lessons.py (tools/make_lipsync.py) - "
                     "re-run it after a new take of vo_cel."),
     ("New takes", "Put the take in vo_source/recorded/ under its Audio ID (any audio format), then:  python tools/import_vo.py  "

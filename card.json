@@ -60,6 +60,7 @@
    "vo_g1_sub": "assets/voiceover/vo_g1_sub.ogg",
    "vo_g2_build": "assets/voiceover/vo_g2_build.ogg",
    "vo_g2_correct": "assets/voiceover/vo_g2_correct.ogg",
+   "vo_g2_correct_plain": "assets/voiceover/vo_g2_correct_plain.ogg",
    "vo_g2_h2": "assets/voiceover/vo_g2_h2.ogg",
    "vo_g2_prompt": "assets/voiceover/vo_g2_prompt.ogg",
    "vo_g2_reveal": "assets/voiceover/vo_g2_reveal.ogg",
@@ -67,6 +68,7 @@
    "vo_g2_rm_tens": "assets/voiceover/vo_g2_rm_tens.ogg",
    "vo_g2_sub": "assets/voiceover/vo_g2_sub.ogg",
    "vo_g3_correct": "assets/voiceover/vo_g3_correct.ogg",
+   "vo_g3_correct_plain": "assets/voiceover/vo_g3_correct_plain.ogg",
    "vo_g3_h2": "assets/voiceover/vo_g3_h2.ogg",
    "vo_g3_prompt": "assets/voiceover/vo_g3_prompt.ogg",
    "vo_g3_reveal": "assets/voiceover/vo_g3_reveal.ogg",
@@ -86,26 +88,31 @@
    "vo_num_3": "assets/voiceover/vo_num_3.ogg",
    "vo_p1_ask": "assets/voiceover/vo_p1_ask.ogg",
    "vo_p1_correct": "assets/voiceover/vo_p1_correct.ogg",
+   "vo_p1_correct_plain": "assets/voiceover/vo_p1_correct_plain.ogg",
    "vo_p1_h2": "assets/voiceover/vo_p1_h2.ogg",
    "vo_p1_prompt": "assets/voiceover/vo_p1_prompt.ogg",
    "vo_p1_reveal": "assets/voiceover/vo_p1_reveal.ogg",
    "vo_p1_rm_ones": "assets/voiceover/vo_p1_rm_ones.ogg",
    "vo_p2_correct": "assets/voiceover/vo_p2_correct.ogg",
+   "vo_p2_correct_plain": "assets/voiceover/vo_p2_correct_plain.ogg",
    "vo_p2_h2": "assets/voiceover/vo_p2_h2.ogg",
    "vo_p2_prompt": "assets/voiceover/vo_p2_prompt.ogg",
    "vo_p2_remove": "assets/voiceover/vo_p2_remove.ogg",
    "vo_p2_reveal": "assets/voiceover/vo_p2_reveal.ogg",
    "vo_p3_correct": "assets/voiceover/vo_p3_correct.ogg",
+   "vo_p3_correct_plain": "assets/voiceover/vo_p3_correct_plain.ogg",
    "vo_p3_h2": "assets/voiceover/vo_p3_h2.ogg",
    "vo_p3_prompt": "assets/voiceover/vo_p3_prompt.ogg",
    "vo_p3_reveal": "assets/voiceover/vo_p3_reveal.ogg",
    "vo_p4_h2": "assets/voiceover/vo_p4_h2.ogg",
    "vo_p4_reveal": "assets/voiceover/vo_p4_reveal.ogg",
    "vo_p67_correct": "assets/voiceover/vo_p67_correct.ogg",
+   "vo_p67_correct_plain": "assets/voiceover/vo_p67_correct_plain.ogg",
    "vo_p67_h2": "assets/voiceover/vo_p67_h2.ogg",
    "vo_p67_prompt": "assets/voiceover/vo_p67_prompt.ogg",
    "vo_p67_reveal": "assets/voiceover/vo_p67_reveal.ogg",
    "vo_p90_correct": "assets/voiceover/vo_p90_correct.ogg",
+   "vo_p90_correct_plain": "assets/voiceover/vo_p90_correct_plain.ogg",
    "vo_p90_prompt": "assets/voiceover/vo_p90_prompt.ogg",
    "vo_pt_guided": "assets/voiceover/vo_pt_guided.ogg",
    "vo_pt_practice": "assets/voiceover/vo_pt_practice.ogg",
@@ -145,6 +152,7 @@
    "vo_g1_sub": "और अब 21 घटाते हैं, 21 में 2 दहाई और 1 इकाई हैं।",
    "vo_g2_build": "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।",
    "vo_g2_correct": "शाबाश! 47 घटा 20 बराबर 27।",
+   "vo_g2_correct_plain": "47 घटा 20 बराबर 27।",
    "vo_g2_h2": "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।",
    "vo_g2_prompt": "47 में से 20 घटाइए।",
    "vo_g2_reveal": "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।",
@@ -152,6 +160,7 @@
    "vo_g2_rm_tens": "अब दहाई घटाइए। 4 दहाई में से 2 दहाई हटाइए।",
    "vo_g2_sub": "और अब 20 घटाते हैं। 20 में 2 दहाई और 0 इकाई होती हैं।",
    "vo_g3_correct": "शाबाश! 58 घटा 30 बराबर 28।",
+   "vo_g3_correct_plain": "58 घटा 30 बराबर 28।",
    "vo_g3_h2": "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।",
    "vo_g3_prompt": "58 में से 30 घटाइए।",
    "vo_g3_reveal": "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।",
@@ -171,26 +180,31 @@
    "vo_num_3": "तीन।",
    "vo_p1_ask": "अब कितने बचे? इस डिब्बे पर सही संख्या टाइप करिए।",
    "vo_p1_correct": "शाबाश! 79 घटा 34 बराबर 45।",
+   "vo_p1_correct_plain": "79 घटा 34 बराबर 45।",
    "vo_p1_h2": "79 में से 34 घटाने पर, 4 दहाई और 5 इकाई बचती हैं।",
    "vo_p1_prompt": "79 में से 34 घटाइए।",
    "vo_p1_reveal": "79 में से 34 घटाने पर 45 बचता है। तो सही संख्या यह है।",
    "vo_p1_rm_ones": "पहले इकाई घटाइए, फिर दहाई घटाइए।",
    "vo_p2_correct": "शाबाश! आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।",
+   "vo_p2_correct_plain": "आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।",
    "vo_p2_h2": "86 में से 56 घटाने पर, 3 दहाई और 0 इकाई बचती हैं।",
    "vo_p2_prompt": "86 में से 56 घटाइए और फिर सही संख्या चुनिए।",
    "vo_p2_remove": "दिए हुए ब्लॉक्स पर टैप करके 56 ब्लॉक्स हटाइए। पहले इकाई में से हटाइए, फिर दहाई में से।",
    "vo_p2_reveal": "86 में से 56 घटाने पर 30 बचता है। तो सही संख्या यह है।",
    "vo_p3_correct": "शाबाश! आपने सही संख्या चुन ली। 45 घटा 12 बराबर 33।",
+   "vo_p3_correct_plain": "आपने सही संख्या चुन ली। 45 घटा 12 बराबर 33।",
    "vo_p3_h2": "45 में से 12 घटाने पर, 3 दहाई और 3 इकाई बचती हैं।",
    "vo_p3_prompt": "45 में से 12 घटाइए और सही संख्या चुनिए।",
    "vo_p3_reveal": "45 में से 12 घटाने पर 33 बचता है। तो सही संख्या यह है।",
    "vo_p4_h2": "90 में से 40 घटाने पर, 5 दहाई और 0 इकाई बचती हैं।",
    "vo_p4_reveal": "90 में से 40 घटाने पर 50 बचता है। तो सही संख्या यह है।",
    "vo_p67_correct": "शाबाश! आपने सही संख्या चुन ली। 67 घटा 53 बराबर 14।",
+   "vo_p67_correct_plain": "आपने सही संख्या चुन ली। 67 घटा 53 बराबर 14।",
    "vo_p67_h2": "67 में से 53 घटाने पर, 1 दहाई और 4 इकाई बचती हैं।",
    "vo_p67_prompt": "67 में से 53 घटाइए और सही संख्या चुनिए।",
    "vo_p67_reveal": "67 में से 53 घटाने पर 14 बचता है। तो सही संख्या यह है।",
    "vo_p90_correct": "शाबाश! 90 घटा 40 बराबर 50।",
+   "vo_p90_correct_plain": "90 घटा 40 बराबर 50।",
    "vo_p90_prompt": "90 में से 40 घटाइए।",
    "vo_pt_guided": "बहुत बढ़िया! अब हम साथ मिलकर शुरू करते हैं। चलिए, साथ में करें!",
    "vo_pt_practice": "वाह! अब आपकी बारी।",
@@ -405,7 +419,8 @@
     "recount": "vo_h_recount",
     "h2": "vo_g2_h2",
     "reveal": "vo_g2_reveal",
-    "correct": "vo_g2_correct"
+    "correct": "vo_g2_correct",
+    "correct_plain": "vo_g2_correct_plain"
    },
    "data": {
     "a": 47,
@@ -452,6 +467,13 @@
       "b": 0.462,
       "eq": 0.624,
       "q": 0.746
+     },
+     "correct_plain_eq": {
+      "a": 0.073,
+      "op": 0.264,
+      "b": 0.359,
+      "eq": 0.549,
+      "q": 0.692
      }
     }
    }
@@ -476,7 +498,8 @@
     "recount": "vo_h_recount",
     "h2": "vo_g3_h2",
     "reveal": "vo_g3_reveal",
-    "correct": "vo_g3_correct"
+    "correct": "vo_g3_correct",
+    "correct_plain": "vo_g3_correct_plain"
    },
    "data": {
     "a": 58,
@@ -518,6 +541,13 @@
       "b": 0.461,
       "eq": 0.622,
       "q": 0.743
+     },
+     "correct_plain_eq": {
+      "a": 0.078,
+      "op": 0.266,
+      "b": 0.36,
+      "eq": 0.548,
+      "q": 0.689
      }
     }
    }
@@ -539,7 +569,8 @@
     "recount": "vo_h_recount",
     "h2": "vo_p1_h2",
     "reveal": "vo_p1_reveal",
-    "correct": "vo_p1_correct"
+    "correct": "vo_p1_correct",
+    "correct_plain": "vo_p1_correct_plain"
    },
    "data": {
     "a": 79,
@@ -566,6 +597,13 @@
       "b": 0.462,
       "eq": 0.629,
       "q": 0.754
+     },
+     "correct_plain_eq": {
+      "a": 0.058,
+      "op": 0.256,
+      "b": 0.355,
+      "eq": 0.554,
+      "q": 0.702
      }
     }
    }
@@ -587,7 +625,8 @@
     "recount": "vo_h_recount",
     "h2": "vo_p4_h2",
     "reveal": "vo_p4_reveal",
-    "correct": "vo_p90_correct"
+    "correct": "vo_p90_correct",
+    "correct_plain": "vo_p90_correct_plain"
    },
    "data": {
     "a": 90,
@@ -614,6 +653,13 @@
       "b": 0.462,
       "eq": 0.623,
       "q": 0.745
+     },
+     "correct_plain_eq": {
+      "a": 0.08,
+      "op": 0.267,
+      "b": 0.36,
+      "eq": 0.547,
+      "q": 0.687
      }
     }
    }
@@ -635,7 +681,8 @@
     "recount": "vo_h_recount",
     "h2": "vo_p2_h2",
     "reveal": "vo_p2_reveal",
-    "correct": "vo_p2_correct"
+    "correct": "vo_p2_correct",
+    "correct_plain": "vo_p2_correct_plain"
    },
    "data": {
     "a": 86,
@@ -667,6 +714,13 @@
       "b": 0.642,
       "eq": 0.749,
       "q": 0.829
+     },
+     "correct_plain_eq": {
+      "a": 0.419,
+      "op": 0.538,
+      "b": 0.597,
+      "eq": 0.716,
+      "q": 0.805
      }
     }
    }
@@ -682,7 +736,8 @@
     "order": "vo_h_order",
     "h2": "vo_p3_h2",
     "reveal": "vo_p3_reveal",
-    "correct": "vo_p3_correct"
+    "correct": "vo_p3_correct",
+    "correct_plain": "vo_p3_correct_plain"
    },
    "data": {
     "a": 45,
@@ -710,6 +765,13 @@
       "b": 0.643,
       "eq": 0.751,
       "q": 0.831
+     },
+     "correct_plain_eq": {
+      "a": 0.419,
+      "op": 0.539,
+      "b": 0.598,
+      "eq": 0.718,
+      "q": 0.808
      }
     }
    }
@@ -725,7 +787,8 @@
     "order": "vo_h_order",
     "h2": "vo_p67_h2",
     "reveal": "vo_p67_reveal",
-    "correct": "vo_p67_correct"
+    "correct": "vo_p67_correct",
+    "correct_plain": "vo_p67_correct_plain"
    },
    "data": {
     "a": 67,
@@ -753,6 +816,13 @@
       "b": 0.641,
       "eq": 0.748,
       "q": 0.828
+     },
+     "correct_plain_eq": {
+      "a": 0.419,
+      "op": 0.537,
+      "b": 0.597,
+      "eq": 0.715,
+      "q": 0.804
      }
     }
    }

@@ -276,6 +276,10 @@ for sl in slides:
                        "q": frac(au["sub"], "घटाते"), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
         cues["story"] = {"a": frac(au["story_a"], "पच्चीस"), "b": frac(au["story_a"], "तेरह"), "n": frac(au["story_a"], "बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
+    # user 2026-10-28: after a wrong attempt the correct line is said without its «शाबाश!» - "correct_plain", cut from the
+    # recorded line by tools/make_plain_correct.py (same voice); only on the pages a child can answer wrongly first
+    if d.get("answer") in ("mcq", "numpad") and VO.get(au.get("correct", ""), "").startswith("शाबाश!"):
+        au["correct_plain"] = vo(au["correct"] + "_plain", VO[au["correct"]][len("शाबाश!"):].strip())
     # 2026-10-27: a correct line that says the equation ("शाबाश! 47 घटा 20 बराबर 27।") - each part lights on its word
     if "correct" in au and "a" in d and "b" in d:
         txt = VO[au["correct"]]
@@ -283,6 +287,10 @@ for sl in slides:
             cues["correct_eq"] = {"a": frac(au["correct"], str(d["a"])), "op": frac(au["correct"], "घटा"),
                                   "b": frac(au["correct"], str(d["b"]), after="घटा"), "eq": frac(au["correct"], "बराबर"),
                                   "q": frac(au["correct"], str(d["a"] - d["b"]), after="बराबर")}
+            if "correct_plain" in au:
+                cp = au["correct_plain"]
+                cues["correct_plain_eq"] = {"a": frac(cp, str(d["a"])), "op": frac(cp, "घटा"), "b": frac(cp, str(d["b"]), after="घटा"),
+                                            "eq": frac(cp, "बराबर"), "q": frac(cp, str(d["a"] - d["b"]), after="बराबर")}
     # user 2026-10-23: the portrait lights as its name is said (T1's lines, T2's story lines): role -> [[fraction, who], ...]
     if sl["type"] in ("STORY_SUB", "PV_SUB_DEMO"):
         names = {}

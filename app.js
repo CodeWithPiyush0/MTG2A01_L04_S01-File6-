@@ -1528,7 +1528,7 @@ Object.assign(PVK, (function(){
         sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
         if(cfg.onRight) await cfg.onRight(o);
         els.forEach(x => x.classList.add("pv-gone"));   // the answer now stands in the equation: the cards below go
-        await (cfg.sayCorrect ? cfg.sayCorrect() : C.say("correct"));
+        await (cfg.sayCorrect ? cfg.sayCorrect(wrong) : C.say(wrong && C.has("correct_plain") ? "correct_plain" : "correct"));   /* («शाबाश» only at the first try - user 2026-10-28) */
         if(cfg.after) await cfg.after();
         await C.wait(500);
         completeSlide(wrong === 0);
@@ -1617,7 +1617,7 @@ Object.assign(PVK, (function(){
           sfxCorrect(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
           pad.classList.add("pv-gone");   // the keypad goes as the answer goes up (review 2026-10-14)
           if(cfg.onRight) await cfg.onRight(ans);
-          await (cfg.sayCorrect ? cfg.sayCorrect() : C.say("correct")); if(cfg.after) await cfg.after(); await C.wait(500);
+          await (cfg.sayCorrect ? cfg.sayCorrect(wrong) : C.say(wrong && C.has("correct_plain") ? "correct_plain" : "correct"));   /* («शाबाश» only at the first try - user 2026-10-28) */ if(cfg.after) await cfg.after(); await C.wait(500);
           completeSlide(wrong === 0); res(); return;
         }
         wrong++;
@@ -1926,10 +1926,12 @@ function pvPadPage(sc, L, d, hidden){
 const pvTable = (sc, L, cx, y)=> PVK.table(sc, { cx, y, cube: L.cube, blk: L.blk, pad: L.pad, tensMax: 9, tensFinal: 0, onesMax: 9 });
 /* the correct line - when it says the equation ("शाबाश! 47 घटा 20 बराबर 27।", the 2026-10-27 recordings) each part of the
    equation lights as it is said (card cues.correct_eq, measured from the clip); extra: the page's own cues on the line */
-function pvSayCorrect(C, E, CU, extra){
-  const c = CU && CU.correct_eq, say = e =>{ if(!e) return; e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
-  if(!c || !E) return C.cue("correct", extra || []);
-  return C.cue("correct", [[c.a, ()=> say(E.a)], [c.op, ()=> say(E.op)], [c.b, ()=> say(E.b)], [c.eq, ()=> say(E.eq)], [c.q, ()=> say(E.q)], ...(extra || [])]);
+function pvSayCorrect(C, E, CU, extra, wrongs){
+  /* user 2026-10-28: «शाबाश!» only for a right answer at the first try - after a wrong attempt the line without it */
+  const plain = !!wrongs && C.has("correct_plain"), role = plain ? "correct_plain" : "correct";
+  const c = CU && (plain ? CU.correct_plain_eq : CU.correct_eq), say = e =>{ if(!e) return; e.classList.remove("pv-say"); void e.offsetWidth; e.classList.add("pv-say"); };
+  if(!c || !E) return C.cue(role, extra || []);
+  return C.cue(role, [[c.a, ()=> say(E.a)], [c.op, ()=> say(E.op)], [c.b, ()=> say(E.b)], [c.eq, ()=> say(E.eq)], [c.q, ()=> say(E.q)], ...(extra || [])]);
 }
 function pvReplay(C){ state.replayAudio = ()=>{ if(!isPlaying && C.cur && C.alive()) C.say(C.cur).catch(()=>{}); };
   /* [QA BUG_09 / 04 / 07, as HI02H11_L02_S02] the speaker of the page: it takes a tap only when the page is WAITING FOR THE CHILD
@@ -2182,7 +2184,7 @@ const PVModules = {
         if(d.answer === "mcq"){
           await K.mcq(C, { options: d.options, answer: diff, y: ansY, reask: "ask",
             onReady: M =>{ M.open(); C.say("ask").then(()=> M.ready(), ()=>{}); },
-            onRight: o => K.flyToQ(C, o, E), sayCorrect: ()=> pvSayCorrect(C, E, CU),
+            onRight: o => K.flyToQ(C, o, E), sayCorrect: w => pvSayCorrect(C, E, CU, null, w),
             after: ()=> C.has("eq") ? K.eqSync(C, E, "eq") : null,
             ladder: async (n, M)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
               else { await digitsUnder(dy => M.moveTo(ansY + dy)); M.lock(); if(d.reveal_hand) setTimeout(()=>{ if(C.alive()) placeNudge(M.right); }, 300); await C.say("reveal"); } } });
@@ -2190,7 +2192,7 @@ const PVModules = {
         }
         await K.numpad(C, { answer: diff, x: L.cx, y: ansY, reask: "ask", target: E.q, padAt: PAD.padAt,
           onReady: P =>{ P.hide(true); C.cue("ask", [[0.55, ()=>{ P.hide(false); P.open(); }]]).then(()=> P.ready(), ()=>{}); },
-          onRight: ()=> E.fill(diff), sayCorrect: ()=> pvSayCorrect(C, E, CU),
+          onRight: ()=> E.fill(diff), sayCorrect: w => pvSayCorrect(C, E, CU, null, w),
           ladder: async (n, P)=>{ if(n === 1) await recount(); else if(n === 2) await sayH2();
             else { await digitsUnder(); P.guideKeys(); await C.say("reveal"); } } });
       });
@@ -2248,7 +2250,7 @@ const PVModules = {
         if(!pad){
           await K.mcq(C, { options: d.options, answer: diff, y: Y0, reask: "prompt",
             onReady: M =>{ M.open(); C.say("prompt").then(()=> M.ready(), ()=>{}); },
-            onRight: o => K.flyToQ(C, o, E), sayCorrect: ()=> pvSayCorrect(C, E, CU),
+            onRight: o => K.flyToQ(C, o, E), sayCorrect: w => pvSayCorrect(C, E, CU, null, w),
             ladder: async (n, M)=>{
               if(n === 1) await order();
               else if(n === 2) await blocks(on => M.hide(on), y =>{ optY = y; M.moveTo(y); });
@@ -2259,7 +2261,7 @@ const PVModules = {
         await K.numpad(C, { answer: diff, x: L.cx, y: Y0, reask: "prompt", target: E.q, padAt: PAD.padAt,
           onReady: P =>{
             P.hide(true); C.cue("prompt", [[0.6, ()=>{ P.hide(false); P.open(); }]]).then(()=> P.ready(), ()=>{}); },
-          onRight: ()=> E.fill(diff), sayCorrect: ()=> pvSayCorrect(C, E, CU),
+          onRight: ()=> E.fill(diff), sayCorrect: w => pvSayCorrect(C, E, CU, null, w),
           ladder: async (n, P)=>{
             const moveTo = ()=>{};                                        // (the "?" and the pad stay where they are)
             if(n === 1) await order();
@@ -3019,6 +3021,7 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_g1_sub.ogg": 21939,
   "assets/voiceover/vo_g2_build.ogg": 30023,
   "assets/voiceover/vo_g2_correct.ogg": 19827,
+  "assets/voiceover/vo_g2_correct_plain.ogg": 14410,
   "assets/voiceover/vo_g2_h2.ogg": 20417,
   "assets/voiceover/vo_g2_prompt.ogg": 10963,
   "assets/voiceover/vo_g2_remove.ogg": 39576,
@@ -3027,6 +3030,7 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_g2_rm_tens.ogg": 19977,
   "assets/voiceover/vo_g2_sub.ogg": 29927,
   "assets/voiceover/vo_g3_correct.ogg": 18127,
+  "assets/voiceover/vo_g3_correct_plain.ogg": 13239,
   "assets/voiceover/vo_g3_h2.ogg": 23287,
   "assets/voiceover/vo_g3_prompt.ogg": 9511,
   "assets/voiceover/vo_g3_reveal.ogg": 22623,
@@ -3046,26 +3050,31 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_num_3.ogg": 2862,
   "assets/voiceover/vo_p1_ask.ogg": 16128,
   "assets/voiceover/vo_p1_correct.ogg": 22990,
+  "assets/voiceover/vo_p1_correct_plain.ogg": 17747,
   "assets/voiceover/vo_p1_h2.ogg": 23079,
   "assets/voiceover/vo_p1_prompt.ogg": 11186,
   "assets/voiceover/vo_p1_reveal.ogg": 27018,
   "assets/voiceover/vo_p1_rm_ones.ogg": 15799,
   "assets/voiceover/vo_p2_correct.ogg": 27502,
+  "assets/voiceover/vo_p2_correct_plain.ogg": 21963,
   "assets/voiceover/vo_p2_h2.ogg": 23116,
   "assets/voiceover/vo_p2_prompt.ogg": 17455,
   "assets/voiceover/vo_p2_remove.ogg": 31797,
   "assets/voiceover/vo_p2_reveal.ogg": 20578,
   "assets/voiceover/vo_p3_correct.ogg": 29632,
+  "assets/voiceover/vo_p3_correct_plain.ogg": 23786,
   "assets/voiceover/vo_p3_h2.ogg": 21718,
   "assets/voiceover/vo_p3_prompt.ogg": 17120,
   "assets/voiceover/vo_p3_reveal.ogg": 22345,
   "assets/voiceover/vo_p4_h2.ogg": 23016,
   "assets/voiceover/vo_p4_reveal.ogg": 21875,
   "assets/voiceover/vo_p67_correct.ogg": 27415,
+  "assets/voiceover/vo_p67_correct_plain.ogg": 21961,
   "assets/voiceover/vo_p67_h2.ogg": 21955,
   "assets/voiceover/vo_p67_prompt.ogg": 17128,
   "assets/voiceover/vo_p67_reveal.ogg": 22017,
   "assets/voiceover/vo_p90_correct.ogg": 19006,
+  "assets/voiceover/vo_p90_correct_plain.ogg": 13160,
   "assets/voiceover/vo_p90_prompt.ogg": 10150,
   "assets/voiceover/vo_pt_guided.ogg": 21069,
   "assets/voiceover/vo_pt_practice.ogg": 9453,

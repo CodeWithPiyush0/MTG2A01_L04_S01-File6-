@@ -336,3 +336,9 @@ The user's 81 recordings (supplied in `assets/voiceover/voiceovers/` as .mp3-nam
 - The three transitions are now the user's recordings (same words as HI02H11's); their headlines are re-timed to these clips (3.30 / 3.99 / 1.46 s).
 - Every cue time re-measured from the new clips (`python tools/lessons.py`), the celebration lip-sync re-measured from the new `vo_cel`; the manifest regenerated (81 recordings, all "Recorded").
 - **2026-10-27 (later): two new takes** - `vo_g2_rm_tens`, `vo_g3_rm_tens` (the user's: the first takes were not right). Put in with `tools/import_vo.py` (sources replaced in `vo_source/recorded/`), checked by transcription ("अब दहाई घटाइए। 4 दहाई में से 2 दहाई हटाइए।" / "… 5 दहाई में से 3 …" - the script now says "दहाई" as recorded), cue times re-measured; G2 and G3 played on both paths.
+
+## «शाबाश» only at the first try — 2026-10-28
+| Asked | Status | How it is built |
+|---|---|---|
+| G2-P5: the correct line with «शाबाश…» only when the answer is right at the first try; after 1-3 wrong attempts the line without it | ✅ | `tools/make_plain_correct.py` cuts each recorded correct line at the pause after «शाबाश!» (same voice, the lesson's lead put back) → `vo_<id>_correct_plain.ogg` (G2, G3, P1, P2: "47 घटा 20 बराबर 27।"; P3-P5: "आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।"); the cards / keypad say "correct" at the first try and "correct_plain" after a wrong one; the equation's parts light on their words in both (cue times measured from each). G1 unchanged (no attempts). The manifest lists the cut lines (not to be recorded) |
+Verified: first try → `vo_*_correct` (G2, P1, P5); after wrong tries → `vo_*_correct_plain` on all seven pages (G2, G3, P1-P5); each cut checked by transcription; 0 console errors.
