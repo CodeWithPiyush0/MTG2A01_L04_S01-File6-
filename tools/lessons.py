@@ -230,6 +230,37 @@ def weight(t):
     return len(re.sub(r"[।,.!?—]", "oo", t))
 
 
+# the word times MEASURED on the recordings (seconds; from their pauses - ffmpeg silencedetect -38dB/0.1s - each word group being its
+# own voiced stretch) where the text estimate below drifts on a long line with a slow «शाबाश!» (user 2026-11-10: the equation lights
+# in sync with the VO). clip -> {cue key: s}; re-measure them if the line is re-recorded.
+MEASURED = {   # a | − (घटा / में से) | b | (x: lights off) | = (बराबर / यानी) | the answer
+    "vo_t2_total":          {"a": 0.30, "op": 0.95, "b": 1.45, "x": 2.60, "eq": 6.52, "q": 7.19},   # 25 में से 13 घटाने पर | … यानी 12
+    "vo_g1_correct":        {"a": 1.65, "op": 2.15, "b": 2.65, "x": 3.30, "eq": 6.72, "q": 7.36},   # शाबाश! 34 में से 21 घटाने | पर … यानी 13।
+    "vo_g2_correct":        {"a": 1.65, "op": 2.35, "b": 2.75, "eq": 3.39, "q": 4.23},   # शाबाश! 47 घटा 20 बराबर 27।
+    "vo_g2_correct_plain":  {"a": 0.38, "op": 1.05, "b": 1.50, "eq": 2.12, "q": 2.96},
+    "vo_g3_correct":        {"a": 1.45, "op": 2.12, "b": 2.58, "eq": 3.14, "q": 3.76},   # शाबाश! 58 घटा 30 बराबर 28।
+    "vo_g3_correct_plain":  {"a": 0.32, "op": 1.08, "b": 1.44, "eq": 1.99, "q": 2.62},
+    "vo_p1_correct":        {"a": 1.61, "op": 2.57, "b": 3.13, "eq": 4.11, "q": 4.94},   # शाबाश! 79 घटा 34 बराबर 45।
+    "vo_p1_correct_plain":  {"a": 0.32, "op": 1.29, "b": 1.84, "eq": 2.82, "q": 3.65},
+    "vo_p90_correct":       {"a": 1.73, "op": 2.25, "b": 2.70, "eq": 3.37, "q": 4.00},   # शाबाश! 90 घटा 40 बराबर 50।
+    "vo_p90_correct_plain": {"a": 0.32, "op": 0.85, "b": 1.30, "eq": 1.97, "q": 2.59},
+    "vo_p2_correct":        {"a": 3.70, "op": 4.50, "b": 5.00, "eq": 5.65, "q": 6.25},   # शाबाश! आपने सही संख्या चुन ली। 86 घटा 56 बराबर 30।
+    "vo_p2_correct_plain":  {"a": 2.45, "op": 3.25, "b": 3.75, "eq": 4.40, "q": 5.05},
+    "vo_p3_correct":        {"a": 3.72, "op": 4.66, "b": 5.13, "eq": 5.81, "q": 6.60},   # … 45 घटा 12 बराबर 33।
+    "vo_p3_correct_plain":  {"a": 2.43, "op": 3.36, "b": 3.83, "eq": 4.52, "q": 5.30},
+    "vo_p67_correct":       {"a": 3.62, "op": 4.20, "b": 4.78, "eq": 5.51, "q": 6.14},   # … 67 घटा 53 बराबर 14।
+    "vo_p67_correct_plain": {"a": 2.42, "op": 3.00, "b": 3.58, "eq": 4.30, "q": 4.93},
+}
+
+
+def measured(cid, cues):
+    """cues with the measured word times of the clip (as fractions of it) put in"""
+    m = MEASURED.get(cid); dur = clip_len(cid)
+    if m and dur:
+        cues.update({k: round(t / dur, 3) for k, t in m.items()})
+    return cues
+
+
 def frac(cid, phrase, after=None):
     text = VO[cid]; i0 = text.index(after) + len(after) if after else 0
     i = text.index(phrase, i0); dur = clip_len(cid)
@@ -274,6 +305,11 @@ for sl in slides:
         # SME review 4: 25 − 13 = ? comes in with "अब 25 में से 13 घटाते हैं"; the story lines on T1's screen
         cues["sub"] = {"a": frac(au["sub"], str(d["a"])), "op": frac(au["sub"], "में से"), "b": frac(au["sub"], str(d["b"]), after="में से"),
                        "q": frac(au["sub"], "घटाते"), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
+        # user 2026-11-10: "…घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12" - 25, −, 13 light on their words; the 12 goes into
+        # the equation's "?" (and lights) on "12"
+        cues["total_eq"] = {"a": frac(au["total"], str(d["a"])), "op": frac(au["total"], "में से"), "b": frac(au["total"], str(d["b"]), after="में से"),
+                            "eq": frac(au["total"], "यानी"), "q": frac(au["total"], str(d["a"] - d["b"]), after="यानी")}
+        measured(au["total"], cues["total_eq"])
         cues["story"] = {"a": frac(au["story_a"], "पच्चीस"), "b": frac(au["story_a"], "तेरह"), "n": frac(au["story_a"], "बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
     # user 2026-10-28: after a wrong attempt the correct line is said without its «शाबाश!» - "correct_plain", cut from the
@@ -287,10 +323,18 @@ for sl in slides:
             cues["correct_eq"] = {"a": frac(au["correct"], str(d["a"])), "op": frac(au["correct"], "घटा"),
                                   "b": frac(au["correct"], str(d["b"]), after="घटा"), "eq": frac(au["correct"], "बराबर"),
                                   "q": frac(au["correct"], str(d["a"] - d["b"]), after="बराबर")}
+            measured(au["correct"], cues["correct_eq"])
+        elif "में से" in txt and "यानी" in txt:     # G1 (user 2026-11-10): "34 में से 21 घटाने पर … यानी 13।" - 34, −, 21, = on "यानी", 13
+            cues["correct_eq"] = {"a": frac(au["correct"], str(d["a"])), "op": frac(au["correct"], "में से"),
+                                  "b": frac(au["correct"], str(d["b"]), after="में से"), "eq": frac(au["correct"], "यानी"),
+                                  "q": frac(au["correct"], str(d["a"] - d["b"]), after="यानी")}
+            measured(au["correct"], cues["correct_eq"])
+        if "घटा" in txt and "बराबर" in txt:
             if "correct_plain" in au:
                 cp = au["correct_plain"]
                 cues["correct_plain_eq"] = {"a": frac(cp, str(d["a"])), "op": frac(cp, "घटा"), "b": frac(cp, str(d["b"]), after="घटा"),
                                             "eq": frac(cp, "बराबर"), "q": frac(cp, str(d["a"] - d["b"]), after="बराबर")}
+                measured(cp, cues["correct_plain_eq"])
     # user 2026-10-23: the portrait lights as its name is said (T1's lines, T2's story lines): role -> [[fraction, who], ...]
     if sl["type"] in ("STORY_SUB", "PV_SUB_DEMO"):
         names = {}

@@ -12,7 +12,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261028">
+<link rel="stylesheet" href="style.css?v=20261110">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -492,6 +492,14 @@
       "t": 0.6,
       "o": 0.734
      },
+     "total_eq": {
+      "a": 0.038,
+      "op": 0.119,
+      "b": 0.181,
+      "eq": 0.815,
+      "q": 0.899,
+      "x": 0.325
+     },
      "story": {
       "a": 0.214,
       "b": 0.43,
@@ -545,6 +553,14 @@
      "build": {
       "t": 0.633,
       "o": 0.757
+     },
+     "correct_eq": {
+      "a": 0.205,
+      "op": 0.267,
+      "b": 0.329,
+      "eq": 0.835,
+      "q": 0.914,
+      "x": 0.41
      }
     }
    }
@@ -613,18 +629,18 @@
       "o": 0.748
      },
      "correct_eq": {
-      "a": 0.218,
-      "op": 0.38,
-      "b": 0.462,
-      "eq": 0.624,
-      "q": 0.746
+      "a": 0.324,
+      "op": 0.462,
+      "b": 0.54,
+      "eq": 0.666,
+      "q": 0.831
      },
      "correct_plain_eq": {
-      "a": 0.073,
-      "op": 0.264,
-      "b": 0.359,
-      "eq": 0.549,
-      "q": 0.692
+      "a": 0.1,
+      "op": 0.275,
+      "b": 0.393,
+      "eq": 0.555,
+      "q": 0.776
      }
     }
    }
@@ -687,18 +703,18 @@
       "o": 0.541
      },
      "correct_eq": {
-      "a": 0.22,
-      "op": 0.381,
-      "b": 0.461,
-      "eq": 0.622,
-      "q": 0.743
+      "a": 0.305,
+      "op": 0.446,
+      "b": 0.543,
+      "eq": 0.661,
+      "q": 0.791
      },
      "correct_plain_eq": {
-      "a": 0.078,
-      "op": 0.266,
-      "b": 0.36,
-      "eq": 0.548,
-      "q": 0.689
+      "a": 0.089,
+      "op": 0.299,
+      "b": 0.399,
+      "eq": 0.552,
+      "q": 0.726
      }
     }
    }
@@ -743,18 +759,18 @@
       "o": 0.424
      },
      "correct_eq": {
-      "a": 0.212,
-      "op": 0.379,
-      "b": 0.462,
-      "eq": 0.629,
-      "q": 0.754
+      "a": 0.263,
+      "op": 0.42,
+      "b": 0.512,
+      "eq": 0.672,
+      "q": 0.808
      },
      "correct_plain_eq": {
-      "a": 0.058,
-      "op": 0.256,
-      "b": 0.355,
-      "eq": 0.554,
-      "q": 0.702
+      "a": 0.066,
+      "op": 0.267,
+      "b": 0.381,
+      "eq": 0.585,
+      "q": 0.757
      }
     }
    }
@@ -799,18 +815,18 @@
       "o": 0.424
      },
      "correct_eq": {
-      "a": 0.219,
-      "op": 0.381,
-      "b": 0.462,
-      "eq": 0.623,
-      "q": 0.745
+      "a": 0.351,
+      "op": 0.457,
+      "b": 0.548,
+      "eq": 0.684,
+      "q": 0.812
      },
      "correct_plain_eq": {
-      "a": 0.08,
-      "op": 0.267,
-      "b": 0.36,
-      "eq": 0.547,
-      "q": 0.687
+      "a": 0.091,
+      "op": 0.242,
+      "b": 0.369,
+      "eq": 0.56,
+      "q": 0.736
      }
     }
    }
@@ -860,18 +876,18 @@
       "o": 0.424
      },
      "correct_eq": {
-      "a": 0.481,
-      "op": 0.588,
-      "b": 0.642,
-      "eq": 0.749,
-      "q": 0.829
+      "a": 0.52,
+      "op": 0.632,
+      "b": 0.702,
+      "eq": 0.794,
+      "q": 0.878
      },
      "correct_plain_eq": {
-      "a": 0.419,
-      "op": 0.538,
-      "b": 0.597,
-      "eq": 0.716,
-      "q": 0.805
+      "a": 0.417,
+      "op": 0.553,
+      "b": 0.638,
+      "eq": 0.749,
+      "q": 0.86
      }
     }
    }
@@ -911,18 +927,18 @@
       "t": 0.671
      },
      "correct_eq": {
-      "a": 0.481,
-      "op": 0.589,
-      "b": 0.643,
-      "eq": 0.751,
-      "q": 0.831
+      "a": 0.49,
+      "op": 0.614,
+      "b": 0.675,
+      "eq": 0.765,
+      "q": 0.869
      },
      "correct_plain_eq": {
-      "a": 0.419,
-      "op": 0.539,
-      "b": 0.598,
+      "a": 0.386,
+      "op": 0.534,
+      "b": 0.608,
       "eq": 0.718,
-      "q": 0.808
+      "q": 0.842
      }
     }
    }
@@ -962,18 +978,18 @@
       "t": 0.671
      },
      "correct_eq": {
-      "a": 0.481,
-      "op": 0.588,
-      "b": 0.641,
-      "eq": 0.748,
-      "q": 0.828
+      "a": 0.521,
+      "op": 0.604,
+      "b": 0.688,
+      "eq": 0.793,
+      "q": 0.883
      },
      "correct_plain_eq": {
-      "a": 0.419,
-      "op": 0.537,
-      "b": 0.597,
-      "eq": 0.715,
-      "q": 0.804
+      "a": 0.421,
+      "op": 0.522,
+      "b": 0.624,
+      "eq": 0.749,
+      "q": 0.859
      }
     }
    }
@@ -1106,6 +1122,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261028"></script>
+<script src="app.js?v=20261110"></script>
 </body>
 </html>
