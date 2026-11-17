@@ -369,3 +369,40 @@ Verified: P1 / P2 right and wrong paths (45: 5 then 4; 50: hints 0, 5, ✓), the
 |---|---|---|
 | "add mute and unmute button in the dev menu so that I can test it better" | ✅ | A 🔊 / 🔇 button at the end of the dev nav bar (`?dev=1` / `?nav=1` only; children never see it). Muting silences the VO, the SFX, the music and the WebAudio tones (confetti, sky burst). The clips still play muted, so the VO-driven flow, the cues and the lip-sync keep their timing. The choice is remembered across reloads (localStorage `devMute`) |
 Verified: mute, next slide, reload (stays muted), unmute; 0 console errors.
+
+## Lead review — 2026-11-17
+| Asked | Status | How it is built |
+|---|---|---|
+| 1. The title style as MTG2A01_L03_S01 (no gaps in the text) | ✅ | The landing title's code and CSS are hers: each word set straight on the arch (no textPath), the white outline its own layer |
+| 2. T1 as the reference picture; the equation built with the VO; the 13 blocks fade on «…तेरह ब्लॉक्स…» | ✅ | `pvStoryScene`: both portraits on top, the giver's blocks under the giver, the equation spread along the bottom (25 under Meera, 13 under Aman, = ? right); no heading. 25 on «पच्चीस», − on «उनमें से», 13 on «तेरह» (13 of Meera's blocks fade to 30 %, not taken away), = on «कितने», ? on «बचे»; the «learn» line lights 25, −, 13, ? (cues `build` / `learn`) |
+| 3. The + buttons only when blocks are to be added | ✅ | T2 / T4: the + box comes in after «25 में 2 दहाई और 5 इकाई हैं»; G2: after the build line |
+| 4. The ones further apart, a bigger tap area | ✅ | `table`: the ones' gap `og` (14px, was 6); each tappable cube has 7px of invisible padding round it |
+| 5. Only the दहाई / इकाई word lights, not the head row | ✅ | The head's word is its own span (`.pv-tag`); `beatCol` pops and glows the word only |
+| 6. The numbers light with the blocks | ✅ | Card cues `<role>_dg` (lessons.py): «5 इकाई में से 3 इकाई हटाते हैं» lights 25's 5, then 13's 3 (T2 / T4 rm_ones, ones_left, rm_tens, tens_left; G2 / G3 rm_ones, rm_tens); the build lines beat the column with the digit |
+| 7. T3 / T4 = T1 / T2 with G1's 34 − 21; G1 deleted; a new character from File8 | ✅ (VO to record) | T3: Rohan (रोहन) gives 21 to Moni (मोनी) - File8's `char_rohan` / `char_moni`; starts with «आइए, एक और उदाहरण करते हैं।». T4: T2 with 34 − 21. **18 new lines have no recording yet** (Gemini credits are out - 402): they are in `lesson_vo_manifest.xlsx` as "TO RECORD"; until then those pages run silently |
+| 8. The options pulse on inactivity (the next button's pulse) | ✅ | `mcq`: after 7s idle the cards still in play get `.idle-pulse` (pvBtnPulse) until one is tapped |
+| 9. MTG2A01_L03_S01's numpad and its logic | ✅ | `numpad` is hers: the इकाई box first - it pulses, a tap opens the digits-only pad beside it, a digit fills it and the pad goes; then the दहाई box; both in: checked (no tick). 3rd layer: the pad opens itself with the digit lit. This lesson's: on the practice pages no hand (lead review), only the box's pulse |
+Not done (in the lead's notes, not in the list): «अब इस डिब्बे में 12 आएगा» is still said at the end of T2.
+Verified: T1-T4, G2, G3, P1-P3 right and wrong paths, the options' idle pulse; 0 console errors (only the missing T3 / T4 clips 404).
+
+## Review round 2 — 2026-11-17
+| Asked | Status | How it is built |
+|---|---|---|
+| 1. T2 / T4: «= ?» only with «X में से Y घटाने पर हमें मिलीं …»; the hand on the blocks when «… हटाइए» is said | ✅ | The take-away line brings in 25 − 13 only; «= ?» comes in on «हमें मिलीं» (cue `total_eq.show`), the answer fills on «12». The child's ten: the hand on it as soon as the line ends (`removeChild` `handNow`) |
+| 2. Rename the pages; T3 / T4 VO (Edge TTS if Gemini fails); in T4 the child builds | ✅ | 47 − 20 is G1, 58 − 30 is G2. Gemini still 402: the 19 T3 / T4 lines are made with Edge TTS (hi-IN-SwaraNeural, finished like build_vo.py) by the new `tools/edge_vo.py` - stand-ins, "Edge TTS stand-in - TO RECORD" in the manifest (mp3s in `vo_source/edge_tts/`). T4: «अब आप … 34 बनाइए», «3 दहाई के लिए 3 बंडल रखिए» - the child taps the rod +, then «4 इकाई …» the cube + (`data.child_build`) |
+| 3. A hand on the + buttons | ✅ | `childBuild`: the hand on the + to press as the step starts, when its column is full it moves to the other +, and again on inactivity |
+| 4. Inactivity: the hand too, not only the VO | ✅ | `removeChild`: on every page the idle reminder points the hand at the next block to take (it was T2 only) |
+| 5. The options' pulse: slower, smaller | ✅ | `mqIdlePulse`: 4 % at its fullest, 2.2s a beat (was the आगे button's 8 %, 1.15s) |
+| 6. A bigger table where nothing is built with the + buttons | ✅ | `PV_LAY.big` (blocks 34 px, was 28) on G2, P1-P5; on the keypad pages the table is as wide as its own tens (blocks 31 px) so it clears the pad |
+| 7. The keypad's hand (MTG2A01_L03_S01) | ✅ | Her hand back: on the box to fill as its turn starts (the इकाई box, then the दहाई box) and on inactivity |
+| 8. «एक बंडल में 10 ब्लॉक्स हैं» - open the bundle | ✅ | `openBundle`: on «एक बंडल» (cue `bundle`) the first rod comes apart where it stands into its 10 cubes, they beat, then close up into the rod again (T2) |
+Verified: T1-T4, G1, G2, P1, P2, P4, P5 run through (right / wrong), the hands (T2 tens, T4 +, P1 blocks, P3 idle), 0 console errors.
+
+## Review round 3 — 2026-11-17
+| Asked | Status | How it is built |
+|---|---|---|
+| 1. The equation centred; when «= ?» comes it moves left, still centred | ✅ | T2 / T4: «= ?» is out of the row until the result line, so «25 − 13» stands centred; when it joins, the row re-centres and 25 − 13 glide left (0.5s). T1 / T3 keep the reference picture's places (under the portraits) |
+| 2. The bundle: the right one, broken sideways into its 10 blocks | ✅ | `openBundle`: the right-hand rod comes apart into a row of ten cubes at its middle height (inside the दहाई column), the other rod faded under it; they beat, then close up into the rod |
+| 3. T4: the child takes the ones away | ✅ | T4 uses `removeChild` for the ones (the hand on them at once); its line is now «पहले आप इकाइयाँ घटाइए। 4 इकाई में से 1 इकाई हटाइए।» (Edge TTS stand-in) |
+| 4. The equation blinked when the line changed | ✅ | `show()` pops only what was hidden: a part already on screen is left as it is (it used to replay its pop, from nothing, at every new line) |
+Verified: T1-T4, G1, P4 run through, 0 console errors.

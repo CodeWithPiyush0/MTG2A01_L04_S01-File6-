@@ -23,8 +23,8 @@
  },
  "skill_description_hi": "दो अंकों की संख्या में से दो अंकों की संख्या (बिना हासिल के) क्षैतिज रूप में घटाता है।",
  "phase_distribution": {
-  "tutorial": 2,
-  "guided": 3,
+  "tutorial": 4,
+  "guided": 2,
   "practice": 6
  },
  "scaffold_rules": {
@@ -53,11 +53,6 @@
    "sfx_celebrate": "assets/voiceover/sfx_celebrate.ogg",
    "vo_ask_pick": "assets/voiceover/vo_ask_pick.ogg",
    "vo_cel": "assets/voiceover/vo_cel.ogg",
-   "vo_g1_build": "assets/voiceover/vo_g1_build.ogg",
-   "vo_g1_correct": "assets/voiceover/vo_g1_correct.ogg",
-   "vo_g1_prompt": "assets/voiceover/vo_g1_prompt.ogg",
-   "vo_g1_remove": "assets/voiceover/vo_g1_remove.ogg",
-   "vo_g1_sub": "assets/voiceover/vo_g1_sub.ogg",
    "vo_g2_build": "assets/voiceover/vo_g2_build.ogg",
    "vo_g2_correct": "assets/voiceover/vo_g2_correct.ogg",
    "vo_g2_correct_plain": "assets/voiceover/vo_g2_correct_plain.ogg",
@@ -140,16 +135,30 @@
    "vo_t3_a": "assets/voiceover/vo_t3_a.ogg",
    "vo_t3_b": "assets/voiceover/vo_t3_b.ogg",
    "vo_t3_c": "assets/voiceover/vo_t3_c.ogg",
+   "vo_t3s_a": "assets/voiceover/vo_t3s_a.ogg",
+   "vo_t3s_ask": "assets/voiceover/vo_t3s_ask.ogg",
+   "vo_t3s_b": "assets/voiceover/vo_t3s_b.ogg",
+   "vo_t3s_head": "assets/voiceover/vo_t3s_head.ogg",
+   "vo_t3s_learn": "assets/voiceover/vo_t3s_learn.ogg",
+   "vo_t4_built": "assets/voiceover/vo_t4_built.ogg",
+   "vo_t4_digits": "assets/voiceover/vo_t4_digits.ogg",
+   "vo_t4_intro": "assets/voiceover/vo_t4_intro.ogg",
+   "vo_t4_ones": "assets/voiceover/vo_t4_ones.ogg",
+   "vo_t4_ones_left": "assets/voiceover/vo_t4_ones_left.ogg",
+   "vo_t4_rm_ones": "assets/voiceover/vo_t4_rm_ones.ogg",
+   "vo_t4_rm_tens": "assets/voiceover/vo_t4_rm_tens.ogg",
+   "vo_t4_story_a": "assets/voiceover/vo_t4_story_a.ogg",
+   "vo_t4_story_b": "assets/voiceover/vo_t4_story_b.ogg",
+   "vo_t4_story_c": "assets/voiceover/vo_t4_story_c.ogg",
+   "vo_t4_sub": "assets/voiceover/vo_t4_sub.ogg",
+   "vo_t4_tens": "assets/voiceover/vo_t4_tens.ogg",
+   "vo_t4_tens_left": "assets/voiceover/vo_t4_tens_left.ogg",
+   "vo_t4_total": "assets/voiceover/vo_t4_total.ogg",
    "vo_zero": "assets/voiceover/vo_zero.ogg"
   },
   "audio_text": {
    "vo_ask_pick": "अब कितने बचे? सही संख्या चुनिए।",
    "vo_cel": "बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!",
-   "vo_g1_build": "सबसे पहले ब्लॉक्स की सहायता से 34 बनाते हैं, जिसमें 3 दहाई और 4 इकाई होते हैं।",
-   "vo_g1_correct": "शाबाश! 34 में से 21 घटाने पर हमें मिलीं 1 दहाई और 3 इकाई, यानी 13।",
-   "vo_g1_prompt": "अब 34 में से 21 घटाइए।",
-   "vo_g1_remove": "तो पहले 4 इकाई में से 1 इकाई हटाइए।",
-   "vo_g1_sub": "और अब 21 घटाते हैं, 21 में 2 दहाई और 1 इकाई हैं।",
    "vo_g2_build": "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।",
    "vo_g2_correct": "शाबाश! 47 घटा 20 बराबर 27।",
    "vo_g2_correct_plain": "47 घटा 20 बराबर 27।",
@@ -232,6 +241,25 @@
    "vo_t3_a": "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।",
    "vo_t3_b": "अब इस डिब्बे में 12 आएगा।",
    "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।",
+   "vo_t3s_a": "रोहन के पास कुल चौंतीस ब्लॉक्स हैं,",
+   "vo_t3s_ask": "चलिए, पता करते हैं, रोहन के पास अब कितने ब्लॉक्स बचे हैं?",
+   "vo_t3s_b": "उनमें से इक्कीस ब्लॉक्स रोहन ने मोनी को दिए हैं।",
+   "vo_t3s_head": "आइए, एक और उदाहरण करते हैं।",
+   "vo_t3s_learn": "इसके लिए हम सीखते हैं, चौंतीस में से इक्कीस घटाने पर कितने बचते हैं?",
+   "vo_t4_built": "बहुत बढ़िया! आपने ब्लॉक्स से संख्या चौंतीस बना ली।",
+   "vo_t4_digits": "34 में 3 दहाई और 4 इकाई हैं।",
+   "vo_t4_intro": "अब आप ब्लॉक्स की सहायता से 34 बनाइए।",
+   "vo_t4_ones": "अब 4 इकाई के लिए 4 ब्लॉक्स रखिए।",
+   "vo_t4_ones_left": "4 इकाई में से 1 इकाई घटाने पर बचीं, 3 इकाई।",
+   "vo_t4_rm_ones": "पहले आप इकाइयाँ घटाइए। 4 इकाई में से 1 इकाई हटाइए।",
+   "vo_t4_rm_tens": "अब आप दहाइयाँ घटाइए। 3 दहाई में से 2 दहाई हटाइए।",
+   "vo_t4_story_a": "यहाँ हमने चौंतीस में से इक्कीस घटाए हैं, तो बचे 13।",
+   "vo_t4_story_b": "अब इस डिब्बे में 13 आएगा।",
+   "vo_t4_story_c": "यानी रोहन के पास कुल 13 ब्लॉक्स बचे।",
+   "vo_t4_sub": "अब 34 में से 21 घटाते हैं। 21 में 2 दहाई और 1 इकाई होते हैं।",
+   "vo_t4_tens": "3 दहाई के लिए 3 बंडल रखिए।",
+   "vo_t4_tens_left": "बहुत बढ़िया! 3 दहाई में से 2 दहाई घटाने पर बचे, 1 दहाई।",
+   "vo_t4_total": "34 में से 21 घटाने पर हमें मिलीं, 1 दहाई और 3 इकाई, यानी 13",
    "vo_zero": "शून्य यानी कुछ नहीं।"
   }
  },
@@ -241,7 +269,7 @@
    "phase": "tutorial",
    "eis": "iconic",
    "type": "STORY_SUB",
-   "prompt_hi": "कितने बचे?",
+   "prompt_hi": "",
    "audio": {
     "a": "vo_t1_a",
     "b": "vo_t1_b",
@@ -252,6 +280,10 @@
     "mode": "ask",
     "a": 25,
     "b": 13,
+    "words": {
+     "a": "पच्चीस",
+     "b": "तेरह"
+    },
     "people": [
      {
       "who": "meera"
@@ -261,6 +293,19 @@
      }
     ],
     "cues": {
+     "build": {
+      "a": 0.443,
+      "op": 0.076,
+      "b": 0.238,
+      "eq": 0.593,
+      "q": 0.795
+     },
+     "learn": {
+      "a": 0.362,
+      "op": 0.454,
+      "b": 0.546,
+      "q": 0.73
+     },
      "names": {
       "a": [
        [
@@ -347,7 +392,11 @@
       "b": 0.181,
       "eq": 0.815,
       "q": 0.899,
-      "x": 0.325
+      "x": 0.325,
+      "show": 0.325
+     },
+     "bundle": {
+      "at": 0.581
      },
      "story": {
       "a": 0.214,
@@ -355,6 +404,54 @@
       "n": 0.723,
       "c": 0.49
      },
+     "rm_ones_dg": [
+      [
+       0.413,
+       "a",
+       "o"
+      ],
+      [
+       0.647,
+       "b",
+       "o"
+      ]
+     ],
+     "rm_tens_dg": [
+      [
+       0.411,
+       "a",
+       "t"
+      ],
+      [
+       0.675,
+       "b",
+       "t"
+      ]
+     ],
+     "ones_left_dg": [
+      [
+       0.061,
+       "a",
+       "o"
+      ],
+      [
+       0.331,
+       "b",
+       "o"
+      ]
+     ],
+     "tens_left_dg": [
+      [
+       0.239,
+       "a",
+       "t"
+      ],
+      [
+       0.466,
+       "b",
+       "t"
+      ]
+     ],
      "names": {
       "story_c": [
        [
@@ -367,55 +464,204 @@
    }
   },
   {
-   "id": "G1",
-   "phase": "guided",
+   "id": "T3",
+   "phase": "tutorial",
    "eis": "iconic",
-   "type": "PV_SUB",
-   "prompt_hi": "संख्याएँ घटाइए।",
+   "type": "STORY_SUB",
+   "prompt_hi": "",
    "audio": {
-    "rm_ones_more": "vo_rm_ones_more",
-    "rm_ones_less": "vo_rm_ones_less",
-    "rm_tens_more": "vo_rm_tens_more",
-    "rm_guide": "vo_rm_guide",
-    "prompt": "vo_g1_prompt",
-    "build": "vo_g1_build",
-    "sub": "vo_g1_sub",
-    "remove": "vo_g1_remove",
-    "correct": "vo_g1_correct"
+    "head": "vo_t3s_head",
+    "a": "vo_t3s_a",
+    "b": "vo_t3s_b",
+    "ask": "vo_t3s_ask",
+    "learn": "vo_t3s_learn"
    },
    "data": {
+    "mode": "ask",
     "a": 34,
     "b": 21,
-    "answer": "fill",
-    "build": true,
-    "steps": false,
-    "right_table": false,
+    "words": {
+     "a": "चौंतीस",
+     "b": "इक्कीस"
+    },
+    "people": [
+     {
+      "who": "rohan"
+     },
+     {
+      "who": "moni"
+     }
+    ],
     "cues": {
-     "remove": {
-      "o": 0.239
-     },
-     "sub": {
-      "b": 0.133,
-      "t": 0.576,
-      "o": 0.742
-     },
      "build": {
-      "t": 0.633,
-      "o": 0.757
+      "a": 0.443,
+      "op": 0.072,
+      "b": 0.225,
+      "eq": 0.595,
+      "q": 0.801
      },
-     "correct_eq": {
-      "a": 0.205,
-      "op": 0.267,
-      "b": 0.329,
-      "eq": 0.835,
-      "q": 0.914,
-      "x": 0.41
+     "learn": {
+      "a": 0.353,
+      "op": 0.442,
+      "b": 0.531,
+      "q": 0.735
+     },
+     "names": {
+      "a": [
+       [
+        0.083,
+        "rohan"
+       ]
+      ],
+      "b": [
+       [
+        0.481,
+        "rohan"
+       ],
+       [
+        0.618,
+        "moni"
+       ]
+      ],
+      "ask": [
+       [
+        0.375,
+        "rohan"
+       ]
+      ]
      }
     }
    }
   },
   {
-   "id": "G2",
+   "id": "T4",
+   "phase": "tutorial",
+   "eis": "iconic",
+   "type": "PV_SUB_DEMO",
+   "prompt_hi": "",
+   "audio": {
+    "head": "vo_t2_head",
+    "intro": "vo_t4_intro",
+    "digits": "vo_t4_digits",
+    "tens": "vo_t4_tens",
+    "ones": "vo_t4_ones",
+    "built": "vo_t4_built",
+    "sub": "vo_t4_sub",
+    "rm_ones": "vo_t4_rm_ones",
+    "ones_left": "vo_t4_ones_left",
+    "rm_tens": "vo_t4_rm_tens",
+    "tens_left": "vo_t4_tens_left",
+    "total": "vo_t4_total",
+    "story_a": "vo_t4_story_a",
+    "story_b": "vo_t4_story_b",
+    "story_c": "vo_t4_story_c"
+   },
+   "data": {
+    "a": 34,
+    "b": 21,
+    "eq_prompt": "34 − 21 = ?",
+    "idle_ms": 3000,
+    "fill_at": 0.5,
+    "child_build": true,
+    "cues": {
+     "digits": {
+      "t": 0.338,
+      "o": 0.597
+     },
+     "ones_left": {
+      "o": 0.757
+     },
+     "tens_left": {
+      "t": 0.802
+     },
+     "total": {
+      "t": 0.551,
+      "o": 0.688,
+      "n": 0.814
+     },
+     "sub": {
+      "a": 0.075,
+      "op": 0.164,
+      "b": 0.242,
+      "q": 0.332,
+      "t": 0.6,
+      "o": 0.735
+     },
+     "total_eq": {
+      "a": 0.039,
+      "op": 0.13,
+      "b": 0.21,
+      "eq": 0.814,
+      "q": 0.871,
+      "show": 0.403
+     },
+     "story": {
+      "a": 0.206,
+      "b": 0.417,
+      "n": 0.733,
+      "c": 0.489
+     },
+     "rm_ones_dg": [
+      [
+       0.43,
+       "a",
+       "o"
+      ],
+      [
+       0.683,
+       "b",
+       "o"
+      ]
+     ],
+     "rm_tens_dg": [
+      [
+       0.411,
+       "a",
+       "t"
+      ],
+      [
+       0.672,
+       "b",
+       "t"
+      ]
+     ],
+     "ones_left_dg": [
+      [
+       0.057,
+       "a",
+       "o"
+      ],
+      [
+       0.33,
+       "b",
+       "o"
+      ]
+     ],
+     "tens_left_dg": [
+      [
+       0.241,
+       "a",
+       "t"
+      ],
+      [
+       0.466,
+       "b",
+       "t"
+      ]
+     ],
+     "names": {
+      "story_c": [
+       [
+        0.174,
+        "rohan"
+       ]
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "G1",
    "phase": "guided",
    "eis": "iconic",
    "type": "PV_SUB",
@@ -490,12 +736,24 @@
       "b": 0.393,
       "eq": 0.555,
       "q": 0.776
-     }
+     },
+     "rm_tens_dg": [
+      [
+       0.346,
+       "a",
+       "t"
+      ],
+      [
+       0.638,
+       "b",
+       "t"
+      ]
+     ]
     }
    }
   },
   {
-   "id": "G3",
+   "id": "G2",
    "phase": "guided",
    "eis": "iconic",
    "type": "PV_SUB",
@@ -564,7 +822,26 @@
       "b": 0.399,
       "eq": 0.552,
       "q": 0.726
-     }
+     },
+     "rm_ones_dg": [
+      [
+       0.365,
+       "a",
+       "o"
+      ]
+     ],
+     "rm_tens_dg": [
+      [
+       0.346,
+       "a",
+       "t"
+      ],
+      [
+       0.639,
+       "b",
+       "t"
+      ]
+     ]
     }
    }
   },

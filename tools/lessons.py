@@ -61,12 +61,12 @@ slides = []
 
 # deck page 2 - the story, asked
 slides.append({
-    "id": "T1", "phase": "tutorial", "eis": "iconic", "type": "STORY_SUB", "prompt_hi": "कितने बचे?",
+    "id": "T1", "phase": "tutorial", "eis": "iconic", "type": "STORY_SUB", "prompt_hi": "",   # (lead review 2026-11-17: no heading)
     "audio": {"a": vo("vo_t1_a", "मीरा के पास कुल पच्चीस ब्लॉक्स हैं,"),
               "b": vo("vo_t1_b", "उनमें से तेरह ब्लॉक्स मीरा ने अमन को दिए हैं।"),
               "ask": vo("vo_t1_ask", "चलिए, पता करते हैं, मीरा के पास अब कितने ब्लॉक्स बचे हैं?"),
               "learn": vo("vo_t1_learn", "इसके लिए हम सीखते हैं, पच्चीस में से तेरह घटाने पर कितने बचते हैं?")},
-    "data": {"mode": "ask", "a": 25, "b": 13, "people": [{"who": "meera"}, {"who": "aman"}]}})
+    "data": {"mode": "ask", "a": 25, "b": 13, "words": {"a": "पच्चीस", "b": "तेरह"}, "people": [{"who": "meera"}, {"who": "aman"}]}})
 
 # deck page 3 - Swiftee builds 25, takes away 13 (the ones by Swiftee, the ten by the child)
 slides.append({
@@ -91,6 +91,35 @@ slides.append({
 
 # deck page 6 (MAKE_SET): deleted
 
+# user 2026-11-17: T3 and T4 - T1 and T2 again with G1's question, 34 - 21 (G1 is gone); Rohan has the blocks, Moni gets 21
+slides.append({
+    "id": "T3", "phase": "tutorial", "eis": "iconic", "type": "STORY_SUB", "prompt_hi": "",
+    "audio": {"head": vo("vo_t3s_head", "आइए, एक और उदाहरण करते हैं।"),
+              "a": vo("vo_t3s_a", "रोहन के पास कुल चौंतीस ब्लॉक्स हैं,"),
+              "b": vo("vo_t3s_b", "उनमें से इक्कीस ब्लॉक्स रोहन ने मोनी को दिए हैं।"),
+              "ask": vo("vo_t3s_ask", "चलिए, पता करते हैं, रोहन के पास अब कितने ब्लॉक्स बचे हैं?"),
+              "learn": vo("vo_t3s_learn", "इसके लिए हम सीखते हैं, चौंतीस में से इक्कीस घटाने पर कितने बचते हैं?")},
+    "data": {"mode": "ask", "a": 34, "b": 21, "words": {"a": "चौंतीस", "b": "इक्कीस"}, "people": [{"who": "rohan"}, {"who": "moni"}]}})
+
+slides.append({
+    "id": "T4", "phase": "tutorial", "eis": "iconic", "type": "PV_SUB_DEMO", "prompt_hi": "",
+    "audio": {"head": "vo_t2_head",
+              "intro": vo("vo_t4_intro", "अब आप ब्लॉक्स की सहायता से 34 बनाइए।"),
+              "digits": vo("vo_t4_digits", "34 में 3 दहाई और 4 इकाई हैं।"),
+              "tens": vo("vo_t4_tens", "3 दहाई के लिए 3 बंडल रखिए।"),
+              "ones": vo("vo_t4_ones", "अब 4 इकाई के लिए 4 ब्लॉक्स रखिए।"),
+              "built": vo("vo_t4_built", "बहुत बढ़िया! आपने ब्लॉक्स से संख्या चौंतीस बना ली।"),
+              "sub": vo("vo_t4_sub", "अब 34 में से 21 घटाते हैं। 21 में 2 दहाई और 1 इकाई होते हैं।"),
+              "rm_ones": vo("vo_t4_rm_ones", "पहले आप इकाइयाँ घटाइए। 4 इकाई में से 1 इकाई हटाइए।"),
+              "ones_left": vo("vo_t4_ones_left", "4 इकाई में से 1 इकाई घटाने पर बचीं, 3 इकाई।"),
+              "rm_tens": vo("vo_t4_rm_tens", "अब आप दहाइयाँ घटाइए। 3 दहाई में से 2 दहाई हटाइए।"),
+              "tens_left": vo("vo_t4_tens_left", "बहुत बढ़िया! 3 दहाई में से 2 दहाई घटाने पर बचे, 1 दहाई।"),
+              "total": vo("vo_t4_total", "34 में से 21 घटाने पर हमें मिलीं, 1 दहाई और 3 इकाई, यानी 13"),
+              "story_a": vo("vo_t4_story_a", "यहाँ हमने चौंतीस में से इक्कीस घटाए हैं, तो बचे 13।"),
+              "story_b": vo("vo_t4_story_b", "अब इस डिब्बे में 13 आएगा।"),
+              "story_c": vo("vo_t4_story_c", "यानी रोहन के पास कुल 13 ब्लॉक्स बचे।")},
+    "data": {"a": 34, "b": 21, "eq_prompt": "34 − 21 = ?", "idle_ms": 3000, "fill_at": 0.5, "child_build": True}})
+
 
 def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=False, right_table=True, extra_audio=None, extra_data=None):
     """a guided / practice screen: build a (or it is given), take b away, then answer"""
@@ -108,16 +137,10 @@ def pv_sub(sid, phase, a, b, lines, answer, options=None, build=True, steps=Fals
             "audio": au, "data": d}
 
 
-# deck page 7 - 34 - 21: build, take away, the answer fills the box (no options)
-slides.append(pv_sub("G1", "guided", 34, 21, {
-    "prompt": vo("vo_g1_prompt", "अब 34 में से 21 घटाइए।"),
-    "build": vo("vo_g1_build", "सबसे पहले ब्लॉक्स की सहायता से 34 बनाते हैं, जिसमें 3 दहाई और 4 इकाई होते हैं।"),
-    "sub": vo("vo_g1_sub", "और अब 21 घटाते हैं, 21 में 2 दहाई और 1 इकाई हैं।"),
-    "remove": vo("vo_g1_remove", "तो पहले 4 इकाई में से 1 इकाई हटाइए।"),
-    "correct": vo("vo_g1_correct", "शाबाश! 34 में से 21 घटाने पर हमें मिलीं 1 दहाई और 3 इकाई, यानी 13।")}, answer="fill"))
+# deck page 7 - 34 - 21 (G1): deleted - its question is T3 / T4 now (user 2026-11-17)
 
 # deck page 7b - 47 - 20
-slides.append(pv_sub("G2", "guided", 47, 20, {
+slides.append(pv_sub("G1", "guided", 47, 20, {   # (was G2 - renamed 2026-11-17)
     "prompt": vo("vo_g2_prompt", "47 में से 20 घटाइए।"),
     "build": vo("vo_g2_build", "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।"),
     "sub": vo("vo_g2_sub", "और अब 20 घटाते हैं। 20 में 2 दहाई और 0 इकाई होती हैं।"),
@@ -128,7 +151,7 @@ slides.append(pv_sub("G2", "guided", 47, 20, {
     "correct": vo("vo_g2_correct", "शाबाश! 47 घटा 20 बराबर 27।")}, answer="mcq", options=[72, 27, 67], steps=True, extra_data={"reveal_hand": True}))
 
 # deck page 8 - 58 - 30 (the column steps spoken one by one)
-slides.append(pv_sub("G3", "guided", 58, 30, {
+slides.append(pv_sub("G2", "guided", 58, 30, {   # (was G3)
     "prompt": vo("vo_g3_prompt", "58 में से 30 घटाइए।"),
     "sub": vo("vo_g3_sub", "30 में 3 दहाई और 0 इकाई होती हैं।"),
     "rm_ones": vo("vo_g3_rm_ones0", "पहले इकाइयाँ घटाइए। 8 इकाई में से शून्य इकाई घटाते हैं।"), "zero": ZERO,
@@ -281,10 +304,10 @@ for sl in slides:
     if "order" in au:
         cues["order"] = {"o": frac(au["order"], "इकाई"), "t": frac(au["order"], "दहाई")}
     # 3) pages 3-5: the ones light as their step is said, then the tens
-    if sl["id"] in ("G1", "G2") and "remove" in au:
+    if sl["id"] in ("G1",) and "remove" in au:
         (at, ao), (bt, bo) = split(d["a"]), split(d["b"])
         cues["remove"] = {k: frac(au["remove"], ph) for k, ph in (("o", f"{ao} इकाई"), ("t", f"{at} दहाई")) if ph in VO[au["remove"]]}
-    if sl["id"] in ("G2", "G3"):
+    if sl["id"] in ("G1", "G2"):
         (at, ao) = split(d["a"]); (bt, bo) = split(d["b"])
         cues["rm_ones"] = {"o": frac(au["rm_ones"], f"{ao} इकाई" if f"{ao} इकाई" in VO[au["rm_ones"]] else "इकाई")}
         cues["rm_tens"] = {"t": frac(au["rm_tens"], f"{at} दहाई")}
@@ -296,7 +319,7 @@ for sl in slides:
     if "build" in au and sl["type"] == "PV_SUB":
         (at, ao) = split(d["a"])
         cues["build"] = {"t": frac(au["build"], f"{at} दहाई"), "o": frac(au["build"], f"{ao} इकाई")}
-    if sl["id"] == "T2":
+    if sl["type"] == "PV_SUB_DEMO":
         (at, ao), (bt, bo) = split(d["a"]), split(d["b"]); (rt, ro) = split(d["a"] - d["b"])
         cues["digits"] = {"t": frac(au["digits"], f"{at} दहाई"), "o": frac(au["digits"], f"{ao} इकाई")}
         cues["ones_left"] = {"o": frac(au["ones_left"], f"{ro} इकाई", after="बचीं")}
@@ -310,7 +333,11 @@ for sl in slides:
         cues["total_eq"] = {"a": frac(au["total"], str(d["a"])), "op": frac(au["total"], "में से"), "b": frac(au["total"], str(d["b"]), after="में से"),
                             "eq": frac(au["total"], "यानी"), "q": frac(au["total"], str(d["a"] - d["b"]), after="यानी")}
         measured(au["total"], cues["total_eq"])
-        cues["story"] = {"a": frac(au["story_a"], "पच्चीस"), "b": frac(au["story_a"], "तेरह"), "n": frac(au["story_a"], "बचे"),
+        cues["total_eq"]["show"] = cues["total_eq"].get("x", frac(au["total"], "हमें"))   # user 2026-11-17: "= ?" only with this line
+        if "एक बंडल" in VO[au["tens"]]:
+            cues["bundle"] = {"at": frac(au["tens"], "एक बंडल")}                              # user 2026-11-17: the bundle opens
+        WD = {25: "पच्चीस", 13: "तेरह", 34: "चौंतीस", 21: "इक्कीस"}
+        cues["story"] = {"a": frac(au["story_a"], WD[d["a"]]), "b": frac(au["story_a"], WD[d["b"]]), "n": frac(au["story_a"], "बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
     # user 2026-10-28: after a wrong attempt the correct line is said without its «शाबाश!» - "correct_plain", cut from the
     # recorded line by tools/make_plain_correct.py (same voice); only on the pages a child can answer wrongly first
@@ -335,12 +362,35 @@ for sl in slides:
                 cues["correct_plain_eq"] = {"a": frac(cp, str(d["a"])), "op": frac(cp, "घटा"), "b": frac(cp, str(d["b"]), after="घटा"),
                                             "eq": frac(cp, "बराबर"), "q": frac(cp, str(d["a"] - d["b"]), after="बराबर")}
                 measured(cp, cues["correct_plain_eq"])
+    # user 2026-11-17: T1 / T3 - the equation is built as the VO says it: the a on its word, − on "उनमें से" (and b's blocks fade),
+    # b on its word, = ? on "कितने"; the "learn" line lights a, −, b, ? in turn
+    if sl["type"] == "STORY_SUB" and "words" in d:
+        wa, wb = d["words"]["a"], d["words"]["b"]
+        cues["build"] = {"a": frac(au["a"], wa), "op": frac(au["b"], "उनमें से"), "b": frac(au["b"], wb), "eq": frac(au["ask"], "कितने"),
+                         "q": frac(au["ask"], "बचे")}
+        cues["learn"] = {"a": frac(au["learn"], wa), "op": frac(au["learn"], "में से"), "b": frac(au["learn"], wb, after="में से"),
+                         "q": frac(au["learn"], "कितने")}
+    # user 2026-11-17: "when we're syncing the VO with highlighting the blocks, then highlight the numbers also" - a take-away line
+    # that names a column of a or b ("5 इकाई में से 3 इकाई हटाते हैं") lights that digit as it is said: <role>_dg
+    if "a" in d and "b" in d:
+        (at_, ao_), (bt_, bo_) = split(d["a"]), split(d["b"])
+        for role in ("rm_ones", "rm_tens", "ones_left", "tens_left", "remove"):
+            if role not in au:
+                continue
+            txt = VO[au[role]]; used = set(); dg = []
+            for m in re.finditer(r"(\d+) (दहाई|इकाई)", txt):
+                n, pl = int(m.group(1)), ("t" if m.group(2) == "दहाई" else "o")
+                for w, (dt, do) in (("a", (at_, ao_)), ("b", (bt_, bo_))):
+                    if (w, pl) not in used and (dt if pl == "t" else do) == n:
+                        used.add((w, pl)); dg.append([frac(au[role], m.group(0), after=txt[:m.start()] or None), w, pl]); break
+            if dg:
+                cues[role + "_dg"] = dg
     # user 2026-10-23: the portrait lights as its name is said (T1's lines, T2's story lines): role -> [[fraction, who], ...]
     if sl["type"] in ("STORY_SUB", "PV_SUB_DEMO"):
         names = {}
         for role, cid in au.items():
             txt = VO[cid]; hits = []
-            for word, who in (("मीरा", "meera"), ("अमन", "aman")):
+            for word, who in (("मीरा", "meera"), ("अमन", "aman"), ("रोहन", "rohan"), ("मोनी", "moni")):
                 i = txt.find(word)
                 while i >= 0:
                     hits.append([frac(cid, word, after=txt[:i] if i else None), who]); i = txt.find(word, i + 1)

@@ -38,24 +38,29 @@ def duration(path):
 # ---- what each role is and when it plays (the build's behaviour) ----
 ROLE = {
     # T1
-    ("T1", "a"): ("story - Meera's blocks", "as the page opens; Meera's picture and her 25 blocks come in, the card 25; her picture lights on «मीरा»"),
-    ("T1", "b"): ("story - 13 given to Aman", "next; Aman's picture comes in, then − 13; the pictures light on «मीरा» / «अमन»"),
-    ("T1", "ask"): ("story - the question", "next; = ? comes in and pulses; Meera's picture lights on «मीरा»"),
-    ("T1", "learn"): ("story - what we will learn", "next; 25 and 13 light as they are said; then the next button"),
+    ("T1", "a"): ("story - Meera's blocks", "as the page opens (no heading); Meera's picture and her 25 blocks come in, 25 on «पच्चीस»; her picture lights on «मीरा»"),
+    ("T1", "b"): ("story - 13 given to Aman", "next; Aman's picture comes in; − on «उनमें से», 13 on «तेरह» as 13 of Meera's blocks fade; the pictures light on the names"),
+    ("T1", "ask"): ("story - the question", "next; = on «कितने», ? on «बचे» (it pulses); Meera's picture lights on «मीरा»"),
+    ("T1", "learn"): ("story - what we will learn", "next; 25, −, 13 and ? light as they are said; then the next button"),
+    ("T3", "head"): ("story 2 - opening", "as T3 opens: «आइए, एक और उदाहरण करते हैं।»"),
+    ("T3", "a"): ("story 2 - Rohan's blocks", "as T1 with 34: Rohan's picture and his 34 blocks, 34 on «चौंतीस»"),
+    ("T3", "b"): ("story 2 - 21 given to Moni", "as T1: − on «उनमें से», 21 on «इक्कीस» as 21 of his blocks fade"),
+    ("T3", "ask"): ("story 2 - the question", "as T1: = ? comes in"),
+    ("T3", "learn"): ("story 2 - what we will learn", "as T1: 34, −, 21, ? light as they are said"),
     # T2
     ("T2", "head"): ("demo - opening", "as the page opens; the 25 card pops"),
-    ("T2", "intro"): ("demo - build 25", "next; the empty table and the + box come in"),
-    ("T2", "digits"): ("demo - 25 = 2 tens 5 ones", "next; the digits and the + halves light / pulse on «2 दहाई» / «5 इकाई»"),
+    ("T2", "intro"): ("demo - build 25", "next; the empty table comes in"),
+    ("T2", "digits"): ("demo - 25 = 2 tens 5 ones", "next; the digits light and the column words glow on «2 दहाई» / «5 इकाई»; the + box comes in after it"),
     ("T2", "tens"): ("demo - the tens", "Swiftee's hand taps the rod + twice"),
     ("T2", "ones"): ("demo - the ones", "Swiftee's hand taps the cube + five times"),
     ("T2", "built"): ("demo - 25 is built", "the table pops"),
     ("T2", "sub"): ("demo - take 13 away", "25 − 13 = ? comes in part by part with the words; 13's digits light on «1 दहाई» / «3 इकाई»"),
-    ("T2", "rm_ones"): ("demo - ones first", "then Swiftee's hand takes 3 ones away"),
+    ("T2", "rm_ones"): ("demo - ones first", "25's 5 and 13's 3 light on «5 इकाई» / «3 इकाई»; then Swiftee's hand takes 3 ones away"),
     ("T2", "num"): ("demo - the count", "one per tap of Swiftee's hand on the ones: «एक», «दो», «तीन»"),
-    ("T2", "ones_left"): ("demo - ones left", "the ones column beats on «2 इकाई»"),
+    ("T2", "ones_left"): ("demo - ones left", "5 and 3 light on their words; the ones column beats on «2 इकाई»"),
     ("T2", "rm_tens"): ("demo - the child takes the ten", "the child taps one ten (the hand after 3s)"),
-    ("T2", "tens_left"): ("demo - tens left", "the tens column beats on «1 दहाई»"),
-    ("T2", "total"): ("demo - the result", "the columns beat; = 12 comes in beside the table on «यानी 12»"),
+    ("T2", "tens_left"): ("demo - tens left", "2 and 1 light on their words; the tens column beats on «1 दहाई»"),
+    ("T2", "total"): ("demo - the result", "25, −, 13 light on their words, the columns beat; 12 goes into the ? on «12»"),
     ("T2", "story_a"): ("story's answer", "T1's screen comes back; on «तेरह घटाए» 13 of Meera's blocks fly into Aman's picture (hers grey); on «बचे 12» her 12 beat"),
     ("T2", "story_b"): ("story's answer - the box", "the ? becomes 12 on «12 आएगा»; confetti"),
     ("T2", "story_c"): ("story's answer - the end", "the 12 beat, Meera's picture lights on «मीरा»; then the next button"),
@@ -93,9 +98,9 @@ def page_rows(i, s):
     out = []
     def add(cid, key):
         if cid:
-            out.append((cid, ROLE[key]))
+            out.append((cid, ROLE.get(key) or ROLE[("T2", key[1])]))   # (T4: as T2, with 34 - 21)
     if ty == "STORY_SUB":
-        for r in ("a", "b", "ask", "learn"):
+        for r in ("head", "a", "b", "ask", "learn"):
             add(au.get(r), (sid, r))
     elif ty == "PV_SUB_DEMO":
         for r in ("head", "intro", "digits", "tens", "ones", "built", "sub", "rm_ones"):
@@ -134,8 +139,8 @@ def page_rows(i, s):
 slides = CARD["slides"]
 order = [("Start screen", "Start screen", [("vo_landing", ("greeting", "the start screen: Swiftee's greeting; the picture comes in on «आज हम…»"))]),
          ("Transition 1", "before page 1", [("vo_pt_tutorial", ("transition line", "Swiftee rises talking; «चलिए, शुरू करें!» wipes in as it is said"))])]
-gate_before = {"G1": ("Transition 2", "before page 3", "vo_pt_guided", "«चलिए, साथ में करें!»"),
-               "P1": ("Transition 3", "before page 6", "vo_pt_practice", "«अब आपकी बारी!»")}
+gate_before = {"G1": ("Transition 2", "before page 5", "vo_pt_guided", "«चलिए, साथ में करें!»"),
+               "P1": ("Transition 3", "before page 7", "vo_pt_practice", "«अब आपकी बारी!»")}
 for i, s in enumerate(slides):
     if s["id"] in gate_before:
         g = gate_before[s["id"]]
@@ -155,7 +160,8 @@ for page, screen, rows in order:
 DUR = {cid: duration(os.path.join(VO_DIR, cid + ".ogg")) for cid in heard}
 def status(cid):
     if not os.path.exists(os.path.join(VO_DIR, cid + ".ogg")):
-        return "MISSING"
+        return "TO RECORD (new 2026-11-17)"
+    if os.path.exists(os.path.join(ROOT, "vo_source", "edge_tts", cid + ".mp3")): return "Edge TTS stand-in (2026-11-17) - TO RECORD"
     if cid.endswith("_plain"): return "Cut from " + cid[:-6] + " (tools/make_plain_correct.py)"
     if cid in COPIED: return "Copied (HI02H11, recorded voice)"
     if cid == "vo_cel": return "Copied (File4 MTG204_L01_S01's vo_cel_prompt, 2026-11-17)"
@@ -252,7 +258,7 @@ sheet(wb.create_sheet("Sound effects"), "Sound effects and music (supplied - not
 sp = wb.create_sheet("Recording spec")
 SPEC = [
     (TITLE + " - recording spec", None), (None, None),
-    ("Scope", "The whole lesson - start screen, 3 transitions, 10 pages (T1, T2, G1-G3, P1-P5), celebration."),
+    ("Scope", "The whole lesson - start screen, 3 transitions, 11 pages (T1-T4, G1, G2, P1-P5), celebration."),
     ("Order", "Game order. On each page: what plays as it opens, the steps, the 7s inactivity reminders, the take-away mistakes, "
               "then the 1st / 2nd / 3rd wrong answer (Hint 1, 2, 3) and the correct answer. A recording heard on more than one page "
               "is listed on each ('Same recording also on')."),
