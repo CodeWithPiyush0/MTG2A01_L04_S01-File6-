@@ -12,7 +12,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261110">
+<link rel="stylesheet" href="style.css?v=20261117">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -295,7 +295,7 @@
   },
   "audio_text": {
    "vo_ask_pick": "अब कितने बचे? सही संख्या चुनिए।",
-   "vo_cel": "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।",
+   "vo_cel": "बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!",
    "vo_g1_build": "सबसे पहले ब्लॉक्स की सहायता से 34 बनाते हैं, जिसमें 3 दहाई और 4 इकाई होते हैं।",
    "vo_g1_correct": "शाबाश! 34 में से 21 घटाने पर हमें मिलीं 1 दहाई और 3 इकाई, यानी 13।",
    "vo_g1_prompt": "अब 34 में से 21 घटाइए।",
@@ -1112,9 +1112,9 @@
    }
   },
   "track": {
-   "bits": "00000000000000000011110000011111000000000000000000000000001110001111100000001111000000111111111100001110001111111111000001100000011100001110000000000000000",
+   "bits": "0000000000001100000111100000011110000001111111111100000001110000000000000000111111110000000111111000111100001110000111111100000000000000000",
    "step_ms": 25,
-   "ms": 3876
+   "ms": 3499
   }
  }
 }
@@ -1122,6 +1122,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261110"></script>
+<script src="app.js?v=20261117"></script>
 </body>
 </html>

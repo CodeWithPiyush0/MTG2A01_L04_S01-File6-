@@ -158,6 +158,7 @@ def status(cid):
         return "MISSING"
     if cid.endswith("_plain"): return "Cut from " + cid[:-6] + " (tools/make_plain_correct.py)"
     if cid in COPIED: return "Copied (HI02H11, recorded voice)"
+    if cid == "vo_cel": return "Copied (File4 MTG204_L01_S01's vo_cel_prompt, 2026-11-17)"
     rec = os.path.join(ROOT, "vo_source", "recorded")
     if os.path.isdir(rec) and any(os.path.splitext(f)[0] == cid for f in os.listdir(rec)): return "Recorded (2026-10-27)"
     return "TTS (Gemini, Kore)"

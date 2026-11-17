@@ -195,7 +195,7 @@ slides.append({
 
 # deck page 16 - the end
 slides.append({"id": "CEL", "phase": "practice", "eis": "enactive", "type": "CELEBRATION", "prompt_hi": "",
-               "audio": {"prompt": vo("vo_cel", "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।")}, "data": {}})
+               "audio": {"prompt": vo("vo_cel", "बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!")}, "data": {}})   # user 2026-11-17: File4 MTG204_L01_S01's celebration line (its recording)
 
 # ---- checks: every number in the content is the subtraction it claims to be ---------------------------
 for s in slides:
