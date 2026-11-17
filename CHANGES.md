@@ -357,3 +357,9 @@ Verified (scripted child, Chrome): T1-P5 + CEL play through, right and wrong pat
 |---|---|---|
 | The end celebration screen says the same line as File4 (MTG204_L01_S01) | ✅ | File4's own recording (`assets/Audio/vo_cel_prompt.ogg`, "बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!") copied in as `vo_source/recorded/vo_cel.mp3` and put through `tools/import_vo.py` (the lesson's lead / tail, −18.5 LUFS, Opus) → `assets/voiceover/vo_cel.ogg`; the script text updated in `tools/lessons.py`; Swiftee's lip-sync re-measured from the new line on the build; manifest row marked "Copied (File4…)". Was "शाबाश! अब आप संख्याएँ घटाना सीख गए हैं।" |
 Verified: the celebration slide plays the new line with Swiftee talking, 0 console errors.
+
+## Keypad: the ones digit first — 2026-11-17
+| Asked | Status | How it is built |
+|---|---|---|
+| "we write numbers from ones to tens" - typing on the keypad should fill the इकाई box first | ✅ | `numpad` (place boxes): the first digit typed goes into the इकाई box (the "|" starts there), the second into the दहाई box; the answer is read tens-first for the check; ⌫ takes back the last digit typed. Third wrong attempt: the keys light the ones digit, then the tens digit, then ✓ |
+Verified: P1 / P2 right and wrong paths (45: 5 then 4; 50: hints 0, 5, ✓), the digits land in the right boxes; 0 console errors.
