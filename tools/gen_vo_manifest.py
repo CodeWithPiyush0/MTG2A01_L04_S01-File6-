@@ -51,23 +51,29 @@ ROLE = {
     ("T2", "head"): ("demo - opening", "as the page opens; the 25 card pops"),
     ("T2", "intro"): ("demo - build 25", "next; the empty table comes in"),
     ("T2", "digits"): ("demo - 25 = 2 tens 5 ones", "next; the digits light and the column words glow on «2 दहाई» / «5 इकाई»; the + box comes in after it"),
-    ("T2", "tens"): ("demo - the tens", "Swiftee's hand taps the rod + twice"),
+    ("T2", "tens"): ("demo - the tens", "Swiftee's hand taps the rod + twice; on «एक बंडल में 10 ब्लॉक्स» the right bundle breaks sideways into its 10 cubes, then closes up"),
     ("T2", "ones"): ("demo - the ones", "Swiftee's hand taps the cube + five times"),
     ("T2", "built"): ("demo - 25 is built", "the table pops"),
-    ("T2", "sub"): ("demo - take 13 away", "25 − 13 = ? comes in part by part with the words; 13's digits light on «1 दहाई» / «3 इकाई»"),
+    ("T2", "sub"): ("demo - take 13 away", "25, − and 13 come in on their words (centred, no «= ?» yet); on «1 दहाई» / «3 इकाई» 13's digit lights and the table's दहाई / इकाई word pulses"),
     ("T2", "rm_ones"): ("demo - ones first", "25's 5 and 13's 3 light on «5 इकाई» / «3 इकाई»; then Swiftee's hand takes 3 ones away"),
     ("T2", "num"): ("demo - the count", "one per tap of Swiftee's hand on the ones: «एक», «दो», «तीन»"),
     ("T2", "ones_left"): ("demo - ones left", "5 and 3 light on their words; the ones column beats on «2 इकाई»"),
-    ("T2", "rm_tens"): ("demo - the child takes the ten", "the child taps one ten (the hand after 3s)"),
+    ("T2", "rm_tens"): ("demo - the child takes the ten", "25's 2 and 13's 1 light on their words; then the hand on the ten at once - the child taps it"),
     ("T2", "tens_left"): ("demo - tens left", "2 and 1 light on their words; the tens column beats on «1 दहाई»"),
-    ("T2", "total"): ("demo - the result", "25, −, 13 light on their words, the columns beat; 12 goes into the ? on «12»"),
+    ("T2", "total"): ("demo - the result", "«= ?» joins the row on «हमें मिलीं» (25 − 13 glide left, the row stays centred); 25, −, 13 light on their words, the columns beat; 12 goes into the ? on «12»"),
     ("T2", "story_a"): ("story's answer", "T1's screen comes back; on «तेरह घटाए» 13 of Meera's blocks fly into Aman's picture (hers grey); on «बचे» her 12 beat; on «12» the 12 fills the ?; confetti"),
     ("T2", "story_b"): ("story's answer - the box", "the ? becomes 12 on «12 आएगा»; confetti"),
     ("T2", "story_c"): ("story's answer - the end", "the 12 beat, Meera's picture lights on «मीरा»; then the next button"),
+    # T4: as T2 with 34 - 21, but the child builds 34 and takes the ones away (user 2026-11-17)
+    ("T4", "intro"): ("demo 2 - build 34", "next; the empty table comes in"),
+    ("T4", "tens"): ("demo 2 - the child puts the tens", "the + box comes in after the digits line; the hand on the rod +; the child taps it 3 times"),
+    ("T4", "ones"): ("demo 2 - the child puts the ones", "the hand moves to the cube +; the child taps it 4 times"),
+    ("T4", "built"): ("demo 2 - 34 is built", "the table pops"),
+    ("T4", "rm_ones"): ("demo 2 - the child takes the ones", "34's 4 and 21's 1 light on their words; the hand on a one at once - the child taps 1 one"),
     # the guided / practice pages
     "prompt": ("page instruction", "as the page opens (the speaker replays it)"),
     "build": ("build instruction", "after the instruction; the + box comes in, the rod + pulses on its «… दहाई», the cube + on «… इकाई»"),
-    "sub": ("what is taken away", "after the build (or the opening): the number pops, its digits light on «… दहाई» / «… इकाई»; on «इसमें» the whole table lights"),
+    "sub": ("what is taken away", "after the build (or the opening): the number pops, its digit lights and the table's दहाई / इकाई word pulses on «… दहाई» / «… इकाई»; on «इसमें» the whole table lights"),
     "remove": ("take-away instruction", "next; the ones column beats on its «… इकाई», the tens on «… दहाई»; then «अब इकाई हटाइए।»"),
     "rm_ones": ("take-away step - the ones", "next; the ones column beats on its «… इकाई»"),
     "zero": ("zero ones", "straight after the ones step: no one is tappable"),
@@ -160,14 +166,14 @@ for page, screen, rows in order:
 DUR = {cid: duration(os.path.join(VO_DIR, cid + ".ogg")) for cid in heard}
 def status(cid):
     if not os.path.exists(os.path.join(VO_DIR, cid + ".ogg")):
-        return "TO RECORD (new 2026-11-17)"
-    if os.path.exists(os.path.join(ROOT, "vo_source", "edge_tts", cid + ".mp3")): return "Edge TTS stand-in (2026-11-17) - TO RECORD"
-    if cid.endswith("_plain"): return "Cut from " + cid[:-6] + " (tools/make_plain_correct.py)"
-    if cid in COPIED: return "Copied (HI02H11, recorded voice)"
-    if cid == "vo_cel": return "Copied (File4 MTG204_L01_S01's vo_cel_prompt, 2026-11-17)"
+        return "TO RECORD"
     rec = os.path.join(ROOT, "vo_source", "recorded")
-    if os.path.isdir(rec) and any(os.path.splitext(f)[0] == cid for f in os.listdir(rec)): return "Recorded (2026-10-27)"
+    if os.path.isdir(rec) and any(os.path.splitext(f)[0] == cid for f in os.listdir(rec)):
+        return "Recorded (new recordings 2026-11-18)"
+    if os.path.exists(os.path.join(ROOT, "vo_source", "edge_tts", cid + ".mp3")): return "Edge TTS stand-in - TO RECORD"
+    if cid.endswith("_plain"): return "Cut from " + cid[:-6] + " (tools/make_plain_correct.py)"
     return "TTS (Gemini, Kore)"
+
 
 manifest = []
 n = 0

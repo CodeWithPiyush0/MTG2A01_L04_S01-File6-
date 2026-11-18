@@ -419,3 +419,10 @@ Verified: T2, T3, T4 run through, 0 console errors.
 |---|---|---|
 | T2 / T4 («13 में 1 दहाई और 3 इकाई», «21 में 2 दहाई और 1 इकाई») and G1 / G2 («20 में 2 दहाई और 0 इकाई», «30 में 3 दहाई …»): the दहाई and इकाई words pulsate with the VO | ✅ | `beatHead`: the table's head WORD only glows and pops (not the strip, not the blocks) on «… दहाई», then on «… इकाई» - with the number's digit lighting as before. The word times are measured on the recordings (MEASURED: vo_t2_sub, vo_t4_sub, vo_g2_sub, vo_g3_sub) |
 Verified: T2 - दहाई at 4.11s («1 दहाई» starts 4.08s), इकाई at 5.42s («3 इकाई» 5.40s); T4, G1, G2 run through, 0 console errors.
+
+## New recordings — 2026-11-18
+| Asked | Status | How it is built |
+|---|---|---|
+| Replace the VOs with the new recordings (shorter / reworded lines) | ✅ | All 100 new takes (`assets/voiceover/voiceovers/*.mp3`) moved to `vo_source/recorded/` and imported with `tools/import_vo.py` (trimmed, 0.28s lead / 0.36s tail, -18.5 LUFS). The T3 / T4 Edge TTS stand-ins and the cut «_plain» lines are now recordings too. The old clips are kept in `vo_source/_old_2026-11-18/` (ogg, recorded, edge_tts). The duplicate folder in assets/ removed (byte-for-byte the same as vo_source/recorded) |
+| The sync | ⚠️ partly | The new wording was not given (user: keep the old text for now), so every cue still reads the OLD line's words: the estimated cues now use the new lengths; the hand-measured times (MEASURED) were moved onto the new takes by matching their pauses (piecewise where the pause pattern matches, else scaled over the voiced span). Lines whose wording changed may highlight off their word until the new text is put in tools/lessons.py |
+Verified: every page runs through, 0 console errors.
