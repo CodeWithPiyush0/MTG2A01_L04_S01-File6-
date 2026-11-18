@@ -413,3 +413,9 @@ Verified: T1-T4, G1, P4 run through, 0 console errors.
 | 1. T1 / T3: the equation not centred | ✅ | `pvStoryScene`: the whole picture 106px left - the row 25 − 13 = ? now stands centred on the card; the blocks stay under their child |
 | 2. T2 / T4: the answer fills on «…तो बचे 12»; «अब इस डिब्बे में 12 आएगा» removed | ✅ | `story_b` gone from T2 and T4 (vo_t3_b / vo_t4_story_b unused); the 12 / 13 goes into the box on its word in `story_a` (measured: 3.85s / 4.22s, MEASURED), then the confetti and «यानी मीरा के पास कुल 12 ब्लॉक्स बचे।» |
 Verified: T2, T3, T4 run through, 0 console errors.
+
+## The दहाई / इकाई words with «13 में 1 दहाई और 3 इकाई होते हैं» — 2026-11-18
+| Asked | Status | How it is built |
+|---|---|---|
+| T2 / T4 («13 में 1 दहाई और 3 इकाई», «21 में 2 दहाई और 1 इकाई») and G1 / G2 («20 में 2 दहाई और 0 इकाई», «30 में 3 दहाई …»): the दहाई and इकाई words pulsate with the VO | ✅ | `beatHead`: the table's head WORD only glows and pops (not the strip, not the blocks) on «… दहाई», then on «… इकाई» - with the number's digit lighting as before. The word times are measured on the recordings (MEASURED: vo_t2_sub, vo_t4_sub, vo_g2_sub, vo_g3_sub) |
+Verified: T2 - दहाई at 4.11s («1 दहाई» starts 4.08s), इकाई at 5.42s («3 इकाई» 5.40s); T4, G1, G2 run through, 0 console errors.

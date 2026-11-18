@@ -1740,6 +1740,8 @@ Object.assign(PVK, (function(){
               { duration: 560, delay: i * (step == null ? 70 : step), easing: "ease-out" }); }); }
   /* a column of a table beats: its head and the blocks still standing in it */
   const headWord = T => T.querySelector(".pv-tag") || T;   // (user 2026-11-17: only the word lights, not the head strip)
+  /* user 2026-11-18: only the column's word pulsates (glow + pop) - "13 में 1 दहाई और 3 इकाई" names the columns, not the blocks */
+  function beatHead(T, kind){ const w = headWord(kind === "t" ? T.th : T.oh); w.classList.remove("pv-tag-hl"); void w.offsetWidth; w.classList.add("pv-tag-hl"); beat([w], 0); }
   function beatCol(T, kind){ const w = headWord(kind === "t" ? T.th : T.oh); w.classList.remove("pv-tag-hl"); void w.offsetWidth; w.classList.add("pv-tag-hl"); beat([w], 0); beat(left(T, kind), kind === "t" ? 90 : 60); }
   /* the whole table pops (it and every block on it, together) */
   /* the whole table lights (its frame glows a moment) and pops - "इसमें" (SME review 4) */
@@ -1985,7 +1987,7 @@ Object.assign(PVK, (function(){
     return C.cue(role, cues);
   }
 
-  return { headCount, liveHeads, dropBlock, beat, beatCol, popTable, hlTable, sparkles, sources, demoAdd, childBuild, openBundle, takeAway, putBack, demoRemove, removeChild, copyLeft,
+  return { headCount, liveHeads, dropBlock, beat, beatCol, beatHead, popTable, hlTable, sparkles, sources, demoAdd, childBuild, openBundle, takeAway, putBack, demoRemove, removeChild, copyLeft,
            eqSync, left };
 })());
 
@@ -2193,7 +2195,7 @@ const PVModules = {
         const inn = (...els)=>{ els.forEach(e => K.show(e)); sfxPop(); };
         const cs = CU.sub || { a: .12, op: .2, b: .3, q: .4, t: .62, o: .8 };
         await C.cue("sub", [[cs.a, ()=> inn(E.a)], [cs.op, ()=> inn(E.op)], [cs.b, ()=> inn(E.b)],
-                            [cs.t, ()=> K.lightDigit(E.b, "t")], [cs.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]);
+                            [cs.t, ()=>{ K.lightDigit(E.b, "t"); K.beatHead(TA, "t"); }], [cs.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); K.beatHead(TA, "o"); }]]);
         [E.a, E.op, E.b].forEach(e => K.show(e));                              // (the "= ?" only with the result line - user 2026-11-17)
         K.lightDigit(E.b, "o", false);
         TA.rods.forEach(x => x.classList.add("pv-dim"));                       // "Tens are disabled"
@@ -2316,7 +2318,7 @@ const PVModules = {
         let cfg = { to, settle: 1100, onesFirst: true, sayStep: !d.steps };   // (every page: only the ones can be tapped until they are done - SME review 4)
         if(C.has("sub")){ const c = CU.sub || { b: .05, t: .6, o: .82 };
           await C.cue("sub", [...(c.this != null ? [[c.this, ()=> K.hlTable(TA)]] : []), [c.b, ()=> K.pop(E.b)],
-                              [c.t, ()=> K.lightDigit(E.b, "t")], [c.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); }]]); }
+                              [c.t, ()=>{ K.lightDigit(E.b, "t"); K.beatHead(TA, "t"); }], [c.o, ()=>{ K.lightDigit(E.b, "t", false); K.lightDigit(E.b, "o"); K.beatHead(TA, "o"); }]]); }
         K.lightDigit(E.b, "o", false);
         const sweepO = ()=> K.beatCol(TA, "o"), sweepT = ()=> K.beatCol(TA, "t");
         if(d.steps){ await pvCueDg(C, E, CU, "rm_ones", CU.rm_ones ? [[CU.rm_ones.o, sweepO]] : []);

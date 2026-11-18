@@ -12,7 +12,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261118a">
+<link rel="stylesheet" href="style.css?v=20261118b">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -529,8 +529,8 @@
       "op": 0.164,
       "b": 0.243,
       "q": 0.332,
-      "t": 0.6,
-      "o": 0.734
+      "t": 0.609,
+      "o": 0.804
      },
      "total_eq": {
       "a": 0.038,
@@ -730,8 +730,8 @@
       "op": 0.164,
       "b": 0.242,
       "q": 0.332,
-      "t": 0.6,
-      "o": 0.735
+      "t": 0.64,
+      "o": 0.772
      },
      "total_eq": {
       "a": 0.039,
@@ -863,8 +863,8 @@
      },
      "sub": {
       "b": 0.116,
-      "t": 0.541,
-      "o": 0.701
+      "t": 0.471,
+      "o": 0.685
      },
      "build": {
       "t": 0.618,
@@ -953,8 +953,8 @@
      },
      "sub": {
       "b": 0.063,
-      "t": 0.302,
-      "o": 0.541
+      "t": 0.314,
+      "o": 0.615
      },
      "correct_eq": {
       "a": 0.305,
@@ -1395,6 +1395,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261118a"></script>
+<script src="app.js?v=20261118b"></script>
 </body>
 </html>

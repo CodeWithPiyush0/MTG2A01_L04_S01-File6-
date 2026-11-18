@@ -256,6 +256,11 @@ def weight(t):
 # own voiced stretch) where the text estimate below drifts on a long line with a slow «शाबाश!» (user 2026-11-10: the equation lights
 # in sync with the VO). clip -> {cue key: s}; re-measure them if the line is re-recorded.
 MEASURED = {   # a | − (घटा / में से) | b | (x: lights off) | = (बराबर / यानी) | the answer
+    # "13 में | 1 दहाई | और | 3 इकाई होते हैं" - the दहाई / इकाई words pulsate on them (user 2026-11-18)
+    "vo_t2_sub":            {"t": 4.10, "o": 5.42},
+    "vo_t4_sub":            {"t": 4.35, "o": 5.25},
+    "vo_g2_sub":            {"t": 3.66, "o": 5.33},   # G1 (47 - 20)
+    "vo_g3_sub":            {"t": 1.39, "o": 2.72},   # G2 (58 - 30)
     "vo_t3_a":              {"q": 3.85},   # …तो बचे | 12 (the last phrase 3.46-4.34s) - the 12 fills the box (user 2026-11-18)
     "vo_t4_story_a":        {"q": 4.22},   # …तो बचे | 13 (3.80-4.70s)
     "vo_t2_total":          {"a": 0.30, "op": 0.95, "b": 1.45, "x": 2.60, "eq": 6.52, "q": 7.19},   # 25 में से 13 घटाने पर | … यानी 12
@@ -315,6 +320,7 @@ for sl in slides:
     if "sub" in au and sl["type"] == "PV_SUB":   # "और अब (इसमें से) 34 घटाते हैं, 34 में 3 दहाई और 4 इकाई हैं।"
         (bt, bo) = split(d["b"]); txt = VO[au["sub"]]
         cues["sub"] = {"b": frac(au["sub"], str(d["b"])), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
+        measured(au["sub"], cues["sub"])
         if "इसमें" in txt:
             cues["sub"]["this"] = frac(au["sub"], "इसमें")   # SME review 4: the whole table lights on "इसमें"
     if "build" in au and sl["type"] == "PV_SUB":
@@ -329,6 +335,7 @@ for sl in slides:
         # SME review 4: 25 − 13 = ? comes in with "अब 25 में से 13 घटाते हैं"; the story lines on T1's screen
         cues["sub"] = {"a": frac(au["sub"], str(d["a"])), "op": frac(au["sub"], "में से"), "b": frac(au["sub"], str(d["b"]), after="में से"),
                        "q": frac(au["sub"], "घटाते"), "t": frac(au["sub"], f"{bt} दहाई"), "o": frac(au["sub"], f"{bo} इकाई")}
+        measured(au["sub"], cues["sub"])
         # user 2026-11-10: "…घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12" - 25, −, 13 light on their words; the 12 goes into
         # the equation's "?" (and lights) on "12"
         cues["total_eq"] = {"a": frac(au["total"], str(d["a"])), "op": frac(au["total"], "में से"), "b": frac(au["total"], str(d["b"]), after="में से"),
