@@ -2405,7 +2405,9 @@ const PVModules = {
         await C.wait(300);
         if(!pad){
           await K.mcq(C, { options: d.options, answer: diff, y: Y0, reask: "prompt",
-            onReady: M =>{ M.open(); C.say("prompt").then(()=> M.ready(), ()=>{}); },
+            onReady: M =>{ M.open(); const cp = CU.prompt || {}, lit = e =>{ [E.a, E.b].forEach(x => x.classList.remove("pv-lit")); e.classList.add("pv-lit");
+                clearTimeout(e._litT); e._litT = setTimeout(()=> e.classList.remove("pv-lit"), 1100); };   // (user 2026-11-18: each lit 1.1s as it is said)
+              C.cue("prompt", [[cp.a, ()=> lit(E.a)], [cp.b, ()=> lit(E.b)]]).then(()=> M.ready(), ()=>{}); },
             onRight: o => K.flyToQ(C, o, E), sayCorrect: w => pvSayCorrect(C, E, CU, null, w),
             ladder: async (n, M)=>{
               if(n === 1) await order();
@@ -3389,15 +3391,15 @@ const ASSET_SIZES = {
   "assets/voiceover/vo_t1_b.ogg": 17775,
   "assets/voiceover/vo_t1_learn.ogg": 20715,
   "assets/voiceover/vo_t2_built.ogg": 14434,
-  "assets/voiceover/vo_t2_digits.ogg": 15835,
+  "assets/voiceover/vo_t2_digits.ogg": 18056,
   "assets/voiceover/vo_t2_head.ogg": 3448,
   "assets/voiceover/vo_t2_intro.ogg": 14448,
-  "assets/voiceover/vo_t2_ones.ogg": 13734,
+  "assets/voiceover/vo_t2_ones.ogg": 13844,
   "assets/voiceover/vo_t2_ones_left.ogg": 20649,
-  "assets/voiceover/vo_t2_rm_ones.ogg": 22655,
+  "assets/voiceover/vo_t2_rm_ones.ogg": 25040,
   "assets/voiceover/vo_t2_rm_tens.ogg": 21495,
-  "assets/voiceover/vo_t2_sub.ogg": 25410,
-  "assets/voiceover/vo_t2_tens.ogg": 24283,
+  "assets/voiceover/vo_t2_sub.ogg": 29020,
+  "assets/voiceover/vo_t2_tens.ogg": 29786,
   "assets/voiceover/vo_t2_tens_left.ogg": 25961,
   "assets/voiceover/vo_t2_total.ogg": 27536,
   "assets/voiceover/vo_t3_a.ogg": 17039,

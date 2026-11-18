@@ -143,7 +143,7 @@ slides.append(pv_sub("G1", "guided", 47, 20, {   # (was G2 - renamed 2026-11-17)
     "prompt": vo("vo_g2_prompt", "47 में से 20 घटाइए।"),
     "build": vo("vo_g2_build", "सबसे पहले ब्लॉक्स की सहायता से 47 बनाइए, जिसमें 4 दहाई और 7 इकाई होते हैं।"),
     "sub": vo("vo_g2_sub", "और अब 20 घटाते हैं। 20 में 2 दहाई और 0 इकाई होती हैं।"),
-    "rm_ones": vo("vo_g2_rm_ones", "पहले इकाई घटाइए।"), "zero": ZERO,
+    "rm_ones": vo("vo_g2_rm_ones", "सात इकाइयों में से शून्य इकाई घटाते हैं।"), "zero": ZERO,   # (the new recording's words, 2026-11-18)
     "rm_tens": vo("vo_g2_rm_tens", "अब दहाई घटाइए। 4 दहाई में से 2 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g2_h2", "47 में से 20 घटाने पर, 2 दहाई और 7 इकाई बचती हैं।"), 
     "reveal": vo("vo_g2_reveal", "47 में से 20 घटाने पर 27 बचता है। तो सही संख्या यह है।"),
@@ -153,7 +153,7 @@ slides.append(pv_sub("G1", "guided", 47, 20, {   # (was G2 - renamed 2026-11-17)
 slides.append(pv_sub("G2", "guided", 58, 30, {   # (was G3)
     "prompt": vo("vo_g3_prompt", "58 में से 30 घटाइए।"),
     "sub": vo("vo_g3_sub", "30 में 3 दहाई और 0 इकाई होती हैं।"),
-    "rm_ones": vo("vo_g3_rm_ones0", "पहले इकाइयाँ घटाइए। 8 इकाई में से शून्य इकाई घटाते हैं।"), "zero": ZERO,
+    "rm_ones": vo("vo_g3_rm_ones0", "पहले इकाइयाँ घटाइए। आठ इकाइयों में से शून्य इकाई घटाते हैं।"), "zero": ZERO,
     "rm_tens": vo("vo_g3_rm_tens", "अब दहाई घटाइए। 5 दहाई में से 3 दहाई हटाइए।"),
     "ask": ASK_PICK, "recount": RECOUNT, "h2": vo("vo_g3_h2", "58 में से 30 घटाने पर, 2 दहाई और 8 इकाई बचती हैं।"), 
     "reveal": vo("vo_g3_reveal", "58 में से 30 घटाने पर 28 बचता है। तो सही संख्या यह है।"),
@@ -257,7 +257,9 @@ def weight(t):
 # in sync with the VO). clip -> {cue key: s}; re-measure them if the line is re-recorded.
 MEASURED = {   # a | − (घटा / में से) | b | (x: lights off) | = (बराबर / यानी) | the answer
     # "13 में | 1 दहाई | और | 3 इकाई होते हैं" - the दहाई / इकाई words pulsate on them (user 2026-11-18)
-    "vo_t2_sub":            {"t": 4.00, "o": 5.25},
+    "vo_t2_sub":            {"t": 4.50, "o": 5.88},   # new take 2026-11-18: "13 में | एक दहाई | और | तीन इकाई"
+    "vo_t2_digits":         {"t": 1.54, "o": 3.51},   # new take: "25 में | 2 दहाई | और | 5 इकाई हैं"
+    "vo_t2_tens":           {"at": 5.19},             # new take: "… ध्यान रखिए, | एक बंडल में | 10 ब्लॉक्स हैं"
     "vo_t4_sub":            {"t": 4.69, "o": 5.66},
     "vo_g2_sub":            {"t": 3.03, "o": 4.39},   # G1 (47 - 20)
     "vo_g3_sub":            {"t": 1.40, "o": 2.97},   # G2 (58 - 30)
@@ -280,6 +282,15 @@ MEASURED = {   # a | − (घटा / में से) | b | (x: lights off) | 
     "vo_p67_correct":       {"a": 4.01, "op": 4.66, "b": 5.30, "eq": 6.12, "q": 6.82},   # … 67 घटा 53 बराबर 14।
     "vo_p67_correct_plain": {"a": 2.04, "op": 2.53, "b": 3.01, "eq": 3.61, "q": 4.14},
 }
+
+
+# user 2026-11-18: "सात इकाइयों में से शून्य इकाई घटाते हैं" - 7 lights on "सात", 0 on "शून्य" (G1); "आठ … शून्य" (G2). Seconds in the
+# recordings (their loudness: "सात इकाइयों में से" 0.30-2.33 | "शून्य इकाई घटाते हैं" 2.60-4.42; G2 "आठ" 2.71, "शून्य" 4.31)
+DG_AT = {"vo_g2_rm_ones": [(0.32, "a", "o"), (2.60, "b", "o")],
+         "vo_t2_rm_ones": [(2.86, "a", "o"), (4.43, "b", "o")],   # new take: "… | पाँच इकाई में से | तीन इकाई हटाते हैं"
+         "vo_g3_rm_ones0": [(2.71, "a", "o"), (4.31, "b", "o")]}
+# user 2026-11-18: P4 / P5 - the question's two numbers light as it says them ("45 में से 12 घटाइए…"), seconds in the recordings
+PROMPT_AT = {"vo_p3_prompt": {"a": 0.30, "b": 1.52}, "vo_p67_prompt": {"a": 0.30, "b": 1.56}}
 
 
 def measured(cid, cues):
@@ -307,6 +318,10 @@ for sl in slides:
                       "t": frac(au["h2"], f"{x} दहाई"), "o": frac(au["h2"], f"{y} इकाई")}
     if "recount" in au:
         cues["recount"] = {"t": frac(au["recount"], "दहाई"), "o": frac(au["recount"], "इकाई")}
+    if sl["type"] == "MENTAL_SUB" and "prompt" in au:
+        pa = PROMPT_AT.get(au["prompt"]); dur = clip_len(au["prompt"])
+        cues["prompt"] = ({k: round(v / dur, 3) for k, v in pa.items()} if pa and dur else
+                          {"a": frac(au["prompt"], str(d["a"])), "b": frac(au["prompt"], str(d["b"]), after="में से")})
     if "order" in au:
         cues["order"] = {"o": frac(au["order"], "इकाई"), "t": frac(au["order"], "दहाई")}
     # 3) pages 3-5: the ones light as their step is said, then the tens
@@ -328,7 +343,7 @@ for sl in slides:
         cues["build"] = {"t": frac(au["build"], f"{at} दहाई"), "o": frac(au["build"], f"{ao} इकाई")}
     if sl["type"] == "PV_SUB_DEMO":
         (at, ao), (bt, bo) = split(d["a"]), split(d["b"]); (rt, ro) = split(d["a"] - d["b"])
-        cues["digits"] = {"t": frac(au["digits"], f"{at} दहाई"), "o": frac(au["digits"], f"{ao} इकाई")}
+        cues["digits"] = measured(au["digits"], {"t": frac(au["digits"], f"{at} दहाई"), "o": frac(au["digits"], f"{ao} इकाई")})
         cues["ones_left"] = {"o": frac(au["ones_left"], f"{ro} इकाई", after="बचीं")}
         cues["tens_left"] = {"t": frac(au["tens_left"], f"{rt} दहाई", after="बचे")}
         cues["total"] = {"t": frac(au["total"], f"{rt} दहाई"), "o": frac(au["total"], f"{ro} इकाई"), "n": frac(au["total"], "यानी")}
@@ -343,7 +358,7 @@ for sl in slides:
         measured(au["total"], cues["total_eq"])
         cues["total_eq"]["show"] = cues["total_eq"].get("x", frac(au["total"], "हमें"))   # user 2026-11-17: "= ?" only with this line
         if "एक बंडल" in VO[au["tens"]]:
-            cues["bundle"] = {"at": frac(au["tens"], "एक बंडल")}                              # user 2026-11-17: the bundle opens
+            cues["bundle"] = measured(au["tens"], {"at": frac(au["tens"], "एक बंडल")})                              # user 2026-11-17: the bundle opens
         WD = {25: "पच्चीस", 13: "तेरह", 34: "चौंतीस", 21: "इक्कीस"}
         cues["story"] = {"a": frac(au["story_a"], WD[d["a"]]), "b": frac(au["story_a"], WD[d["b"]]), "n": frac(au["story_a"], "बचे"), "q": frac(au["story_a"], str(d["a"] - d["b"]), after="बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
@@ -392,6 +407,10 @@ for sl in slides:
                 for w, (dt, do) in (("a", (at_, ao_)), ("b", (bt_, bo_))):
                     if (w, pl) not in used and (dt if pl == "t" else do) == n:
                         used.add((w, pl)); dg.append([frac(au[role], m.group(0), after=txt[:m.start()] or None), w, pl]); break
+            if au[role] in DG_AT and clip_len(au[role]):
+                dg = [[round(t / clip_len(au[role]), 3), w, pl] for t, w, pl in DG_AT[au[role]]]
+                if role == "rm_ones" and "rm_ones" in cues:
+                    cues["rm_ones"]["o"] = dg[0][0]          # (the ones column beats as "सात इकाइयों" is said)
             if dg:
                 cues[role + "_dg"] = dg
     # user 2026-10-23: the portrait lights as its name is said (T1's lines, T2's story lines): role -> [[fraction, who], ...]

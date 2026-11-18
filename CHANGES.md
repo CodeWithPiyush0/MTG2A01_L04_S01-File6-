@@ -431,3 +431,12 @@ Verified: every page runs through, 0 console errors.
 | Asked | Status | How it is built |
 |---|---|---|
 | «… X दहाई और Y इकाई …»: the ones digit stayed highlighted for seconds (the tens digit was fine) | ✅ | The tens digit went off as the ones digit lit, but the ones digit stayed on to the end of the line (and 0.7s after a step line). `lightDigit(card, which, on, ms)`: the ones digit (and each digit a step line lights) is now on for 1.1s - as long as the tens digit is. Measured on T2: tens 1.13s, ones 1.10s |
+
+## G1 / G2 «… में से शून्य इकाई», P4 / P5 question numbers, 5 new T2 takes — 2026-11-18
+| Asked | Status | How it is built |
+|---|---|---|
+| G1: «सात इकाइयों में से शून्य इकाई घटाते हैं» - 7 and 0 light | ✅ | The line's words updated in lessons.py; the digits are said as words, so their times are measured on the recording (`DG_AT`): 7 on «सात» (0.32s), 0 on «शून्य» (2.60s), each 1.1s; the ones column beats with «सात इकाइयों» |
+| G2: «आठ इकाइयों में से शून्य इकाई …» - 8 lit for seconds, 0 never | ✅ | 8 on «आठ» (2.71s), 0 on «शून्य» (4.31s), each 1.1s |
+| P4 / P5: the question's numbers light as it is said - only at the start, not on the idle reminder | ✅ | MENTAL_SUB: the opening «45 में से 12 घटाइए …» lights 45 then 12 (each 1.1s, measured: 0.30s / 1.52s; P5 67 / 53: 0.30s / 1.56s); the 7s reminder says it without lights |
+| New takes: vo_t2_digits, vo_t2_ones, vo_t2_rm_ones, vo_t2_sub, vo_t2_tens | ✅ | Imported (old ones in vo_source/_old_2026-11-18b/); re-measured: «एक दहाई» 4.50s / «तीन इकाई» 5.88s, «2 दहाई» 1.54s / «5 इकाई» 3.51s, «पाँच» 2.86s / «तीन» 4.43s, «एक बंडल» 5.19s |
+Verified (digit on/off logged in the browser): G1 7 → 0 2.27s apart, G2 8 → 0 1.6s apart, P4 45 → 12, P5 67 → 53, no lights on the reminder; T2 runs through, 0 console errors.
