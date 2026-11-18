@@ -2084,7 +2084,8 @@ function pvStoryScene(sc, d, dy){
      the "?" to the right. No heading. dy: T2's ending stands dy higher. */
   dy = dy || 0;
   const K = PVK, AV = 112, PY = 168 + dy, BH = 190, BOT = 436 + dy, GAP = 6, EY = 486 + dy, EH = 74;
-  const XA = 545, XB = 790, XE = 905, XQ = 1000;          // the two portraits' centres; the "=" and the "?"
+  /* (user 2026-11-18: the equation row was right of centre) everything 106px left: 25 ... ? centred on the card (666) */
+  const XA = 439, XB = 684, XE = 799, XQ = 894;            // the two portraits' centres; the "=" and the "?"
   const [P0, P1] = d.people, diff = d.a - d.b;
   const S = { BOT, BH, diff, amanAt: { x: XB, y: PY } };
   S.pA = K.person(sc, P0.who, P0.name, XA, PY - AV / 2, AV); S.pB = K.person(sc, P1.who, P1.name, XB, PY - AV / 2, AV);
@@ -2245,10 +2246,11 @@ const PVModules = {
                   c.animate([{ scale: "1", opacity: 1 }, { scale: ".2", opacity: 0 }], { duration: 260, easing: "ease-in" }).onfinish = ()=> c.remove();
                   if(n === 0 || n === goR.length + goC.length - 1) K.beat([S.pB], 0); }); })); };
           const cy = CU.story || { a: .25, b: .45, n: .78, c: .55 };
+          const fillQ = ()=>{ S.cQ.classList.remove("pulse"); S.cQ.innerHTML = K.numHTML(d.a - d.b); S.cQ.classList.add("filled"); K.pop(S.cQ); K.settle(S.cQ); sfxCorrect(); };
+          /* user 2026-11-18: the 12 goes into the box as «…तो बचे 12।» says it (the «अब इस डिब्बे में 12 आएगा।» line is gone) */
           await C.cue("story_a", [[cy.a, ()=>{ say(S.cA); K.beat(S.gA.all(), 25); }], [cy.b, ()=>{ say(S.cB); give(); }],
-                                  [cy.n, ()=> K.beat(kept, 60)]]);
-          await C.cue("story_b", [[0.12, ()=> S.cQ.classList.add("pulse")],
-                                  [d.fill_at || 0.5, ()=>{ S.cQ.classList.remove("pulse"); S.cQ.innerHTML = K.numHTML(d.a - d.b); S.cQ.classList.add("filled"); K.pop(S.cQ); K.settle(S.cQ); sfxCorrect(); }]]);
+                                  [cy.n, ()=> K.beat(kept, 60)], ...(C.has("story_b") ? [] : [[Math.max(0, (cy.q != null ? cy.q : .88) - .02), fillQ]])]);
+          if(C.has("story_b")) await C.cue("story_b", [[0.12, ()=> S.cQ.classList.add("pulse")], [d.fill_at || 0.5, fillQ]]);
           C.guard(); try{ confettiCannon(); }catch(e){} setSwMood("happy");
           if(C.has("story_c")) await C.cue("story_c", S.names(CU, "story_c", [[cy.c, ()=>{ K.beat(kept, 60); say(S.cQ); }]]));
         }

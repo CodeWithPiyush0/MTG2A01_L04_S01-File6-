@@ -12,7 +12,7 @@
      request, so without this the very first paint is unstyled. This inline rule
      lands the loader's own colour on the first frame. -->
 <style>html,body{background:#FFFFFF;margin:0;}</style>
-<link rel="stylesheet" href="style.css?v=20261117h">
+<link rel="stylesheet" href="style.css?v=20261118a">
 <!-- [loading] the landing's own files start downloading with the page, alongside style.css - not only once app.js has
      arrived and asked for them (the boot loader waits for exactly these: app.js Assets, CRIT). http(s) only: on
      file:// a preload of a fetch() fails, and local files need no head start. -->
@@ -284,7 +284,6 @@
    "vo_t2_tens_left": "assets/voiceover/vo_t2_tens_left.ogg",
    "vo_t2_total": "assets/voiceover/vo_t2_total.ogg",
    "vo_t3_a": "assets/voiceover/vo_t3_a.ogg",
-   "vo_t3_b": "assets/voiceover/vo_t3_b.ogg",
    "vo_t3_c": "assets/voiceover/vo_t3_c.ogg",
    "vo_t3s_a": "assets/voiceover/vo_t3s_a.ogg",
    "vo_t3s_ask": "assets/voiceover/vo_t3s_ask.ogg",
@@ -299,7 +298,6 @@
    "vo_t4_rm_ones": "assets/voiceover/vo_t4_rm_ones.ogg",
    "vo_t4_rm_tens": "assets/voiceover/vo_t4_rm_tens.ogg",
    "vo_t4_story_a": "assets/voiceover/vo_t4_story_a.ogg",
-   "vo_t4_story_b": "assets/voiceover/vo_t4_story_b.ogg",
    "vo_t4_story_c": "assets/voiceover/vo_t4_story_c.ogg",
    "vo_t4_sub": "assets/voiceover/vo_t4_sub.ogg",
    "vo_t4_tens": "assets/voiceover/vo_t4_tens.ogg",
@@ -390,7 +388,6 @@
    "vo_t2_tens_left": "बहुत बढ़िया! 2 दहाई में से 1 दहाई घटाने पर बचे, 1 दहाई।",
    "vo_t2_total": "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12",
    "vo_t3_a": "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।",
-   "vo_t3_b": "अब इस डिब्बे में 12 आएगा।",
    "vo_t3_c": "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।",
    "vo_t3s_a": "रोहन के पास कुल चौंतीस ब्लॉक्स हैं,",
    "vo_t3s_ask": "चलिए, पता करते हैं, रोहन के पास अब कितने ब्लॉक्स बचे हैं?",
@@ -405,7 +402,6 @@
    "vo_t4_rm_ones": "पहले आप इकाइयाँ घटाइए। 4 इकाई में से 1 इकाई हटाइए।",
    "vo_t4_rm_tens": "अब आप दहाइयाँ घटाइए। 3 दहाई में से 2 दहाई हटाइए।",
    "vo_t4_story_a": "यहाँ हमने चौंतीस में से इक्कीस घटाए हैं, तो बचे 13।",
-   "vo_t4_story_b": "अब इस डिब्बे में 13 आएगा।",
    "vo_t4_story_c": "यानी रोहन के पास कुल 13 ब्लॉक्स बचे।",
    "vo_t4_sub": "अब 34 में से 21 घटाते हैं। 21 में 2 दहाई और 1 इकाई होते हैं।",
    "vo_t4_tens": "3 दहाई के लिए 3 बंडल रखिए।",
@@ -504,7 +500,6 @@
     "tens_left": "vo_t2_tens_left",
     "total": "vo_t2_total",
     "story_a": "vo_t3_a",
-    "story_b": "vo_t3_b",
     "story_c": "vo_t3_c"
    },
    "data": {
@@ -553,6 +548,7 @@
       "a": 0.214,
       "b": 0.43,
       "n": 0.723,
+      "q": 0.816,
       "c": 0.49
      },
      "rm_ones_dg": [
@@ -704,7 +700,6 @@
     "tens_left": "vo_t4_tens_left",
     "total": "vo_t4_total",
     "story_a": "vo_t4_story_a",
-    "story_b": "vo_t4_story_b",
     "story_c": "vo_t4_story_c"
    },
    "data": {
@@ -750,6 +745,7 @@
       "a": 0.206,
       "b": 0.417,
       "n": 0.733,
+      "q": 0.831,
       "c": 0.489
      },
      "rm_ones_dg": [
@@ -1399,6 +1395,6 @@
 
 <!-- ============ ENGINE ============ -->
 <script src="swiftpal-bridge.js"></script>   <!-- [QA 01] host bridge: Android / iOS / web - must load before app.js -->
-<script src="app.js?v=20261117h"></script>
+<script src="app.js?v=20261118a"></script>
 </body>
 </html>

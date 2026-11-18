@@ -61,7 +61,7 @@ ROLE = {
     ("T2", "rm_tens"): ("demo - the child takes the ten", "the child taps one ten (the hand after 3s)"),
     ("T2", "tens_left"): ("demo - tens left", "2 and 1 light on their words; the tens column beats on «1 दहाई»"),
     ("T2", "total"): ("demo - the result", "25, −, 13 light on their words, the columns beat; 12 goes into the ? on «12»"),
-    ("T2", "story_a"): ("story's answer", "T1's screen comes back; on «तेरह घटाए» 13 of Meera's blocks fly into Aman's picture (hers grey); on «बचे 12» her 12 beat"),
+    ("T2", "story_a"): ("story's answer", "T1's screen comes back; on «तेरह घटाए» 13 of Meera's blocks fly into Aman's picture (hers grey); on «बचे» her 12 beat; on «12» the 12 fills the ?; confetti"),
     ("T2", "story_b"): ("story's answer - the box", "the ? becomes 12 on «12 आएगा»; confetti"),
     ("T2", "story_c"): ("story's answer - the end", "the 12 beat, Meera's picture lights on «मीरा»; then the next button"),
     # the guided / practice pages
@@ -110,7 +110,7 @@ def page_rows(i, s):
         for r in ("ones_left", "rm_tens"):
             add(au.get(r), (sid, r))
         add("vo_idle_rm_t", "idle_rm")
-        for r in ("tens_left", "total", "story_a", "story_b", "story_c"):
+        for r in ("tens_left", "total", "story_a", "story_c"):
             add(au.get(r), (sid, r))
     elif ty == "PV_SUB":
         b_t, b_o = d["b"] // 10, d["b"] % 10

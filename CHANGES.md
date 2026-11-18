@@ -406,3 +406,10 @@ Verified: T1-T4, G1, G2, P1, P2, P4, P5 run through (right / wrong), the hands (
 | 3. T4: the child takes the ones away | ✅ | T4 uses `removeChild` for the ones (the hand on them at once); its line is now «पहले आप इकाइयाँ घटाइए। 4 इकाई में से 1 इकाई हटाइए।» (Edge TTS stand-in) |
 | 4. The equation blinked when the line changed | ✅ | `show()` pops only what was hidden: a part already on screen is left as it is (it used to replay its pop, from nothing, at every new line) |
 Verified: T1-T4, G1, P4 run through, 0 console errors.
+
+## Review round 4 — 2026-11-18
+| Asked | Status | How it is built |
+|---|---|---|
+| 1. T1 / T3: the equation not centred | ✅ | `pvStoryScene`: the whole picture 106px left - the row 25 − 13 = ? now stands centred on the card; the blocks stay under their child |
+| 2. T2 / T4: the answer fills on «…तो बचे 12»; «अब इस डिब्बे में 12 आएगा» removed | ✅ | `story_b` gone from T2 and T4 (vo_t3_b / vo_t4_story_b unused); the 12 / 13 goes into the box on its word in `story_a` (measured: 3.85s / 4.22s, MEASURED), then the confetti and «यानी मीरा के पास कुल 12 ब्लॉक्स बचे।» |
+Verified: T2, T3, T4 run through, 0 console errors.

@@ -85,7 +85,7 @@ slides.append({
               "total": vo("vo_t2_total", "25 में से 13 घटाने पर हमें मिलीं, 1 दहाई और 2 इकाई, यानी 12"),
               # the deck's "Appear the first screen" lines, now the end of this page (its T3 page is folded in)
               "story_a": vo("vo_t3_a", "यहाँ हमने पच्चीस में से तेरह घटाए हैं, तो बचे 12।"),
-              "story_b": vo("vo_t3_b", "अब इस डिब्बे में 12 आएगा।"),
+              # (user 2026-11-18: «अब इस डिब्बे में 12 आएगा।» removed - the 12 fills the box on «…तो बचे 12।»)
               "story_c": vo("vo_t3_c", "यानी मीरा के पास कुल 12 ब्लॉक्स बचे।")},
     "data": {"a": 25, "b": 13, "eq_prompt": "25 − 13 = ?", "idle_ms": 3000, "fill_at": 0.5}})
 
@@ -116,7 +116,6 @@ slides.append({
               "tens_left": vo("vo_t4_tens_left", "बहुत बढ़िया! 3 दहाई में से 2 दहाई घटाने पर बचे, 1 दहाई।"),
               "total": vo("vo_t4_total", "34 में से 21 घटाने पर हमें मिलीं, 1 दहाई और 3 इकाई, यानी 13"),
               "story_a": vo("vo_t4_story_a", "यहाँ हमने चौंतीस में से इक्कीस घटाए हैं, तो बचे 13।"),
-              "story_b": vo("vo_t4_story_b", "अब इस डिब्बे में 13 आएगा।"),
               "story_c": vo("vo_t4_story_c", "यानी रोहन के पास कुल 13 ब्लॉक्स बचे।")},
     "data": {"a": 34, "b": 21, "eq_prompt": "34 − 21 = ?", "idle_ms": 3000, "fill_at": 0.5, "child_build": True}})
 
@@ -257,6 +256,8 @@ def weight(t):
 # own voiced stretch) where the text estimate below drifts on a long line with a slow «शाबाश!» (user 2026-11-10: the equation lights
 # in sync with the VO). clip -> {cue key: s}; re-measure them if the line is re-recorded.
 MEASURED = {   # a | − (घटा / में से) | b | (x: lights off) | = (बराबर / यानी) | the answer
+    "vo_t3_a":              {"q": 3.85},   # …तो बचे | 12 (the last phrase 3.46-4.34s) - the 12 fills the box (user 2026-11-18)
+    "vo_t4_story_a":        {"q": 4.22},   # …तो बचे | 13 (3.80-4.70s)
     "vo_t2_total":          {"a": 0.30, "op": 0.95, "b": 1.45, "x": 2.60, "eq": 6.52, "q": 7.19},   # 25 में से 13 घटाने पर | … यानी 12
     "vo_g1_correct":        {"a": 1.65, "op": 2.15, "b": 2.65, "x": 3.30, "eq": 6.72, "q": 7.36},   # शाबाश! 34 में से 21 घटाने | पर … यानी 13।
     "vo_g2_correct":        {"a": 1.65, "op": 2.35, "b": 2.75, "eq": 3.39, "q": 4.23},   # शाबाश! 47 घटा 20 बराबर 27।
@@ -337,8 +338,9 @@ for sl in slides:
         if "एक बंडल" in VO[au["tens"]]:
             cues["bundle"] = {"at": frac(au["tens"], "एक बंडल")}                              # user 2026-11-17: the bundle opens
         WD = {25: "पच्चीस", 13: "तेरह", 34: "चौंतीस", 21: "इक्कीस"}
-        cues["story"] = {"a": frac(au["story_a"], WD[d["a"]]), "b": frac(au["story_a"], WD[d["b"]]), "n": frac(au["story_a"], "बचे"),
+        cues["story"] = {"a": frac(au["story_a"], WD[d["a"]]), "b": frac(au["story_a"], WD[d["b"]]), "n": frac(au["story_a"], "बचे"), "q": frac(au["story_a"], str(d["a"] - d["b"]), after="बचे"),
                          "c": frac(au["story_c"], str(d["a"] - d["b"]))}
+        sq = {"q": cues["story"]["q"]}; measured(au["story_a"], sq); cues["story"]["q"] = sq["q"]
     # user 2026-10-28: after a wrong attempt the correct line is said without its «शाबाश!» - "correct_plain", cut from the
     # recorded line by tools/make_plain_correct.py (same voice); only on the pages a child can answer wrongly first
     if d.get("answer") in ("mcq", "numpad") and VO.get(au.get("correct", ""), "").startswith("शाबाश!"):
