@@ -426,3 +426,8 @@ Verified: T2 - दहाई at 4.11s («1 दहाई» starts 4.08s), इक�
 | Replace the VOs with the new recordings (shorter / reworded lines) | ✅ | All 100 new takes (`assets/voiceover/voiceovers/*.mp3`) moved to `vo_source/recorded/` and imported with `tools/import_vo.py` (trimmed, 0.28s lead / 0.36s tail, -18.5 LUFS). The T3 / T4 Edge TTS stand-ins and the cut «_plain» lines are now recordings too. The old clips are kept in `vo_source/_old_2026-11-18/` (ogg, recorded, edge_tts). The duplicate folder in assets/ removed (byte-for-byte the same as vo_source/recorded) |
 | The sync | ⚠️ partly | The new wording was not given (user: keep the old text for now), so every cue still reads the OLD line's words: the estimated cues now use the new lengths; the hand-measured times (MEASURED) were moved onto the new takes by matching their pauses (piecewise where the pause pattern matches, else scaled over the voiced span). Lines whose wording changed may highlight off their word until the new text is put in tools/lessons.py |
 Verified: every page runs through, 0 console errors.
+
+## The ones digit lit too long — 2026-11-18
+| Asked | Status | How it is built |
+|---|---|---|
+| «… X दहाई और Y इकाई …»: the ones digit stayed highlighted for seconds (the tens digit was fine) | ✅ | The tens digit went off as the ones digit lit, but the ones digit stayed on to the end of the line (and 0.7s after a step line). `lightDigit(card, which, on, ms)`: the ones digit (and each digit a step line lights) is now on for 1.1s - as long as the tens digit is. Measured on T2: tens 1.13s, ones 1.10s |
