@@ -460,3 +460,8 @@ Verified (speaker state traced every 40ms against the voice): cover - grey throu
 |---|---|---|
 | As File4 (MTG204_L01_S01): once the greeting has ended the play button is there; tapping the speaker greys the play button until the line ends | ✅ | File4's round 26: the play button still appears for the first time when the greeting is over; after that a replay from the speaker turns it into the grey disabled disc (btn-play-round-waiting.svg - on screen, no tap, no pulse) together with the grey speaker; when the line ends it is live again (pop + pulse). `playLanding` + `.sg-btn.sg-shown.sg-waiting` |
 Verified: live and pulsing → speaker tapped: grey disc, a tap on it does nothing → line over: live and pulsing again (both files).
+
+## Cover title: a little more space between the words — 2026-11-19
+
+- User: "in the cover page increase little space between the words of title". The gap between the title's words is now the font's own space plus 0.12em (about 8px at the 64px title), in `app.js` (the arched title's `fit()`, `sp`). The arch and the title's place on the page are unchanged.
+- Cache version `?v=20261119a`.
